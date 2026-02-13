@@ -2,7 +2,7 @@
 
 #pragma once
 
-#pragma warning(disable: 4201)
+#pragma warning(disable : 4201)
 
 typedef enum _KDU_SOURCEBASE {
     SourceBaseNone = 0,
@@ -43,22 +43,22 @@ typedef struct _KDU_DB_ENTRY {
     };
     ULONG SupportedShellFlags;
     LPWSTR Description;
-    LPWSTR DriverName; //only file name, e.g. PROCEXP
+    LPWSTR DriverName;  // only file name, e.g. PROCEXP
     union {
-        LPWSTR DeviceName; //device name, e.g. PROCEXP152
+        LPWSTR DeviceName;  // device name, e.g. PROCEXP152
         LPWSTR PortName;
     };
     LPWSTR SignerName;
-} KDU_DB_ENTRY, * PKDU_DB_ENTRY;
+} KDU_DB_ENTRY, *PKDU_DB_ENTRY;
 
 typedef struct _KDU_DB {
     ULONG NumberOfEntries;
     KDU_DB_ENTRY* Entries;
-} KDU_DB, * PKDU_DB;
+} KDU_DB, *PKDU_DB;
 
 typedef struct _KDU_DB_VERSION {
     WORD MajorVersion;
     WORD MinorVersion;
     WORD Revision;
     WORD Build;
-} KDU_DB_VERSION, * PKDU_DB_VERSION;
+} KDU_DB_VERSION, *PKDU_DB_VERSION;

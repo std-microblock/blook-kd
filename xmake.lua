@@ -35,7 +35,7 @@ target("helper-dll")
     add_syslinks("shell32")
 
 target("victim-drivers")
-    set_kind("static")
+    set_kind("shared")
     set_encodings("utf-8")
     add_defines("UNICODE")
     add_files("src/victim-drivers/**.c", "src/victim-drivers/**.cpp", "src/victim-drivers/**.def", "src/victim-drivers/**.rc")

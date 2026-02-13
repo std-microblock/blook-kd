@@ -5,17 +5,18 @@
 //
 // Ignored warnings
 //
-#pragma warning(disable: 4005) // macro redefinition
-#pragma warning(disable: 4091) // 'typedef ': ignored on left of '%s' when no variable is declared
-#pragma warning(disable: 4201) // nameless struct/union
-#pragma warning(disable: 26812) // Prefer 'enum class' over 'enum'
+#pragma warning(disable : 4005)   // macro redefinition
+#pragma warning(disable : 4091)   // 'typedef ': ignored on left of '%s' when no
+                                  // variable is declared
+#pragma warning(disable : 4201)   // nameless struct/union
+#pragma warning(disable : 26812)  // Prefer 'enum class' over 'enum'
 
-#define KDU_SHELLCODE_NONE  (0)
-#define KDU_SHELLCODE_V1    (1)
-#define KDU_SHELLCODE_V2    (2)
-#define KDU_SHELLCODE_V3    (3)
-#define KDU_SHELLCODE_V4    (4)
-#define KDU_SHELLCODE_VMAX  KDU_SHELLCODE_V4
+#define KDU_SHELLCODE_NONE (0)
+#define KDU_SHELLCODE_V1 (1)
+#define KDU_SHELLCODE_V2 (2)
+#define KDU_SHELLCODE_V3 (3)
+#define KDU_SHELLCODE_V4 (4)
+#define KDU_SHELLCODE_VMAX KDU_SHELLCODE_V4
 
 #include <Windows.h>
 #include <strsafe.h>
@@ -25,7 +26,7 @@
 #include <SetupAPI.h>
 #include <newdev.h>
 #include <Bcrypt.h>
-#include<fltuser.h>
+#include <fltuser.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -73,5 +74,13 @@ extern "C" {
 #include "diag.h"
 #include "tests.h"
 
-#define ASSERT_RESOLVED_FUNC(FunctionPtr) { if (FunctionPtr == 0) break; }
-#define ASSERT_RESOLVED_FUNC_ABORT(FunctionPtr) { if (FunctionPtr == 0) return FALSE; }
+#define ASSERT_RESOLVED_FUNC(FunctionPtr) \
+    {                                     \
+        if (FunctionPtr == 0)             \
+            break;                        \
+    }
+#define ASSERT_RESOLVED_FUNC_ABORT(FunctionPtr) \
+    {                                           \
+        if (FunctionPtr == 0)                   \
+            return FALSE;                       \
+    }

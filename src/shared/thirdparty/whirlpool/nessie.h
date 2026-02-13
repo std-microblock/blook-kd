@@ -26,7 +26,7 @@ typedef signed int s32;
 typedef unsigned short u16;
 typedef unsigned int u32;
 
-#define ONE32   0xffffffffU
+#define ONE32 0xffffffffU
 
 #else
 
@@ -35,30 +35,30 @@ typedef signed long s32;
 typedef unsigned int u16;
 typedef unsigned long u32;
 
-#define ONE32   0xffffffffUL
+#define ONE32 0xffffffffUL
 
 #endif
 
-#define ONE8    0xffU
-#define ONE16   0xffffU
+#define ONE8 0xffU
+#define ONE16 0xffffU
 
-#define T8(x)   ((x) & ONE8)
-#define T16(x)  ((x) & ONE16)
-#define T32(x)  ((x) & ONE32)
+#define T8(x) ((x) & ONE8)
+#define T16(x) ((x) & ONE16)
+#define T32(x) ((x) & ONE32)
 
 #ifdef _MSC_VER
 typedef unsigned __int64 u64;
 typedef signed __int64 s64;
-#define LL(v)   (v##i64)
-#define ONE64   LL(0xffffffffffffffff)
-#else  /* !_MSC_VER */
+#define LL(v) (v##i64)
+#define ONE64 LL(0xffffffffffffffff)
+#else /* !_MSC_VER */
 typedef unsigned long long u64;
 typedef signed long long s64;
-#define LL(v)   (v##ULL)
-#define ONE64   LL(0xffffffffffffffff)
+#define LL(v) (v##ULL)
+#define ONE64 LL(0xffffffffffffffff)
 #endif /* ?_MSC_VER */
-#define T64(x)  ((x) & ONE64)
-#define ROTR64(v, n)   (((v) >> (n)) | T64((v) << (64 - (n))))
+#define T64(x) ((x) & ONE64)
+#define ROTR64(v, n) (((v) >> (n)) | T64((v) << (64 - (n))))
 /*
  * Note: the test is used to detect native 64-bit architectures;
  * if the unsigned long is strictly greater than 32-bit, it is
@@ -71,58 +71,77 @@ typedef signed long long s64;
 /*
  * U8TO32_BIG(c) returns the 32-bit value stored in big-endian convention
  * in the unsigned char array pointed to by c.
-*/
-#define U8TO32_BIG(c)  (((u32)T8(*(c)) << 24) | ((u32)T8(*((c) + 1)) << 16) | ((u32)T8(*((c) + 2)) << 8) | ((u32)T8(*((c) + 3))))
+ */
+#define U8TO32_BIG(c)                                      \
+    (((u32)T8(*(c)) << 24) | ((u32)T8(*((c) + 1)) << 16) | \
+     ((u32)T8(*((c) + 2)) << 8) | ((u32)T8(*((c) + 3))))
 
 /*
-  * U8TO32_LITTLE(c) returns the 32-bit value stored in little-endian convention
-  * in the unsigned char array pointed to by c.
-*/
+ * U8TO32_LITTLE(c) returns the 32-bit value stored in little-endian convention
+ * in the unsigned char array pointed to by c.
+ */
 #define U8TO32_LITTLE(c)  (((u32)T8(*(c))) | ((u32)T8(*((c) + 1)) << 8) | (u32)T8(*((c) + 2)) << 16) | ((u32)T8(*((c) + 3)) << 24))
 
 /*
-  * U8TO32_BIG(c, v) stores the 32-bit-value v in big-endian convention
-  * into the unsigned char array pointed to by c.
-*/
-#define U32TO8_BIG(c, v)    do { u32 x = (v); u8 *d = (c); d[0] = T8(x >> 24); d[1] = T8(x >> 16); d[2] = T8(x >> 8); d[3] = T8(x); } while (0)
+ * U8TO32_BIG(c, v) stores the 32-bit-value v in big-endian convention
+ * into the unsigned char array pointed to by c.
+ */
+#define U32TO8_BIG(c, v)    \
+    do {                    \
+        u32 x = (v);        \
+        u8* d = (c);        \
+        d[0] = T8(x >> 24); \
+        d[1] = T8(x >> 16); \
+        d[2] = T8(x >> 8);  \
+        d[3] = T8(x);       \
+    } while (0)
 
 /*
-  * U8TO32_LITTLE(c, v) stores the 32-bit-value v in little-endian convention
-  * into the unsigned char array pointed to by c.
-*/
-#define U32TO8_LITTLE(c, v)    do { u32 x = (v); u8 *d = (c); d[0] = T8(x); d[1] = T8(x >> 8); d[2] = T8(x >> 16); d[3] = T8(x >> 24); } while (0)
+ * U8TO32_LITTLE(c, v) stores the 32-bit-value v in little-endian convention
+ * into the unsigned char array pointed to by c.
+ */
+#define U32TO8_LITTLE(c, v) \
+    do {                    \
+        u32 x = (v);        \
+        u8* d = (c);        \
+        d[0] = T8(x);       \
+        d[1] = T8(x >> 8);  \
+        d[2] = T8(x >> 16); \
+        d[3] = T8(x >> 24); \
+    } while (0)
 
 /*
-      * ROTL32(v, n) returns the value of the 32-bit unsigned value v after
-      * a rotation of n bits to the left. It might be replaced by the appropriate
-      * architecture-specific macro.
-      *
-      * It evaluates v and n twice.
-      *
-      * The compiler might emit a warning if n is the constant 0. The result
-      * is undefined if n is greater than 31.
-*/
-#define ROTL32(v, n)   (T32((v) << (n)) | ((v) >> (32 - (n))))
+ * ROTL32(v, n) returns the value of the 32-bit unsigned value v after
+ * a rotation of n bits to the left. It might be replaced by the appropriate
+ * architecture-specific macro.
+ *
+ * It evaluates v and n twice.
+ *
+ * The compiler might emit a warning if n is the constant 0. The result
+ * is undefined if n is greater than 31.
+ */
+#define ROTL32(v, n) (T32((v) << (n)) | ((v) >> (32 - (n))))
 
 /*
-* Whirlpool-specific definitions.
-*/
+ * Whirlpool-specific definitions.
+ */
 
 #define DIGESTBYTES 64
-#define DIGESTBITS  (8*DIGESTBYTES) /* 512 */
+#define DIGESTBITS (8 * DIGESTBYTES) /* 512 */
 
 #define WBLOCKBYTES 64
-#define WBLOCKBITS  (8*WBLOCKBYTES) /* 512 */
+#define WBLOCKBITS (8 * WBLOCKBYTES) /* 512 */
 
 #define LENGTHBYTES 32
-#define LENGTHBITS  (8*LENGTHBYTES) /* 256 */
+#define LENGTHBITS (8 * LENGTHBYTES) /* 256 */
 
 typedef struct NESSIEstruct {
-    u8  bitLength[LENGTHBYTES]; /* global number of hashed bits (256-bit counter) */
-    u8  buffer[WBLOCKBYTES];	/* buffer of data to hash */
-    int bufferBits;		        /* current number of bits on the buffer */
-    int bufferPos;		        /* current (possibly incomplete) byte slot on the buffer */
-    u64 hash[DIGESTBYTES / 8];    /* the hashing state */
+    u8 bitLength[LENGTHBYTES]; /* global number of hashed bits (256-bit counter)
+                                */
+    u8 buffer[WBLOCKBYTES];    /* buffer of data to hash */
+    int bufferBits;            /* current number of bits on the buffer */
+    int bufferPos; /* current (possibly incomplete) byte slot on the buffer */
+    u64 hash[DIGESTBYTES / 8]; /* the hashing state */
 } NESSIEstruct;
 
-#endif   /* PORTABLE_C__ */
+#endif /* PORTABLE_C__ */

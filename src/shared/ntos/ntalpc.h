@@ -1,6 +1,7 @@
-/* Common header file for the ntos ALPC/CSR related functions and definitions. */
+/* Common header file for the ntos ALPC/CSR related functions and definitions.
+ */
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif
 
@@ -16,25 +17,27 @@ extern "C" {
 #endif
 
 #pragma warning(push)
-#pragma warning(disable: 4214) // nonstandard extension used : bit field types other than int
+#pragma warning( \
+    disable      \
+    : 4214)  // nonstandard extension used : bit field types other than int
 
-#define CSR_API_PORT_NAME               L"ApiPort"
+#define CSR_API_PORT_NAME L"ApiPort"
 
-#define WINSS_OBJECT_DIRECTORY_NAME     L"\\Windows"
+#define WINSS_OBJECT_DIRECTORY_NAME L"\\Windows"
 
-#define CSRSRV_SERVERDLL_INDEX          0
-#define CSRSRV_FIRST_API_NUMBER         0
+#define CSRSRV_SERVERDLL_INDEX 0
+#define CSRSRV_FIRST_API_NUMBER 0
 
-#define BASESRV_SERVERDLL_INDEX         1
-#define BASESRV_FIRST_API_NUMBER        0
+#define BASESRV_SERVERDLL_INDEX 1
+#define BASESRV_FIRST_API_NUMBER 0
 
-#define CONSRV_SERVERDLL_INDEX          2
-#define CONSRV_FIRST_API_NUMBER         512
+#define CONSRV_SERVERDLL_INDEX 2
+#define CONSRV_FIRST_API_NUMBER 512
 
-#define USERSRV_SERVERDLL_INDEX         3
-#define USERSRV_FIRST_API_NUMBER        1024
+#define USERSRV_SERVERDLL_INDEX 3
+#define USERSRV_FIRST_API_NUMBER 1024
 
-#define CSR_CSRSS_SECTION_SIZE          65536
+#define CSR_CSRSS_SECTION_SIZE 65536
 
 #define ALPC_MSGFLG_REPLY_MESSAGE 0x1
 #define ALPC_MSGFLG_LPC_MODE 0x2
@@ -61,14 +64,11 @@ typedef enum _ALPC_PORT_INFORMATION_CLASS {
 } ALPC_PORT_INFORMATION_CLASS;
 
 typedef struct _ALPC_SERVER_INFORMATION {
-    union
-    {
-        struct
-        {
+    union {
+        struct {
             HANDLE ThreadHandle;
         } In;
-        struct
-        {
+        struct {
             BOOLEAN ThreadBlocked;
             HANDLE ConnectedProcessId;
             UNICODE_STRING ConnectionPortName;
@@ -94,7 +94,7 @@ typedef struct _ALPC_PORT_ATTRIBUTES {
 typedef struct _ALPC_MESSAGE_ATTRIBUTES {
     ULONG AllocatedAttributes;
     ULONG ValidAttributes;
-} ALPC_MESSAGE_ATTRIBUTES, * PALPC_MESSAGE_ATTRIBUTES;
+} ALPC_MESSAGE_ATTRIBUTES, *PALPC_MESSAGE_ATTRIBUTES;
 
 typedef struct _ALPC_BASIC_INFORMATION {
     ULONG Flags;
@@ -103,7 +103,7 @@ typedef struct _ALPC_BASIC_INFORMATION {
 } ALPC_BASIC_INFORMATION, *PALPC_BASIC_INFORMATION;
 
 typedef struct _ALPC_HANDLE_TABLE {
-    struct _ALPC_HANDLE_ENTRY *Handles;
+    struct _ALPC_HANDLE_ENTRY* Handles;
     ULONG TotalHandles;
     ULONG Flags;
     struct _EX_PUSH_LOCK Lock;
@@ -111,21 +111,21 @@ typedef struct _ALPC_HANDLE_TABLE {
 
 // Windows 7 - Windows 8
 typedef struct _ALPC_COMMUNICATION_INFO_V1 {
-    struct _ALPC_PORT *ConnectionPort;
-    struct _ALPC_PORT *ServerCommunicationPort;
-    struct _ALPC_PORT *ClientCommunicationPort;
+    struct _ALPC_PORT* ConnectionPort;
+    struct _ALPC_PORT* ServerCommunicationPort;
+    struct _ALPC_PORT* ClientCommunicationPort;
     struct _LIST_ENTRY CommunicationList;
     struct _ALPC_HANDLE_TABLE HandleTable;
 } ALPC_COMMUNICATION_INFO_V1, *PALPC_COMMUNICATION_INFO_V1;
 
 // Windows 8.1+
 typedef struct _ALPC_COMMUNICATION_INFO_V2 {
-    struct _ALPC_PORT *ConnectionPort;
-    struct _ALPC_PORT *ServerCommunicationPort;
-    struct _ALPC_PORT *ClientCommunicationPort;
+    struct _ALPC_PORT* ConnectionPort;
+    struct _ALPC_PORT* ServerCommunicationPort;
+    struct _ALPC_PORT* ClientCommunicationPort;
     struct _LIST_ENTRY CommunicationList;
     struct _ALPC_HANDLE_TABLE HandleTable;
-    struct _KALPC_MESSAGE *CloseMessage;
+    struct _KALPC_MESSAGE* CloseMessage;
 } ALPC_COMMUNICATION_INFO_V2, *PALPC_COMMUNICATION_INFO_V2;
 
 //
@@ -137,11 +137,10 @@ typedef struct _ALPC_COMMUNICATION_INFO_COMPAT {
     struct _ALPC_PORT* ClientCommunicationPort;
     struct _LIST_ENTRY CommunicationList;
     struct _ALPC_HANDLE_TABLE HandleTable;
-} ALPC_COMMUNICATION_INFO_COMPAT, * PALPC_COMMUNICATION_INFO_COMPAT;
+} ALPC_COMMUNICATION_INFO_COMPAT, *PALPC_COMMUNICATION_INFO_COMPAT;
 
 typedef union _ALPC_PORT_STATE {
-    struct
-    {
+    struct {
         unsigned long Initialized : 1;
         unsigned long Type : 2;
         unsigned long ConnectionPending : 1;
@@ -173,15 +172,15 @@ typedef struct _ALPC_PORT_7600 {
     /* 0x0018 */ struct _EPROCESS* OwnerProcess;
     /* 0x0020 */ void* CompletionPort;
     /* 0x0028 */ void* CompletionKey;
-    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE* CompletionPacketLookaside;
+    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE*
+        CompletionPacketLookaside;
     /* 0x0038 */ void* PortContext;
     /* 0x0040 */ struct _SECURITY_CLIENT_CONTEXT StaticSecurity;
     /* 0x0088 */ struct _LIST_ENTRY MainQueue;
     /* 0x0098 */ struct _LIST_ENTRY PendingQueue;
     /* 0x00a8 */ struct _LIST_ENTRY LargeMessageQueue;
     /* 0x00b8 */ struct _LIST_ENTRY WaitQueue;
-    union
-    {
+    union {
         /* 0x00c8 */ struct _KSEMAPHORE* Semaphore;
         /* 0x00c8 */ struct _KEVENT* DummyEvent;
     }; /* size: 0x0008 */
@@ -195,25 +194,23 @@ typedef struct _ALPC_PORT_7600 {
     /* 0x0150 */ void* CallbackContext;
     /* 0x0158 */ struct _LIST_ENTRY CanceledQueue;
     /* 0x0168 */ volatile long SequenceNo;
-    union
-    {
-        struct
-        {
-            unsigned long Initialized : 1; /* bit position: 0 */
-            unsigned long Type : 2; /* bit position: 1 */
-            unsigned long ConnectionPending : 1; /* bit position: 3 */
-            unsigned long ConnectionRefused : 1; /* bit position: 4 */
-            unsigned long Disconnected : 1; /* bit position: 5 */
-            unsigned long Closed : 1; /* bit position: 6 */
-            unsigned long NoFlushOnClose : 1; /* bit position: 7 */
-            unsigned long ReturnExtendedInfo : 1; /* bit position: 8 */
-            unsigned long Waitable : 1; /* bit position: 9 */
-            unsigned long DynamicSecurity : 1; /* bit position: 10 */
-            unsigned long Wow64CompletionList : 1; /* bit position: 11 */
-            unsigned long Lpc : 1; /* bit position: 12 */
-            unsigned long LpcToLpc : 1; /* bit position: 13 */
-            unsigned long HasCompletionList : 1; /* bit position: 14 */
-            unsigned long HadCompletionList : 1; /* bit position: 15 */
+    union {
+        struct {
+            unsigned long Initialized : 1;          /* bit position: 0 */
+            unsigned long Type : 2;                 /* bit position: 1 */
+            unsigned long ConnectionPending : 1;    /* bit position: 3 */
+            unsigned long ConnectionRefused : 1;    /* bit position: 4 */
+            unsigned long Disconnected : 1;         /* bit position: 5 */
+            unsigned long Closed : 1;               /* bit position: 6 */
+            unsigned long NoFlushOnClose : 1;       /* bit position: 7 */
+            unsigned long ReturnExtendedInfo : 1;   /* bit position: 8 */
+            unsigned long Waitable : 1;             /* bit position: 9 */
+            unsigned long DynamicSecurity : 1;      /* bit position: 10 */
+            unsigned long Wow64CompletionList : 1;  /* bit position: 11 */
+            unsigned long Lpc : 1;                  /* bit position: 12 */
+            unsigned long LpcToLpc : 1;             /* bit position: 13 */
+            unsigned long HasCompletionList : 1;    /* bit position: 14 */
+            unsigned long HadCompletionList : 1;    /* bit position: 15 */
             unsigned long EnableCompletionList : 1; /* bit position: 16 */
         } s1;
         /* 0x016c */ unsigned long State;
@@ -238,7 +235,8 @@ typedef struct _ALPC_PORT_9200 {
     /* 0x0018 */ struct _EPROCESS* OwnerProcess;
     /* 0x0020 */ void* CompletionPort;
     /* 0x0028 */ void* CompletionKey;
-    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE* CompletionPacketLookaside;
+    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE*
+        CompletionPacketLookaside;
     /* 0x0038 */ void* PortContext;
     /* 0x0040 */ struct _SECURITY_CLIENT_CONTEXT StaticSecurity;
     /* 0x0088 */ struct _EX_PUSH_LOCK IncomingQueueLock;
@@ -248,8 +246,7 @@ typedef struct _ALPC_PORT_9200 {
     /* 0x00b8 */ struct _LIST_ENTRY PendingQueue;
     /* 0x00c8 */ struct _EX_PUSH_LOCK WaitQueueLock;
     /* 0x00d0 */ struct _LIST_ENTRY WaitQueue;
-    union
-    {
+    union {
         /* 0x00e0 */ struct _KSEMAPHORE* Semaphore;
         /* 0x00e0 */ struct _KEVENT* DummyEvent;
     }; /* size: 0x0008 */
@@ -263,25 +260,23 @@ typedef struct _ALPC_PORT_9200 {
     /* 0x0168 */ void* CallbackContext;
     /* 0x0170 */ struct _LIST_ENTRY CanceledQueue;
     /* 0x0180 */ long SequenceNo;
-    union
-    {
-        struct
-        {
-            unsigned long Initialized : 1; /* bit position: 0 */
-            unsigned long Type : 2; /* bit position: 1 */
-            unsigned long ConnectionPending : 1; /* bit position: 3 */
-            unsigned long ConnectionRefused : 1; /* bit position: 4 */
-            unsigned long Disconnected : 1; /* bit position: 5 */
-            unsigned long Closed : 1; /* bit position: 6 */
-            unsigned long NoFlushOnClose : 1; /* bit position: 7 */
-            unsigned long ReturnExtendedInfo : 1; /* bit position: 8 */
-            unsigned long Waitable : 1; /* bit position: 9 */
-            unsigned long DynamicSecurity : 1; /* bit position: 10 */
-            unsigned long Wow64CompletionList : 1; /* bit position: 11 */
-            unsigned long Lpc : 1; /* bit position: 12 */
-            unsigned long LpcToLpc : 1; /* bit position: 13 */
-            unsigned long HasCompletionList : 1; /* bit position: 14 */
-            unsigned long HadCompletionList : 1; /* bit position: 15 */
+    union {
+        struct {
+            unsigned long Initialized : 1;          /* bit position: 0 */
+            unsigned long Type : 2;                 /* bit position: 1 */
+            unsigned long ConnectionPending : 1;    /* bit position: 3 */
+            unsigned long ConnectionRefused : 1;    /* bit position: 4 */
+            unsigned long Disconnected : 1;         /* bit position: 5 */
+            unsigned long Closed : 1;               /* bit position: 6 */
+            unsigned long NoFlushOnClose : 1;       /* bit position: 7 */
+            unsigned long ReturnExtendedInfo : 1;   /* bit position: 8 */
+            unsigned long Waitable : 1;             /* bit position: 9 */
+            unsigned long DynamicSecurity : 1;      /* bit position: 10 */
+            unsigned long Wow64CompletionList : 1;  /* bit position: 11 */
+            unsigned long Lpc : 1;                  /* bit position: 12 */
+            unsigned long LpcToLpc : 1;             /* bit position: 13 */
+            unsigned long HasCompletionList : 1;    /* bit position: 14 */
+            unsigned long HadCompletionList : 1;    /* bit position: 15 */
             unsigned long EnableCompletionList : 1; /* bit position: 16 */
         } s1;
         /* 0x0184 */ unsigned long State;
@@ -306,7 +301,8 @@ typedef struct _ALPC_PORT_9600 {
     /* 0x0018 */ struct _EPROCESS* OwnerProcess;
     /* 0x0020 */ void* CompletionPort;
     /* 0x0028 */ void* CompletionKey;
-    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE* CompletionPacketLookaside;
+    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE*
+        CompletionPacketLookaside;
     /* 0x0038 */ void* PortContext;
     /* 0x0040 */ struct _SECURITY_CLIENT_CONTEXT StaticSecurity;
     /* 0x0088 */ struct _EX_PUSH_LOCK IncomingQueueLock;
@@ -316,8 +312,7 @@ typedef struct _ALPC_PORT_9600 {
     /* 0x00b8 */ struct _LIST_ENTRY PendingQueue;
     /* 0x00c8 */ struct _EX_PUSH_LOCK WaitQueueLock;
     /* 0x00d0 */ struct _LIST_ENTRY WaitQueue;
-    union
-    {
+    union {
         /* 0x00e0 */ struct _KSEMAPHORE* Semaphore;
         /* 0x00e0 */ struct _KEVENT* DummyEvent;
     }; /* size: 0x0008 */
@@ -332,25 +327,23 @@ typedef struct _ALPC_PORT_9600 {
     /* 0x0178 */ long SequenceNo;
     /* 0x017c */ long ReferenceNo;
     /* 0x0180 */ struct _PALPC_PORT_REFERENCE_WAIT_BLOCK* ReferenceNoWait;
-    union
-    {
-        struct
-        {
-            unsigned long Initialized : 1; /* bit position: 0 */
-            unsigned long Type : 2; /* bit position: 1 */
-            unsigned long ConnectionPending : 1; /* bit position: 3 */
-            unsigned long ConnectionRefused : 1; /* bit position: 4 */
-            unsigned long Disconnected : 1; /* bit position: 5 */
-            unsigned long Closed : 1; /* bit position: 6 */
-            unsigned long NoFlushOnClose : 1; /* bit position: 7 */
-            unsigned long ReturnExtendedInfo : 1; /* bit position: 8 */
-            unsigned long Waitable : 1; /* bit position: 9 */
-            unsigned long DynamicSecurity : 1; /* bit position: 10 */
-            unsigned long Wow64CompletionList : 1; /* bit position: 11 */
-            unsigned long Lpc : 1; /* bit position: 12 */
-            unsigned long LpcToLpc : 1; /* bit position: 13 */
-            unsigned long HasCompletionList : 1; /* bit position: 14 */
-            unsigned long HadCompletionList : 1; /* bit position: 15 */
+    union {
+        struct {
+            unsigned long Initialized : 1;          /* bit position: 0 */
+            unsigned long Type : 2;                 /* bit position: 1 */
+            unsigned long ConnectionPending : 1;    /* bit position: 3 */
+            unsigned long ConnectionRefused : 1;    /* bit position: 4 */
+            unsigned long Disconnected : 1;         /* bit position: 5 */
+            unsigned long Closed : 1;               /* bit position: 6 */
+            unsigned long NoFlushOnClose : 1;       /* bit position: 7 */
+            unsigned long ReturnExtendedInfo : 1;   /* bit position: 8 */
+            unsigned long Waitable : 1;             /* bit position: 9 */
+            unsigned long DynamicSecurity : 1;      /* bit position: 10 */
+            unsigned long Wow64CompletionList : 1;  /* bit position: 11 */
+            unsigned long Lpc : 1;                  /* bit position: 12 */
+            unsigned long LpcToLpc : 1;             /* bit position: 13 */
+            unsigned long HasCompletionList : 1;    /* bit position: 14 */
+            unsigned long HadCompletionList : 1;    /* bit position: 15 */
             unsigned long EnableCompletionList : 1; /* bit position: 16 */
         } s1;
         /* 0x0188 */ unsigned long State;
@@ -375,7 +368,8 @@ typedef struct _ALPC_PORT_10240 {
     /* 0x0018 */ struct _EPROCESS* OwnerProcess;
     /* 0x0020 */ void* CompletionPort;
     /* 0x0028 */ void* CompletionKey;
-    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE* CompletionPacketLookaside;
+    /* 0x0030 */ struct _ALPC_COMPLETION_PACKET_LOOKASIDE*
+        CompletionPacketLookaside;
     /* 0x0038 */ void* PortContext;
     /* 0x0040 */ struct _SECURITY_CLIENT_CONTEXT StaticSecurity;
     /* 0x0088 */ struct _EX_PUSH_LOCK IncomingQueueLock;
@@ -387,8 +381,7 @@ typedef struct _ALPC_PORT_10240 {
     /* 0x00d0 */ struct _LIST_ENTRY DirectQueue;
     /* 0x00e0 */ struct _EX_PUSH_LOCK WaitQueueLock;
     /* 0x00e8 */ struct _LIST_ENTRY WaitQueue;
-    union
-    {
+    union {
         /* 0x00f8 */ struct _KSEMAPHORE* Semaphore;
         /* 0x00f8 */ struct _KEVENT* DummyEvent;
     }; /* size: 0x0008 */
@@ -403,26 +396,33 @@ typedef struct _ALPC_PORT_10240 {
     /* 0x0190 */ long SequenceNo;
     /* 0x0194 */ long ReferenceNo;
     /* 0x0198 */ struct _PALPC_PORT_REFERENCE_WAIT_BLOCK* ReferenceNoWait;
-    union
-    {
+    union {
         struct /* bitfield */
         {
             /* 0x01a0 */ unsigned long Initialized : 1; /* bit position: 0 */
-            /* 0x01a0 */ unsigned long Type : 2; /* bit position: 1 */
-            /* 0x01a0 */ unsigned long ConnectionPending : 1; /* bit position: 3 */
-            /* 0x01a0 */ unsigned long ConnectionRefused : 1; /* bit position: 4 */
-            /* 0x01a0 */ unsigned long Disconnected : 1; /* bit position: 5 */
-            /* 0x01a0 */ unsigned long Closed : 1; /* bit position: 6 */
+            /* 0x01a0 */ unsigned long Type : 2;        /* bit position: 1 */
+            /* 0x01a0 */ unsigned long ConnectionPending
+                : 1; /* bit position: 3 */
+            /* 0x01a0 */ unsigned long ConnectionRefused
+                : 1;                                       /* bit position: 4 */
+            /* 0x01a0 */ unsigned long Disconnected : 1;   /* bit position: 5 */
+            /* 0x01a0 */ unsigned long Closed : 1;         /* bit position: 6 */
             /* 0x01a0 */ unsigned long NoFlushOnClose : 1; /* bit position: 7 */
-            /* 0x01a0 */ unsigned long ReturnExtendedInfo : 1; /* bit position: 8 */
+            /* 0x01a0 */ unsigned long ReturnExtendedInfo
+                : 1;                                 /* bit position: 8 */
             /* 0x01a0 */ unsigned long Waitable : 1; /* bit position: 9 */
-            /* 0x01a0 */ unsigned long DynamicSecurity : 1; /* bit position: 10 */
-            /* 0x01a0 */ unsigned long Wow64CompletionList : 1; /* bit position: 11 */
-            /* 0x01a0 */ unsigned long Lpc : 1; /* bit position: 12 */
+            /* 0x01a0 */ unsigned long DynamicSecurity
+                : 1; /* bit position: 10 */
+            /* 0x01a0 */ unsigned long Wow64CompletionList
+                : 1;                                 /* bit position: 11 */
+            /* 0x01a0 */ unsigned long Lpc : 1;      /* bit position: 12 */
             /* 0x01a0 */ unsigned long LpcToLpc : 1; /* bit position: 13 */
-            /* 0x01a0 */ unsigned long HasCompletionList : 1; /* bit position: 14 */
-            /* 0x01a0 */ unsigned long HadCompletionList : 1; /* bit position: 15 */
-            /* 0x01a0 */ unsigned long EnableCompletionList : 1; /* bit position: 16 */
+            /* 0x01a0 */ unsigned long HasCompletionList
+                : 1; /* bit position: 14 */
+            /* 0x01a0 */ unsigned long HadCompletionList
+                : 1; /* bit position: 15 */
+            /* 0x01a0 */ unsigned long EnableCompletionList
+                : 1; /* bit position: 16 */
         } s1;
         /* 0x01a0 */ unsigned long State;
     } u1;
@@ -438,43 +438,40 @@ typedef struct _ALPC_PORT_10240 {
 } ALPC_PORT_10240, *PALPC_PORT_10240; /* size: 0x01d8 */
 
 NTSYSAPI
-NTSTATUS 
-NTAPI 
-NtAlpcCreatePort(
-    _Out_ PHANDLE PortHandle,
-    _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PALPC_PORT_ATTRIBUTES PortAttributes);
-
-NTSYSAPI
-NTSTATUS 
-NTAPI 
-NtAlpcDisconnectPort(
-    _In_ HANDLE PortHandle,
-    _In_ ULONG Flags);
-
-NTSYSAPI
-NTSTATUS 
-NTAPI 
-NtAlpcQueryInformation(
-    _In_ HANDLE PortHandle,
-    _In_ ALPC_PORT_INFORMATION_CLASS PortInformationClass,
-    _Inout_updates_bytes_to_(Length, *ReturnLength) PVOID PortInformation,
-    _In_ ULONG Length,
-    _Out_opt_ PULONG ReturnLength);
+NTSTATUS
+NTAPI
+NtAlpcCreatePort(_Out_ PHANDLE PortHandle,
+                 _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+                 _In_opt_ PALPC_PORT_ATTRIBUTES PortAttributes);
 
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtAlpcAcceptConnectPort(
-    _Out_ PHANDLE PortHandle,
-    _In_ HANDLE ConnectionPortHandle,
-    _In_ ULONG Flags,
-    _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
-    _In_opt_ PALPC_PORT_ATTRIBUTES PortAttributes,
-    _In_opt_ PVOID PortContext,
-    _In_opt_ PPORT_MESSAGE ConnectionRequest,
-    _Inout_opt_ PALPC_MESSAGE_ATTRIBUTES ConnectionMessageAttributes,
-    _In_ BOOLEAN AcceptConnection);
+NtAlpcDisconnectPort(_In_ HANDLE PortHandle, _In_ ULONG Flags);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtAlpcQueryInformation(_In_ HANDLE PortHandle,
+                       _In_ ALPC_PORT_INFORMATION_CLASS PortInformationClass,
+                       _Inout_updates_bytes_to_(Length, *ReturnLength)
+                           PVOID PortInformation,
+                       _In_ ULONG Length,
+                       _Out_opt_ PULONG ReturnLength);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtAlpcAcceptConnectPort(_Out_ PHANDLE PortHandle,
+                        _In_ HANDLE ConnectionPortHandle,
+                        _In_ ULONG Flags,
+                        _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+                        _In_opt_ PALPC_PORT_ATTRIBUTES PortAttributes,
+                        _In_opt_ PVOID PortContext,
+                        _In_opt_ PPORT_MESSAGE ConnectionRequest,
+                        _Inout_opt_ PALPC_MESSAGE_ATTRIBUTES
+                            ConnectionMessageAttributes,
+                        _In_ BOOLEAN AcceptConnection);
 
 NTSYSAPI
 NTSTATUS

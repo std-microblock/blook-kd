@@ -14,7 +14,7 @@
 #endif
 #endif
 
-#pragma warning(disable: 4005)
+#pragma warning(disable : 4005)
 
 #include <Windows.h>
 #include <ntstatus.h>

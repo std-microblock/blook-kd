@@ -6,19 +6,14 @@
 #pragma comment(lib, "msdelta.lib")
 
 /*
-* EncodeBuffer
-*
-* Purpose:
-*
-* Decrypt/Encrypt given buffer.
-*
-*/
-VOID EncodeBuffer(
-    _In_ PVOID Buffer,
-    _In_ ULONG BufferSize,
-    _In_ ULONG Key
-)
-{
+ * EncodeBuffer
+ *
+ * Purpose:
+ *
+ * Decrypt/Encrypt given buffer.
+ *
+ */
+VOID EncodeBuffer(_In_ PVOID Buffer, _In_ ULONG BufferSize, _In_ ULONG Key) {
     ULONG k, c;
     PUCHAR ptr;
 
@@ -38,23 +33,20 @@ VOID EncodeBuffer(
 }
 
 /*
-* KDULoadResource
-*
-* Purpose:
-*
-* Access and decompress resource.
-*
-* N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
-*
-*/
-PVOID KDULoadResource(
-    _In_ ULONG_PTR ResourceId,
-    _In_ PVOID DllHandle,
-    _In_ PULONG DataSize,
-    _In_ ULONG DecryptKey,
-    _In_ BOOLEAN VerifyChecksum
-)
-{
+ * KDULoadResource
+ *
+ * Purpose:
+ *
+ * Access and decompress resource.
+ *
+ * N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
+ *
+ */
+PVOID KDULoadResource(_In_ ULONG_PTR ResourceId,
+                      _In_ PVOID DllHandle,
+                      _In_ PULONG DataSize,
+                      _In_ ULONG DecryptKey,
+                      _In_ BOOLEAN VerifyChecksum) {
     PBYTE dataPtr;
     ULONG dataSize = 0;
     SIZE_T decompressedSize = 0;
@@ -62,46 +54,36 @@ PVOID KDULoadResource(
     if (DataSize)
         *DataSize = 0;
 
-    dataPtr = supQueryResourceData(ResourceId,
-        DllHandle,
-        &dataSize);
+    dataPtr = supQueryResourceData(ResourceId, DllHandle, &dataSize);
 
     if (dataPtr && dataSize) {
-
-        dataPtr = (PBYTE)KDUDecompressResource(dataPtr,
-            dataSize,
-            &decompressedSize,
-            DecryptKey,
-            VerifyChecksum);
+        dataPtr = (PBYTE)KDUDecompressResource(
+            dataPtr, dataSize, &decompressedSize, DecryptKey, VerifyChecksum);
 
         if (DataSize)
             *DataSize = (ULONG)decompressedSize;
 
         return dataPtr;
-
     }
 
     return NULL;
 }
 
 /*
-* KDUDecompressResource
-*
-* Purpose:
-*
-* Decompress resource and return pointer to decompressed data.
-*
-* N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
-*
-*/
-PVOID KDUDecompressResource(
-    _In_ PVOID ResourcePtr,
-    _In_ SIZE_T ResourceSize,
-    _Out_ PSIZE_T DecompressedSize,
-    _In_ ULONG DecryptKey,
-    _In_ BOOLEAN VerifyChecksum
-)
-{
+ * KDUDecompressResource
+ *
+ * Purpose:
+ *
+ * Decompress resource and return pointer to decompressed data.
+ *
+ * N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
+ *
+ */
+PVOID KDUDecompressResource(_In_ PVOID ResourcePtr,
+                            _In_ SIZE_T ResourceSize,
+                            _Out_ PSIZE_T DecompressedSize,
+                            _In_ ULONG DecryptKey,
+                            _In_ BOOLEAN VerifyChecksum) {
     BOOLEAN bValidData;
     DELTA_INPUT diDelta, diSource;
     DELTA_OUTPUT doOutput;
@@ -123,31 +105,24 @@ PVOID KDUDecompressResource(
         diDelta.uSize = ResourceSize;
 
         if (ApplyDeltaB(DELTA_FILE_TYPE_RAW, diSource, diDelta, &doOutput)) {
-            
             SIZE_T newSize = doOutput.uSize;
             PVOID decomPtr = doOutput.lpStart;
 
             bValidData = TRUE;
 
             if (VerifyChecksum) {
-
                 ULONG headerSum = 0, calcSum = 0;
 
-                bValidData = supVerifyMappedImageMatchesChecksum(decomPtr,
-                    (ULONG)newSize,
-                    &headerSum,
-                    &calcSum);
+                bValidData = supVerifyMappedImageMatchesChecksum(
+                    decomPtr, (ULONG)newSize, &headerSum, &calcSum);
 
                 if (bValidData == FALSE) {
-                    
-                    supPrintfEvent(kduEventError, 
-                        "[!] Error data checksum mismatch! Header sum 0x%lx, calculated sum 0x%lx\r\n",
-                        headerSum, 
-                        calcSum);
-
+                    supPrintfEvent(kduEventError,
+                                   "[!] Error data checksum mismatch! Header "
+                                   "sum 0x%lx, calculated sum 0x%lx\r\n",
+                                   headerSum, calcSum);
                 }
-            }
-            else {
+            } else {
                 printf_s("[+] Checksum verification skipped\r\n");
             }
 
@@ -161,11 +136,9 @@ PVOID KDUDecompressResource(
 
             DeltaFree(doOutput.lpStart);
 
-        }
-        else {
-            
-            supShowWin32Error("[!] Error while decompressing resource", GetLastError());
-
+        } else {
+            supShowWin32Error("[!] Error while decompressing resource",
+                              GetLastError());
         }
 
         supHeapFree(dataBlob);

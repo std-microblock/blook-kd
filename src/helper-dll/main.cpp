@@ -3,33 +3,27 @@
 #include "global.h"
 
 /*
-* StubFunc
-*
-* Purpose:
-*
-* Stub for fake exports.
-*
-*/
-VOID WINAPI StubFunc(
-    VOID
-)
-{
-
-}
+ * StubFunc
+ *
+ * Purpose:
+ *
+ * Stub for fake exports.
+ *
+ */
+VOID WINAPI StubFunc(VOID) {}
 
 #define ZODIACON_KOBJEXP L"\\Device\\KObjExp"
 #define ZODIACON_KREGEXP L"\\Device\\KRegExp"
 
 /*
-* ExecutableMain
-*
-* Purpose:
-*
-* Entry point for exe mode.
-*
-*/
-int ExecutableMain()
-{
+ * ExecutableMain
+ *
+ * Purpose:
+ *
+ * Entry point for exe mode.
+ *
+ */
+int ExecutableMain() {
 #define EXPORT
 
     LPWSTR* lpszArgList;
@@ -39,19 +33,17 @@ int ExecutableMain()
 
     lpszArgList = CommandLineToArgvW(GetCommandLineW(), &nArgs);
     if (lpszArgList) {
-
         if (nArgs > 0) {
-
             ulKey = _strtoul(lpszArgList[0]);
 
             switch (ulKey) {
-            case 1:
-                lpTargetDevice = (LPWSTR)ZODIACON_KREGEXP;
-                break;
-            case 0:
-            default:
-                lpTargetDevice = (LPWSTR)ZODIACON_KOBJEXP;
-                break;
+                case 1:
+                    lpTargetDevice = (LPWSTR)ZODIACON_KREGEXP;
+                    break;
+                case 0:
+                default:
+                    lpTargetDevice = (LPWSTR)ZODIACON_KOBJEXP;
+                    break;
             }
 
             HANDLE deviceHandle;
@@ -62,22 +54,14 @@ int ExecutableMain()
             LARGE_INTEGER liTimeOut;
 
             RtlInitUnicodeString(&deviceName, lpTargetDevice);
-            InitializeObjectAttributes(&objectAttributes, &deviceName, OBJ_CASE_INSENSITIVE, NULL, NULL);
+            InitializeObjectAttributes(&objectAttributes, &deviceName,
+                                       OBJ_CASE_INSENSITIVE, NULL, NULL);
 
-            ntStatus = NtCreateFile(&deviceHandle,
-                GENERIC_READ | GENERIC_WRITE,
-                &objectAttributes,
-                &ioStatusBlock,
-                NULL,
-                0,
-                0,
-                FILE_OPEN,
-                0,
-                NULL,
-                0);
+            ntStatus = NtCreateFile(&deviceHandle, GENERIC_READ | GENERIC_WRITE,
+                                    &objectAttributes, &ioStatusBlock, NULL, 0,
+                                    0, FILE_OPEN, 0, NULL, 0);
 
             if (NT_SUCCESS(ntStatus)) {
-
                 IpcSendHandleToServer(deviceHandle);
 
                 liTimeOut.QuadPart = UInt32x32To64(3000, 10000);
@@ -94,7 +78,6 @@ int ExecutableMain()
                 // Never here.
                 //
             }
-
         }
 
         LocalFree((HLOCAL)lpszArgList);
@@ -106,18 +89,16 @@ int ExecutableMain()
 #ifdef _WIN64
 
 /*
-* DllMain
-*
-* Purpose:
-*
-* Dummy dll entry point.
-*
-*/
-BOOL WINAPI DllMain(
-    _In_ HINSTANCE hinstDLL,
-    _In_ DWORD fdwReason,
-    _In_ LPVOID lpvReserved)
-{
+ * DllMain
+ *
+ * Purpose:
+ *
+ * Dummy dll entry point.
+ *
+ */
+BOOL WINAPI DllMain(_In_ HINSTANCE hinstDLL,
+                    _In_ DWORD fdwReason,
+                    _In_ LPVOID lpvReserved) {
     UNREFERENCED_PARAMETER(lpvReserved);
 
     if (fdwReason == DLL_PROCESS_ATTACH)
@@ -133,18 +114,15 @@ BOOL WINAPI DllMain(
 #define TARGET_IMAGE_BASE 0x00400000
 #define TARGET_LINK TEXT("\\\\.\\CEDRIVER73")
 
-PVOID LoadExecutableRaw()
-{
+PVOID LoadExecutableRaw() {
     WCHAR szFileName[MAX_PATH * 2];
 
     DWORD cch = GetModuleFileName(NULL, (LPWSTR)&szFileName, MAX_PATH);
     if (cch == 0 || cch >= MAX_PATH)
         return NULL;
 
-    HANDLE hFile = CreateFile(szFileName,
-        GENERIC_READ,
-        FILE_SHARE_VALID_FLAGS,
-        NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_VALID_FLAGS,
+                              NULL, OPEN_EXISTING, 0, NULL);
 
     if (hFile == INVALID_HANDLE_VALUE) {
         return NULL;
@@ -171,10 +149,7 @@ PVOID LoadExecutableRaw()
     return lpBuffer;
 }
 
-VOID UnlockCheatEngineDriver(
-    _In_ PVOID ImageBase
-)
-{
+VOID UnlockCheatEngineDriver(_In_ PVOID ImageBase) {
     PVOID lpFileBuffer = LoadExecutableRaw();
     if (lpFileBuffer == NULL) {
         return;
@@ -184,16 +159,19 @@ VOID UnlockCheatEngineDriver(
     PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION(ntHeaders);
     BOOLEAN bReady = FALSE;
 
-    for (WORD i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++, pSection++) {
-
-        if (_strncmpi_a((CHAR*)pSection->Name, TEXT_SECTION, TEXT_SECTION_LENGTH) == 0) {
-
-            PCHAR targetAddress = RtlOffsetToPointer(TARGET_IMAGE_BASE, pSection->VirtualAddress);
-            PCHAR rawAddress = RtlOffsetToPointer(lpFileBuffer, pSection->PointerToRawData);
+    for (WORD i = 0; i < ntHeaders->FileHeader.NumberOfSections;
+         i++, pSection++) {
+        if (_strncmpi_a((CHAR*)pSection->Name, TEXT_SECTION,
+                        TEXT_SECTION_LENGTH) == 0) {
+            PCHAR targetAddress =
+                RtlOffsetToPointer(TARGET_IMAGE_BASE, pSection->VirtualAddress);
+            PCHAR rawAddress =
+                RtlOffsetToPointer(lpFileBuffer, pSection->PointerToRawData);
             ULONG size = pSection->SizeOfRawData;
 
             DWORD oldProtect = 0;
-            if (VirtualProtect(targetAddress, size, PAGE_READWRITE, &oldProtect)) {
+            if (VirtualProtect(targetAddress, size, PAGE_READWRITE,
+                               &oldProtect)) {
                 RtlCopyMemory(targetAddress, rawAddress, size);
                 VirtualProtect(targetAddress, size, oldProtect, &oldProtect);
                 bReady = TRUE;
@@ -201,47 +179,37 @@ VOID UnlockCheatEngineDriver(
 
             break;
         }
-
     }
 
     if (bReady) {
-
-        HANDLE driverHandle = CreateFile(TARGET_LINK,
-            GENERIC_ALL,
-            FILE_SHARE_READ | FILE_SHARE_WRITE,
-            NULL,
-            OPEN_EXISTING,
-            0, NULL);
+        HANDLE driverHandle = CreateFile(TARGET_LINK, GENERIC_ALL,
+                                         FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                         NULL, OPEN_EXISTING, 0, NULL);
 
         if (driverHandle != INVALID_HANDLE_VALUE) {
-
             IpcSendHandleToServer(driverHandle);
 
             while (TRUE) {
                 Sleep(1000);
             }
         }
-
     }
-
 }
 
 #pragma comment(linker, "/ENTRY:DllMainUnlockDBK")
 
 /*
-* DllMainUnlockDBK
-*
-* Purpose:
-*
-* Entry point invoking Cheat Engine's provider unlocking procedure.
-* Note: target is always x86-32, so this dll will always be 32bit.
-*
-*/
-BOOL WINAPI DllMainUnlockDBK(
-    _In_ HINSTANCE hinstDLL,
-    _In_ DWORD fdwReason,
-    _In_ LPVOID lpvReserved)
-{
+ * DllMainUnlockDBK
+ *
+ * Purpose:
+ *
+ * Entry point invoking Cheat Engine's provider unlocking procedure.
+ * Note: target is always x86-32, so this dll will always be 32bit.
+ *
+ */
+BOOL WINAPI DllMainUnlockDBK(_In_ HINSTANCE hinstDLL,
+                             _In_ DWORD fdwReason,
+                             _In_ LPVOID lpvReserved) {
     UNREFERENCED_PARAMETER(lpvReserved);
 
     if (fdwReason == DLL_PROCESS_ATTACH) {

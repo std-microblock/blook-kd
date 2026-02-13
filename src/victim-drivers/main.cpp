@@ -3,8 +3,8 @@
 #include "tanikaze.h"
 
 /*
-* Nothing
-* 
-* WARNING, THIS DLL MUST BE BUILD IN RELEASE CONFIGURATION, ALWAYS.
-* 
-*/
+ * Nothing
+ *
+ * WARNING, THIS DLL MUST BE BUILD IN RELEASE CONFIGURATION, ALWAYS.
+ *
+ */

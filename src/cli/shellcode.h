@@ -7,12 +7,13 @@ typedef struct _PAYLOAD_HEADER_V1 {
 
     //
     // Variant specific fields.
-    // 
+    //
     pfnPsCreateSystemThread PsCreateSystemThread;
     pfnZwClose ZwClose;
 
-    //BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this structure
-} PAYLOAD_HEADER_V1, * PPAYLOAD_HEADER_V1;
+    // BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this
+    // structure
+} PAYLOAD_HEADER_V1, *PPAYLOAD_HEADER_V1;
 
 typedef struct _PAYLOAD_HEADER_V2 {
     ULONG ImageSize;
@@ -23,8 +24,9 @@ typedef struct _PAYLOAD_HEADER_V2 {
     //
     pfnExQueueWorkItem ExQueueWorkItem;
 
-    //BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this structure
-} PAYLOAD_HEADER_V2, * PPAYLOAD_HEADER_V2;
+    // BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this
+    // structure
+} PAYLOAD_HEADER_V2, *PPAYLOAD_HEADER_V2;
 
 typedef struct _PAYLOAD_HEADER_V3 {
     ULONG ImageSize;
@@ -43,56 +45,42 @@ typedef struct _PAYLOAD_HEADER_V3 {
     FIXED_UNICODE_STRING ObjectName;
     FIXED_UNICODE_STRING RegistryPath;
 
-    //BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this structure
-} PAYLOAD_HEADER_V3, * PPAYLOAD_HEADER_V3;
+    // BYTE Payload[ANYSIZE_ARRAY]; //following header, not a part of this
+    // structure
+} PAYLOAD_HEADER_V3, *PPAYLOAD_HEADER_V3;
 
-SIZE_T ScGetViewSize(
-    _In_ ULONG ScVersion,
-    _In_ PVOID ScBuffer);
+SIZE_T ScGetViewSize(_In_ ULONG ScVersion, _In_ PVOID ScBuffer);
 
-DWORD ScSizeOf(
-    _In_ ULONG ScVersion,
-    _Out_opt_ PULONG PayloadSize);
+DWORD ScSizeOf(_In_ ULONG ScVersion, _Out_opt_ PULONG PayloadSize);
 
-ULONG ScSizeOfProc(
-    _In_ PBYTE FunctionPtr);
+ULONG ScSizeOfProc(_In_ PBYTE FunctionPtr);
 
-BOOLEAN ScCreateFixedUnicodeString(
-    _Inout_ PFIXED_UNICODE_STRING DestinationString,
-    _In_ PCWSTR SourceString);
+BOOLEAN ScCreateFixedUnicodeString(_Inout_ PFIXED_UNICODE_STRING
+                                       DestinationString,
+                                   _In_ PCWSTR SourceString);
 
-HANDLE ScCreateReadyEvent(
-    _In_ ULONG ScVersion,
-    _In_ PVOID ScBuffer);
+HANDLE ScCreateReadyEvent(_In_ ULONG ScVersion, _In_ PVOID ScBuffer);
 
-BOOLEAN ScStoreVersionSpecificData(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID PayloadPtr);
+BOOLEAN ScStoreVersionSpecificData(_In_ PKDU_CONTEXT Context,
+                                   _In_ PVOID PayloadPtr);
 
-ULONG_PTR ScResolveFunctionByName(
-    _In_ ULONG_PTR KernelBase,
-    _In_ ULONG_PTR KernelImage,
-    _In_ LPCSTR Function);
+ULONG_PTR ScResolveFunctionByName(_In_ ULONG_PTR KernelBase,
+                                  _In_ ULONG_PTR KernelImage,
+                                  _In_ LPCSTR Function);
 
-BOOLEAN ScResolveImportForPayload(
-    _In_ ULONG ShellVersion,
-    _In_ PVOID PayloadHead,
-    _In_ ULONG_PTR KernelImage,
-    _In_ ULONG_PTR KernelBase);
+BOOLEAN ScResolveImportForPayload(_In_ ULONG ShellVersion,
+                                  _In_ PVOID PayloadHead,
+                                  _In_ ULONG_PTR KernelImage,
+                                  _In_ ULONG_PTR KernelBase);
 
-PVOID ScGetBootstrapLdr(
-    _In_ ULONG ShellVersion,
-    _Out_opt_ PULONG Size);
+PVOID ScGetBootstrapLdr(_In_ ULONG ShellVersion, _Out_opt_ PULONG Size);
 
-VOID ScFree(
-    _In_ PVOID ScBuffer,
-    _In_ ULONG ScSize);
+VOID ScFree(_In_ PVOID ScBuffer, _In_ ULONG ScSize);
 
-PVOID ScAllocate(
-    _In_ ULONG ShellVersion,
-    _In_ HANDLE SectionHandle,
-    _In_ SIZE_T SectionViewSize,
-    _In_ ULONG_PTR KernelImage,
-    _In_ ULONG_PTR KernelBase,
-    _In_ ULONG MemoryTag,
-    _Out_ PULONG ShellSize);
+PVOID ScAllocate(_In_ ULONG ShellVersion,
+                 _In_ HANDLE SectionHandle,
+                 _In_ SIZE_T SectionViewSize,
+                 _In_ ULONG_PTR KernelImage,
+                 _In_ ULONG_PTR KernelBase,
+                 _In_ ULONG MemoryTag,
+                 _Out_ PULONG ShellSize);

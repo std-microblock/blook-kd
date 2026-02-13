@@ -40,12 +40,13 @@
 //
 static KDU_VICTIM_PROVIDER g_KDUVictims[] = {
     {
-        (LPCWSTR)PROCEXP152,              // Device and driver name,
-        (LPCWSTR)PROCEXP1627_DESC,        // Description
-        IDR_PROCEXP1627,                  // Resource id in drivers database
-        KDU_VICTIM_PE1627,                // Victim id
-        SYNCHRONIZE |
-        GENERIC_READ | GENERIC_WRITE,     // Desired access flags used for acquiring victim handle
+        (LPCWSTR)PROCEXP152,        // Device and driver name,
+        (LPCWSTR)PROCEXP1627_DESC,  // Description
+        IDR_PROCEXP1627,            // Resource id in drivers database
+        KDU_VICTIM_PE1627,          // Victim id
+        SYNCHRONIZE | GENERIC_READ |
+            GENERIC_WRITE,  // Desired access flags used for acquiring victim
+                            // handle
         KDU_VICTIM_FLAGS_SUPPORT_RELOAD,  // Victim flags, target dependent
         VpCreateCallback,                 // Victim create callback
         VpReleaseCallback,                // Victim release callback
@@ -55,12 +56,13 @@ static KDU_VICTIM_PROVIDER g_KDUVictims[] = {
     },
 
     {
-        (LPCWSTR)PROCEXP152,              // Device and driver name,
-        (LPCWSTR)PROCEXP1702_DESC,        // Description
-        IDR_PROCEXP1702,                  // Resource id in drivers database
-        KDU_VICTIM_PE1702,                // Victim id
-        SYNCHRONIZE |
-        GENERIC_READ | GENERIC_WRITE,     // Desired access flags used for acquiring victim handle
+        (LPCWSTR)PROCEXP152,        // Device and driver name,
+        (LPCWSTR)PROCEXP1702_DESC,  // Description
+        IDR_PROCEXP1702,            // Resource id in drivers database
+        KDU_VICTIM_PE1702,          // Victim id
+        SYNCHRONIZE | GENERIC_READ |
+            GENERIC_WRITE,  // Desired access flags used for acquiring victim
+                            // handle
         KDU_VICTIM_FLAGS_SUPPORT_RELOAD,  // Victim flags, target dependent
         VpCreateCallback,                 // Victim create callback
         VpReleaseCallback,                // Victim release callback
@@ -74,1490 +76,1142 @@ static KDU_VICTIM_PROVIDER g_KDUVictims[] = {
 //
 // Providers public array, unsupported methods must be set to NULL.
 //
-static KDU_PROVIDER g_KDUProviders[] =
-{
-    {
-        NULL,
+static KDU_PROVIDER g_KDUProviders[] = {
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)NalReadVirtualMemoryEx,
-        (provWriteKernelVM)NalWriteVirtualMemoryEx,
+     (provReadKernelVM)NalReadVirtualMemoryEx,
+     (provWriteKernelVM)NalWriteVirtualMemoryEx,
 
-        (provVirtualToPhysical)NalVirtualToPhysical,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NalVirtualToPhysical, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)RTCoreReadVirtualMemory,
-        (provWriteKernelVM)RTCoreWriteVirtualMemory,
+     (provReadKernelVM)RTCoreReadVirtualMemory,
+     (provWriteKernelVM)RTCoreWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)MapMemRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)MapMemRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)MapMemReadKernelVirtualMemory,
-        (provWriteKernelVM)MapMemWriteKernelVirtualMemory,
+     (provReadKernelVM)MapMemReadKernelVirtualMemory,
+     (provWriteKernelVM)MapMemWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)MapMemVirtualToPhysical,
-        (provQueryPML4)MapMemQueryPML4Value,
-        (provReadPhysicalMemory)MapMemReadPhysicalMemory,
-        (provWritePhysicalMemory)MapMemWritePhysicalMemory,
+     (provVirtualToPhysical)MapMemVirtualToPhysical,
+     (provQueryPML4)MapMemQueryPML4Value,
+     (provReadPhysicalMemory)MapMemReadPhysicalMemory,
+     (provWritePhysicalMemory)MapMemWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)AtszioReadKernelVirtualMemory,
-        (provWriteKernelVM)AtszioWriteKernelVirtualMemory,
+     (provReadKernelVM)AtszioReadKernelVirtualMemory,
+     (provWriteKernelVM)AtszioWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)AtszioVirtualToPhysical,
-        (provQueryPML4)AtszioQueryPML4Value,
-        (provReadPhysicalMemory)AtszioReadPhysicalMemory,
-        (provWritePhysicalMemory)AtszioWritePhysicalMemory,
+     (provVirtualToPhysical)AtszioVirtualToPhysical,
+     (provQueryPML4)AtszioQueryPML4Value,
+     (provReadPhysicalMemory)AtszioReadPhysicalMemory,
+     (provWritePhysicalMemory)AtszioWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WRZeroReadKernelVirtualMemory,
-        (provWriteKernelVM)WRZeroWriteKernelVirtualMemory,
+     (provReadKernelVM)WRZeroReadKernelVirtualMemory,
+     (provWriteKernelVM)WRZeroWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WRZeroVirtualToPhysical,
-        (provQueryPML4)WRZeroQueryPML4Value,
-        (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
-        (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
+     (provVirtualToPhysical)WRZeroVirtualToPhysical,
+     (provQueryPML4)WRZeroQueryPML4Value,
+     (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
+     (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)PhyMemReadKernelVirtualMemory,
-        (provWriteKernelVM)PhyMemWriteKernelVirtualMemory,
+     (provReadKernelVM)PhyMemReadKernelVirtualMemory,
+     (provWriteKernelVM)PhyMemWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)PhyMemVirtualToPhysical,
-        (provQueryPML4)PhyMemQueryPML4Value,
-        (provReadPhysicalMemory)PhyMemReadPhysicalMemory,
-        (provWritePhysicalMemory)PhyMemWritePhysicalMemory,
+     (provVirtualToPhysical)PhyMemVirtualToPhysical,
+     (provQueryPML4)PhyMemQueryPML4Value,
+     (provReadPhysicalMemory)PhyMemReadPhysicalMemory,
+     (provWritePhysicalMemory)PhyMemWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)WinIoUnregisterDriver,
-        (provPreOpenDriver)WinIoPreOpen,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver,
+     (provUnregisterDriver)WinIoUnregisterDriver,
+     (provPreOpenDriver)WinIoPreOpen, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)LHAReadKernelVirtualMemory,
-        (provWriteKernelVM)LHAWriteKernelVirtualMemory,
+     (provReadKernelVM)LHAReadKernelVirtualMemory,
+     (provWriteKernelVM)LHAWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)LHAVirtualToPhysical,
-        (provQueryPML4)LHAQueryPML4Value,
-        (provReadPhysicalMemory)LHAReadPhysicalMemory,
-        (provWritePhysicalMemory)LHAWritePhysicalMemory,
+     (provVirtualToPhysical)LHAVirtualToPhysical,
+     (provQueryPML4)LHAQueryPML4Value,
+     (provReadPhysicalMemory)LHAReadPhysicalMemory,
+     (provWritePhysicalMemory)LHAWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)DI64ReadKernelVirtualMemory,
-        (provWriteKernelVM)DI64WriteKernelVirtualMemory,
+     (provReadKernelVM)DI64ReadKernelVirtualMemory,
+     (provWriteKernelVM)DI64WriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)DI64VirtualToPhysical,
-        (provQueryPML4)DI64QueryPML4Value,
-        (provReadPhysicalMemory)DI64ReadPhysicalMemory,
-        (provWritePhysicalMemory)DI64WritePhysicalMemory,
+     (provVirtualToPhysical)DI64VirtualToPhysical,
+     (provQueryPML4)DI64QueryPML4Value,
+     (provReadPhysicalMemory)DI64ReadPhysicalMemory,
+     (provWritePhysicalMemory)DI64WritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)GmerRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)GmerRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)GmerReadVirtualMemory,
-        (provWriteKernelVM)GmerWriteVirtualMemory,
+     (provReadKernelVM)GmerReadVirtualMemory,
+     (provWriteKernelVM)GmerWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)DbUtilReadVirtualMemory,
-        (provWriteKernelVM)DbUtilWriteVirtualMemory,
+     (provReadKernelVM)DbUtilReadVirtualMemory,
+     (provWriteKernelVM)DbUtilWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)MimidrvReadVirtualMemory,
-        (provWriteKernelVM)MimidrvWriteVirtualMemory,
+     (provReadKernelVM)MimidrvReadVirtualMemory,
+     (provWriteKernelVM)MimidrvWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)KphRegisterDriver,
-        (provUnregisterDriver)KphUnregisterDriver,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)KphRegisterDriver,
+     (provUnregisterDriver)KphUnregisterDriver, (provPreOpenDriver)NULL,
+     (provPostOpenDriver)NULL, (provMapDriver)KDUMapDriver,
+     (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)KphReadKernelVirtualMemory,
-        (provWriteKernelVM)KphWriteKernelVirtualMemory,
+     (provReadKernelVM)KphReadKernelVirtualMemory,
+     (provWriteKernelVM)KphWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)KphVirtualToPhysical,
-        (provQueryPML4)KphQueryPML4Value,
-        (provReadPhysicalMemory)KphReadPhysicalMemory,
-        (provWritePhysicalMemory)KphWritePhysicalMemory,
+     (provVirtualToPhysical)KphVirtualToPhysical,
+     (provQueryPML4)KphQueryPML4Value,
+     (provReadPhysicalMemory)KphReadPhysicalMemory,
+     (provWritePhysicalMemory)KphWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)KphOpenProcess
-    },
+     (provOpenProcess)KphOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)PexRegisterDriver,
-        (provUnregisterDriver)PexpUnregisterDriver,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)PexRegisterDriver,
+     (provUnregisterDriver)PexpUnregisterDriver, (provPreOpenDriver)NULL,
+     (provPostOpenDriver)NULL, (provMapDriver)KDUMapDriver,
+     (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)PexReadKernelVirtualMemory,
-        (provWriteKernelVM)PexWriteKernelVirtualMemory,
+     (provReadKernelVM)PexReadKernelVirtualMemory,
+     (provWriteKernelVM)PexWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)PexVirtualToPhysical,
-        (provQueryPML4)PexQueryPML4Value,
-        (provReadPhysicalMemory)PexReadPhysicalMemory,
-        (provWritePhysicalMemory)PexWritePhysicalMemory,
+     (provVirtualToPhysical)PexVirtualToPhysical,
+     (provQueryPML4)PexQueryPML4Value,
+     (provReadPhysicalMemory)PexReadPhysicalMemory,
+     (provWritePhysicalMemory)PexWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)PexOpenProcess
-    },
+     (provOpenProcess)PexOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)DbUtilStartVulnerableDriver,
-        (provStopVulnerableDriver)DbUtilStopVulnerableDriver,
+     (provStartVulnerableDriver)DbUtilStartVulnerableDriver,
+     (provStopVulnerableDriver)DbUtilStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)DbUtilReadVirtualMemory,
-        (provWriteKernelVM)DbUtilWriteVirtualMemory,
+     (provReadKernelVM)DbUtilReadVirtualMemory,
+     (provWriteKernelVM)DbUtilWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)DbkStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)DbkStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)DbkMapDriver,
-        (provControlDSE)DbkControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL,
+     (provMapDriver)DbkMapDriver, (provControlDSE)DbkControlDSE,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)DbkOpenProcess
-    },
+     (provOpenProcess)DbkOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)AsusIO3UnregisterDriver,
-        (provPreOpenDriver)AsusIO3PreOpen,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver,
+     (provUnregisterDriver)AsusIO3UnregisterDriver,
+     (provPreOpenDriver)AsusIO3PreOpen, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)HwReadKernelVirtualMemory,
-        (provWriteKernelVM)HwWriteKernelVirtualMemory,
+     (provReadKernelVM)HwReadKernelVirtualMemory,
+     (provWriteKernelVM)HwWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)HwVirtualToPhysical,
-        (provQueryPML4)HwQueryPML4Value,
-        (provReadPhysicalMemory)HwReadPhysicalMemory,
-        (provWritePhysicalMemory)HwWritePhysicalMemory,
+     (provVirtualToPhysical)HwVirtualToPhysical,
+     (provQueryPML4)HwQueryPML4Value,
+     (provReadPhysicalMemory)HwReadPhysicalMemory,
+     (provWritePhysicalMemory)HwWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)MapMemRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)MapMemRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)MapMemReadKernelVirtualMemory,
-        (provWriteKernelVM)MapMemWriteKernelVirtualMemory,
+     (provReadKernelVM)MapMemReadKernelVirtualMemory,
+     (provWriteKernelVM)MapMemWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)MapMemVirtualToPhysical,
-        (provQueryPML4)MapMemQueryPML4Value,
-        (provReadPhysicalMemory)MapMemReadPhysicalMemory,
-        (provWritePhysicalMemory)MapMemWritePhysicalMemory,
+     (provVirtualToPhysical)MapMemVirtualToPhysical,
+     (provQueryPML4)MapMemQueryPML4Value,
+     (provReadPhysicalMemory)MapMemReadPhysicalMemory,
+     (provWritePhysicalMemory)MapMemWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)ZmRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)ZmMapDriver,
-        (provControlDSE)ZmControlDSE,
+     (provRegisterDriver)ZmRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL,
+     (provMapDriver)ZmMapDriver, (provControlDSE)ZmControlDSE,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)ZmOpenProcess
-    },
+     (provOpenProcess)ZmOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)DI64ReadKernelVirtualMemory,
-        (provWriteKernelVM)DI64WriteKernelVirtualMemory,
+     (provReadKernelVM)DI64ReadKernelVirtualMemory,
+     (provWriteKernelVM)DI64WriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)DI64VirtualToPhysical,
-        (provQueryPML4)DI64QueryPML4Value,
-        (provReadPhysicalMemory)DI64ReadPhysicalMemory,
-        (provWritePhysicalMemory)DI64WritePhysicalMemory,
+     (provVirtualToPhysical)DI64VirtualToPhysical,
+     (provQueryPML4)DI64QueryPML4Value,
+     (provReadPhysicalMemory)DI64ReadPhysicalMemory,
+     (provWritePhysicalMemory)DI64WritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)AsrReadPhysicalMemory,
-        (provWritePhysicalMemory)AsrWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)AsrReadPhysicalMemory,
+     (provWritePhysicalMemory)AsrWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)AlcReadPhysicalMemory,
-        (provWritePhysicalMemory)AlcWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)AlcReadPhysicalMemory,
+     (provWritePhysicalMemory)AlcWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)RmReadPhysicalMemory,
-        (provWritePhysicalMemory)RmWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)RmReadPhysicalMemory,
+     (provWritePhysicalMemory)RmWritePhysicalMemory,
 
-        (provValidatePrerequisites)RmValidatePrerequisites,
+     (provValidatePrerequisites)RmValidatePrerequisites,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)PhmRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)PhmRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)PhmReadPhysicalMemory,
-        (provWritePhysicalMemory)PhmWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)PhmReadPhysicalMemory,
+     (provWritePhysicalMemory)PhmWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)LddRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)LddControlDSE,
+     (provRegisterDriver)LddRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)LddControlDSE,
 
-        (provReadKernelVM)LddReadKernelVirtualMemory,
-        (provWriteKernelVM)LddWriteKernelVirtualMemory,
+     (provReadKernelVM)LddReadKernelVirtualMemory,
+     (provWriteKernelVM)LddWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)LddpVirtualToPhysical,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)LddReadWritePhysicalMemoryStub,
-        (provWritePhysicalMemory)LddReadWritePhysicalMemoryStub,
+     (provVirtualToPhysical)LddpVirtualToPhysical, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)LddReadWritePhysicalMemoryStub,
+     (provWritePhysicalMemory)LddReadWritePhysicalMemoryStub,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)DellRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)DellRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)DpdReadPhysicalMemory,
-        (provWritePhysicalMemory)DpdWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)DpdReadPhysicalMemory,
+     (provWritePhysicalMemory)DpdWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)HpEtdReadVirtualMemory,
-        (provWriteKernelVM)HpEtdWriteVirtualMemory,
+     (provReadKernelVM)HpEtdReadVirtualMemory,
+     (provWriteKernelVM)HpEtdWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)KObExpReadVirtualMemory,
-        (provWriteKernelVM)KObExpWriteVirtualMemory,
+     (provReadKernelVM)KObExpReadVirtualMemory,
+     (provWriteKernelVM)KObExpWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)ZdcStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)ZdcStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)ZdcRegisterDriver,
-        (provUnregisterDriver)ZdcUnregisterDriver,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)ZdcRegisterDriver,
+     (provUnregisterDriver)ZdcUnregisterDriver, (provPreOpenDriver)NULL,
+     (provPostOpenDriver)NULL, (provMapDriver)KDUMapDriver,
+     (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)ZdcReadKernelVirtualMemory,
-        (provWriteKernelVM)ZdcWriteKernelVirtualMemory,
+     (provReadKernelVM)ZdcReadKernelVirtualMemory,
+     (provWriteKernelVM)ZdcWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)ZdcVirtualToPhysical,
-        (provQueryPML4)ZdcQueryPML4Value,
-        (provReadPhysicalMemory)ZdcReadPhysicalMemory,
-        (provWritePhysicalMemory)ZdcWritePhysicalMemory,
+     (provVirtualToPhysical)ZdcVirtualToPhysical,
+     (provQueryPML4)ZdcQueryPML4Value,
+     (provReadPhysicalMemory)ZdcReadPhysicalMemory,
+     (provWritePhysicalMemory)ZdcWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)ZdcStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)ZdcStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)ZdcRegisterDriver,
-        (provUnregisterDriver)ZdcUnregisterDriver,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)ZdcRegisterDriver,
+     (provUnregisterDriver)ZdcUnregisterDriver, (provPreOpenDriver)NULL,
+     (provPostOpenDriver)NULL, (provMapDriver)KDUMapDriver,
+     (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)ZdcReadKernelVirtualMemory,
-        (provWriteKernelVM)ZdcWriteKernelVirtualMemory,
+     (provReadKernelVM)ZdcReadKernelVirtualMemory,
+     (provWriteKernelVM)ZdcWriteKernelVirtualMemory,
 
-        (provVirtualToPhysical)ZdcVirtualToPhysical,
-        (provQueryPML4)ZdcQueryPML4Value,
-        (provReadPhysicalMemory)ZdcReadPhysicalMemory,
-        (provWritePhysicalMemory)ZdcWritePhysicalMemory,
+     (provVirtualToPhysical)ZdcVirtualToPhysical,
+     (provQueryPML4)ZdcQueryPML4Value,
+     (provReadPhysicalMemory)ZdcReadPhysicalMemory,
+     (provWritePhysicalMemory)ZdcWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)EchoDrvRegisterDriver,
-        (provUnregisterDriver)EchoDrvUnregisterDriver,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provRegisterDriver)EchoDrvRegisterDriver,
+     (provUnregisterDriver)EchoDrvUnregisterDriver, (provPreOpenDriver)NULL,
+     (provPostOpenDriver)NULL, (provMapDriver)KDUMapDriver,
+     (provControlDSE)KDUControlDSE,
 
-        (provReadKernelVM)EchoDrvReadVirtualMemory,
-        (provWriteKernelVM)EchoDrvWriteVirtualMemory,
+     (provReadKernelVM)EchoDrvReadVirtualMemory,
+     (provWriteKernelVM)EchoDrvWriteVirtualMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)EchoDrvOpenProcess
-    },
+     (provOpenProcess)EchoDrvOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NvoReadPhysicalMemory,
-        (provWritePhysicalMemory)NvoWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NvoReadPhysicalMemory,
+     (provWritePhysicalMemory)NvoWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)NULL,
-        (provControlDSE)NULL,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL, (provMapDriver)NULL,
+     (provControlDSE)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)BeDrvOpenProcess
-     },
+     (provOpenProcess)BeDrvOpenProcess},
 
-    {
-        NULL,
+    {NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
-        (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
+     (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
 
-        (provValidatePrerequisites)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provOpenProcess)NULL},
 
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL, (provMapDriver)NULL,
+     (provControlDSE)NULL,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)NULL,
-        (provControlDSE)NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)RazerOpenProcess},
 
-        (provOpenProcess)RazerOpenProcess
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provReadKernelVM)PdFwReadVirtualMemory,
+     (provWriteKernelVM)PdFwWriteVirtualMemory,
 
-        (provReadKernelVM)PdFwReadVirtualMemory,
-        (provWriteKernelVM)PdFwWriteVirtualMemory,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)RmReadPhysicalMemory,
+     (provWritePhysicalMemory)RmWritePhysicalMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)RmReadPhysicalMemory,
-        (provWritePhysicalMemory)RmWritePhysicalMemory,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)WinIoRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-        (provRegisterDriver)WinIoRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provReadKernelVM)WinIoReadKernelVirtualMemory,
+     (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
 
-        (provReadKernelVM)WinIoReadKernelVirtualMemory,
-        (provWriteKernelVM)WinIoWriteKernelVirtualMemory,
+     (provVirtualToPhysical)WinIoVirtualToPhysical,
+     (provQueryPML4)WinIoQueryPML4Value,
+     (provReadPhysicalMemory)WinIoReadPhysicalMemory,
+     (provWritePhysicalMemory)WinIoWritePhysicalMemory,
 
-        (provVirtualToPhysical)WinIoVirtualToPhysical,
-        (provQueryPML4)WinIoQueryPML4Value,
-        (provReadPhysicalMemory)WinIoReadPhysicalMemory,
-        (provWritePhysicalMemory)WinIoWritePhysicalMemory,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)EvgaReadPhysicalMemory,
+     (provWritePhysicalMemory)EvgaWritePhysicalMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)EvgaReadPhysicalMemory,
-        (provWritePhysicalMemory)EvgaWritePhysicalMemory,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)AsrRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provRegisterDriver)AsrRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)RweReadPhysicalMemory,
+     (provWritePhysicalMemory)RweWritePhysicalMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)RweReadPhysicalMemory,
-        (provWritePhysicalMemory)RweWritePhysicalMemory,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
-    {
-        NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)AsrReadPhysicalMemory,
+     (provWritePhysicalMemory)AsrWritePhysicalMemory,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)AsrReadPhysicalMemory,
-        (provWritePhysicalMemory)AsrWritePhysicalMemory,
+     (provValidatePrerequisites)NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provOpenProcess)NULL},
 
-        (provOpenProcess)NULL
-    },
+    {NULL,
 
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-    {
-        NULL,
+     (provRegisterDriver)AsrRegisterDriver, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provRegisterDriver)AsrRegisterDriver,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)RweReadPhysicalMemory,
+     (provWritePhysicalMemory)RweWritePhysicalMemory,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provValidatePrerequisites)NULL,
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)RweReadPhysicalMemory,
-        (provWritePhysicalMemory)RweWritePhysicalMemory,
+     (provOpenProcess)NULL},
 
-        (provValidatePrerequisites)NULL,
+    {NULL,
 
-        (provOpenProcess)NULL
-    },
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-    {
-        NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)AsrReadPhysicalMemory,
+     (provWritePhysicalMemory)AsrWritePhysicalMemory,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provValidatePrerequisites)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provOpenProcess)NULL},
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)AsrReadPhysicalMemory,
-        (provWritePhysicalMemory)AsrWritePhysicalMemory,
+    {NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provOpenProcess)NULL
-    },
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-    {
-        NULL,
+     (provReadKernelVM)PmxDrvReadKernelVirtualMemory,
+     (provWriteKernelVM)PmxDrvWriteKernelVirtualMemory,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provVirtualToPhysical)PmxDrvVirtualToPhysical,
+     (provQueryPML4)PmxDrvQueryPML4Value,
+     (provReadPhysicalMemory)PmxDrvReadPhysicalMemory,
+     (provWritePhysicalMemory)PmxDrvWritePhysicalMemory,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provValidatePrerequisites)NULL,
 
-        (provReadKernelVM)PmxDrvReadKernelVirtualMemory,
-        (provWriteKernelVM)PmxDrvWriteKernelVirtualMemory,
+     (provOpenProcess)NULL},
 
-        (provVirtualToPhysical)PmxDrvVirtualToPhysical,
-        (provQueryPML4)PmxDrvQueryPML4Value,
-        (provReadPhysicalMemory)PmxDrvReadPhysicalMemory,
-        (provWritePhysicalMemory)PmxDrvWritePhysicalMemory,
+    {NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provOpenProcess)NULL
-    },
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE2,
 
-    {
-        NULL,
+     (provReadKernelVM)NULL, (provWriteKernelVM)NULL,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
+     (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE2,
+     (provValidatePrerequisites)NULL,
 
-        (provReadKernelVM)NULL,
-        (provWriteKernelVM)NULL,
+     (provOpenProcess)NULL},
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)WRZeroReadPhysicalMemory,
-        (provWritePhysicalMemory)WRZeroWritePhysicalMemory,
+    {NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provStartVulnerableDriver)NetEaseStartVulnerableDriver,
+     (provStopVulnerableDriver)NetEaseStopVulnerableDriver,
 
-        (provOpenProcess)NULL
-     },
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)NULL,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-    {
-        NULL,
+     (provReadKernelVM)NetEaseReadVirtualMemory,
+     (provWriteKernelVM)NetEaseWriteVirtualMemory,
 
-        (provStartVulnerableDriver)NetEaseStartVulnerableDriver,
-        (provStopVulnerableDriver)NetEaseStopVulnerableDriver,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)NULL, (provWritePhysicalMemory)NULL,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)NULL,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provValidatePrerequisites)NULL,
 
-        (provReadKernelVM)NetEaseReadVirtualMemory,
-        (provWriteKernelVM)NetEaseWriteVirtualMemory,
+     (provOpenProcess)NULL},
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)NULL,
-        (provWritePhysicalMemory)NULL,
+    {NULL,
 
-        (provValidatePrerequisites)NULL,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provOpenProcess)NULL
-    },
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-    {
-        NULL,
+     (provReadKernelVM)TpupReadKernelVirtualMemory,
+     (provWriteKernelVM)TpupWriteKernelVirtualMemory,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)TpupReadPhysicalMemory,
+     (provWritePhysicalMemory)TpupWritePhysicalMemory,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provValidatePrerequisites)TpupValidatePrerequisites,
 
-        (provReadKernelVM)TpupReadKernelVirtualMemory,
-        (provWriteKernelVM)TpupWriteKernelVirtualMemory,
+     (provOpenProcess)NULL},
 
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)TpupReadPhysicalMemory,
-        (provWritePhysicalMemory)TpupWritePhysicalMemory,
+    {NULL,
 
-        (provValidatePrerequisites)TpupValidatePrerequisites,
+     (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
+     (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
 
-        (provOpenProcess)NULL
-    },
+     (provRegisterDriver)NULL, (provUnregisterDriver)NULL,
+     (provPreOpenDriver)NULL, (provPostOpenDriver)KDUProviderPostOpen,
+     (provMapDriver)KDUMapDriver, (provControlDSE)KDUControlDSE,
 
-    {
-        NULL,
+     (provReadKernelVM)TpwReadKernelVirtualMemory,
+     (provWriteKernelVM)TpwWriteKernelVirtualMemory,
 
-        (provStartVulnerableDriver)KDUProvStartVulnerableDriver,
-        (provStopVulnerableDriver)KDUProvStopVulnerableDriver,
+     (provVirtualToPhysical)NULL, (provQueryPML4)NULL,
+     (provReadPhysicalMemory)TpwReadPhysicalMemory,
+     (provWritePhysicalMemory)TpwWritePhysicalMemory,
 
-        (provRegisterDriver)NULL,
-        (provUnregisterDriver)NULL,
-        (provPreOpenDriver)NULL,
-        (provPostOpenDriver)KDUProviderPostOpen,
-        (provMapDriver)KDUMapDriver,
-        (provControlDSE)KDUControlDSE,
+     (provValidatePrerequisites)TpupValidatePrerequisites,
 
-        (provReadKernelVM)TpwReadKernelVirtualMemory,
-        (provWriteKernelVM)TpwWriteKernelVirtualMemory,
-
-        (provVirtualToPhysical)NULL,
-        (provQueryPML4)NULL,
-        (provReadPhysicalMemory)TpwReadPhysicalMemory,
-        (provWritePhysicalMemory)TpwWritePhysicalMemory,
-
-        (provValidatePrerequisites)TpupValidatePrerequisites,
-
-        (provOpenProcess)NULL
-    }
-};
+     (provOpenProcess)NULL}};

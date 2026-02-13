@@ -4,11 +4,7 @@
 
 #define IPC_GET_HANDLE 0x1337
 
-NTSTATUS IpcConnectToPort(
-    _In_ LPCWSTR PortName,
-    _Out_ PHANDLE PortHandle
-)
-{
+NTSTATUS IpcConnectToPort(_In_ LPCWSTR PortName, _Out_ PHANDLE PortHandle) {
     NTSTATUS ntStatus;
     HANDLE portHandle = NULL;
     SECURITY_QUALITY_OF_SERVICE securityQos;
@@ -21,11 +17,8 @@ NTSTATUS IpcConnectToPort(
     RtlInitUnicodeString(&portName, PortName);
 
     do {
-
-        ntStatus = NtConnectPort(&portHandle,
-            &portName,
-            &securityQos,
-            NULL, NULL, NULL, NULL, NULL);
+        ntStatus = NtConnectPort(&portHandle, &portName, &securityQos, NULL,
+                                 NULL, NULL, NULL, NULL);
 
         Sleep(200);
 
@@ -36,23 +29,16 @@ NTSTATUS IpcConnectToPort(
     return ntStatus;
 }
 
-void IpcpSetMessageSize(
-    _In_ PPORT_MESSAGE64 Message,
-    _In_ ULONG Size
-)
-{
+void IpcpSetMessageSize(_In_ PPORT_MESSAGE64 Message, _In_ ULONG Size) {
     Message->u1.s1.TotalLength = (CSHORT)(Size + sizeof(PORT_MESSAGE64));
     Message->u1.s1.DataLength = (CSHORT)Size;
 }
 
-NTSTATUS IpcSendReply(
-    _In_ HANDLE PortHandle,
-    _In_ ULONG Function,
-    _In_ ULONG64 Data,
-    _In_ ULONG64 ReturnedLength,
-    _In_ NTSTATUS Status
-)
-{
+NTSTATUS IpcSendReply(_In_ HANDLE PortHandle,
+                      _In_ ULONG Function,
+                      _In_ ULONG64 Data,
+                      _In_ ULONG64 ReturnedLength,
+                      _In_ NTSTATUS Status) {
     KDU_LPC_MESSAGE rxMsg, txMsg;
 
     KDU_MSG* pMsg;
@@ -69,28 +55,20 @@ NTSTATUS IpcSendReply(
     pMsg->Status = Status;
     pMsg->ReturnedLength = ReturnedLength;
 
-    return NtRequestWaitReplyPort(PortHandle,
-        (PPORT_MESSAGE)&txMsg.Header,
-        (PPORT_MESSAGE)&rxMsg.Header);
+    return NtRequestWaitReplyPort(PortHandle, (PPORT_MESSAGE)&txMsg.Header,
+                                  (PPORT_MESSAGE)&rxMsg.Header);
 }
 
-VOID IpcSendHandleToServer(
-    _In_ HANDLE ProcessHandle
-)
-{
+VOID IpcSendHandleToServer(_In_ HANDLE ProcessHandle) {
     HANDLE portHandle = NULL;
     NTSTATUS ntStatus;
 
     ntStatus = IpcConnectToPort(KDU_PORT_NAME, &portHandle);
     if (NT_SUCCESS(ntStatus)) {
-
-        ntStatus = IpcSendReply(portHandle,
-            IPC_GET_HANDLE,
-            (ULONG64)ProcessHandle,
-            sizeof(ProcessHandle),
-            STATUS_SECRET_TOO_LONG);
+        ntStatus =
+            IpcSendReply(portHandle, IPC_GET_HANDLE, (ULONG64)ProcessHandle,
+                         sizeof(ProcessHandle), STATUS_SECRET_TOO_LONG);
 
         NtClose(portHandle);
     }
-
 }

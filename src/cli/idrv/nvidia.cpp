@@ -13,11 +13,7 @@ extern "C" {
 // Nvo based on https://github.com/zer0condition/NVDrv
 //
 
-VOID whirlpool(
-    _In_ PVOID pcData,
-    _In_ ULONG cbData, 
-    _Inout_ PVOID result)
-{
+VOID whirlpool(_In_ PVOID pcData, _In_ ULONG cbData, _Inout_ PVOID result) {
     NESSIEstruct structpointer;
 
     NESSIEinit(&structpointer);
@@ -26,26 +22,23 @@ VOID whirlpool(
 }
 
 /*
-* NvoEncryptRequest
-*
-* Purpose:
-*
-* Encrypts request for driver side verification.
-* Exact code ripped from driver.
-*
-*/
-VOID NvoEncryptRequest(
-    _In_ PVOID Request,
-    _In_ ULONG Size,
-    _In_ PVOID EncryptedKey
-)
-{
-    char key_value2[64]; 
-    char key_value1[64]; 
+ * NvoEncryptRequest
+ *
+ * Purpose:
+ *
+ * Encrypts request for driver side verification.
+ * Exact code ripped from driver.
+ *
+ */
+VOID NvoEncryptRequest(_In_ PVOID Request,
+                       _In_ ULONG Size,
+                       _In_ PVOID EncryptedKey) {
+    char key_value2[64];
+    char key_value1[64];
     char result1[256];
     char result2[312];
 
-    _strcpy_a(key_value1, "Dfasd0981=kFGdv'df,b;lsk"); //random bullshit go
+    _strcpy_a(key_value1, "Dfasd0981=kFGdv'df,b;lsk");  // random bullshit go
     memset(&key_value1[25], 0, 39);
     _strcpy_a(key_value2, "kasjhf923uasdfkYYE-=~");
     memset(&key_value2[22], 0, 42);
@@ -59,19 +52,17 @@ VOID NvoEncryptRequest(
 }
 
 /*
-* NvoReadPhysicalMemory
-*
-* Purpose:
-*
-* Read from physical memory.
-*
-*/
-BOOL WINAPI NvoReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * NvoReadPhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read from physical memory.
+ *
+ */
+BOOL WINAPI NvoReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                  _In_ ULONG_PTR PhysicalAddress,
+                                  _In_ PVOID Buffer,
+                                  _In_ ULONG NumberOfBytes) {
     NVOCLOCK_REQUEST request;
 
     RtlSecureZeroMemory(&request, sizeof(request));
@@ -80,31 +71,25 @@ BOOL WINAPI NvoReadPhysicalMemory(
     request.Size = NumberOfBytes;
     request.Destination = Buffer;
     request.Source = (PVOID)PhysicalAddress;
-    
+
     NvoEncryptRequest(&request, 0x38, &request.EncryptKey);
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_NVOCLOCK_DISPATCH,
-        &request,
-        sizeof(request),
-        &request,
-        sizeof(request));
+    return supCallDriver(DeviceHandle, IOCTL_NVOCLOCK_DISPATCH, &request,
+                         sizeof(request), &request, sizeof(request));
 }
 
 /*
-* NvoWritePhysicalMemory
-*
-* Purpose:
-*
-* Write to physical memory.
-*
-*/
-BOOL WINAPI NvoWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * NvoWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Write to physical memory.
+ *
+ */
+BOOL WINAPI NvoWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR PhysicalAddress,
+                                   _In_ PVOID Buffer,
+                                   _In_ ULONG NumberOfBytes) {
     NVOCLOCK_REQUEST request;
 
     RtlSecureZeroMemory(&request, sizeof(request));
@@ -116,10 +101,6 @@ BOOL WINAPI NvoWritePhysicalMemory(
 
     NvoEncryptRequest(&request, 0x38, &request.EncryptKey);
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_NVOCLOCK_DISPATCH,
-        &request,
-        sizeof(request),
-        &request,
-        sizeof(request));
+    return supCallDriver(DeviceHandle, IOCTL_NVOCLOCK_DISPATCH, &request,
+                         sizeof(request), &request, sizeof(request));
 }

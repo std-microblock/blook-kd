@@ -4,26 +4,25 @@
 #include "idrv/evga.h"
 
 /*
-* 
-*  WARNING: Bruteforce can take a lot of time because ELEETX1 driver does a lot of debug prints.
-* 
-*/
+ *
+ *  WARNING: Bruteforce can take a lot of time because ELEETX1 driver does a lot
+ * of debug prints.
+ *
+ */
 
 /*
-* EvgaReadPhysicalMemory
-*
-* Purpose:
-*
-* Read physical memory through MmMapIoSpace.
-* Input buffer length must be aligned to ULONG_PTR
-*
-*/
-BOOL WINAPI EvgaReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * EvgaReadPhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read physical memory through MmMapIoSpace.
+ * Input buffer length must be aligned to ULONG_PTR
+ *
+ */
+BOOL WINAPI EvgaReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR PhysicalAddress,
+                                   _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                                   _In_ ULONG NumberOfBytes) {
     if ((NumberOfBytes % sizeof(ULONG_PTR)) != 0)
         return FALSE;
 
@@ -33,16 +32,11 @@ BOOL WINAPI EvgaReadPhysicalMemory(
     ULONG_PTR valueRead, readBytes = 0;
 
     for (ULONG_PTR i = 0; i < NumberOfBytes / sizeof(ULONG_PTR); i++) {
-
         valueRead = 0;
 
-        if (!supCallDriver(DeviceHandle,
-            IOCTL_EVGA_ELEETX1_READ_PHYSMEM,
-            &address,
-            sizeof(address),
-            &valueRead,
-            sizeof(valueRead)))
-        {
+        if (!supCallDriver(DeviceHandle, IOCTL_EVGA_ELEETX1_READ_PHYSMEM,
+                           &address, sizeof(address), &valueRead,
+                           sizeof(valueRead))) {
             break;
         }
 
@@ -52,24 +46,21 @@ BOOL WINAPI EvgaReadPhysicalMemory(
     }
 
     return (readBytes == NumberOfBytes);
-
 }
 
 /*
-* EvgaWritePhysicalMemory
-*
-* Purpose:
-*
-* Write physical memory through MmMapIoSpace.
-*
-*/
-_Success_(return != FALSE)
-BOOL WINAPI EvgaWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * EvgaWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Write physical memory through MmMapIoSpace.
+ *
+ */
+_Success_(return != FALSE) BOOL WINAPI
+    EvgaWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                            _In_ ULONG_PTR PhysicalAddress,
+                            _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                            _In_ ULONG NumberOfBytes) {
     EVGA_ELEETX1_WRITE_REQUEST request;
 
     PBYTE BufferPtr = (PBYTE)Buffer;
@@ -78,17 +69,11 @@ BOOL WINAPI EvgaWritePhysicalMemory(
     ULONG writeBytes = 0;
 
     for (ULONG i = 0; i < NumberOfBytes; i++) {
-
         request.Value = BufferPtr[i];
         request.Address.QuadPart = address;
 
-        if (!supCallDriver(DeviceHandle,
-            IOCTL_EVGA_ELEETX1_WRITE_PHYSMEM,
-            &request,
-            sizeof(request),
-            NULL,
-            0))
-        {
+        if (!supCallDriver(DeviceHandle, IOCTL_EVGA_ELEETX1_WRITE_PHYSMEM,
+                           &request, sizeof(request), NULL, 0)) {
             break;
         }
 

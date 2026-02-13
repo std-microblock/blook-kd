@@ -15,25 +15,21 @@ extern "C" {
 }
 #endif
 
-#define PROVIDER_RES_KEY_DEFAULT        ' uwu'
+#define PROVIDER_RES_KEY_DEFAULT ' uwu'
 
-#define supHeapAlloc(Size) RtlAllocateHeap(NtCurrentPeb()->ProcessHeap, HEAP_ZERO_MEMORY, Size)
+#define supHeapAlloc(Size) \
+    RtlAllocateHeap(NtCurrentPeb()->ProcessHeap, HEAP_ZERO_MEMORY, Size)
 #define supHeapFree(Ptr) RtlFreeHeap(NtCurrentPeb()->ProcessHeap, 0, Ptr)
 
 /*
-* EncodeBuffer
-*
-* Purpose:
-*
-* Decrypt/Encrypt given buffer.
-*
-*/
-VOID EncodeBuffer(
-    _In_ PVOID Buffer,
-    _In_ ULONG BufferSize,
-    _In_ ULONG Key
-)
-{
+ * EncodeBuffer
+ *
+ * Purpose:
+ *
+ * Decrypt/Encrypt given buffer.
+ *
+ */
+VOID EncodeBuffer(_In_ PVOID Buffer, _In_ ULONG BufferSize, _In_ ULONG Key) {
     ULONG k, c;
     PUCHAR ptr;
 
@@ -53,24 +49,21 @@ VOID EncodeBuffer(
 }
 
 /*
-* supWriteBufferToFile
-*
-* Purpose:
-*
-* Create new file and write buffer to it.
-*
-*/
-BOOL supWriteBufferToFile(
-    _In_ LPWSTR lpFileName,
-    _In_ PVOID Buffer,
-    _In_ DWORD BufferSize
-)
-{
+ * supWriteBufferToFile
+ *
+ * Purpose:
+ *
+ * Create new file and write buffer to it.
+ *
+ */
+BOOL supWriteBufferToFile(_In_ LPWSTR lpFileName,
+                          _In_ PVOID Buffer,
+                          _In_ DWORD BufferSize) {
     HANDLE hFile;
     DWORD bytesIO;
 
-    hFile = CreateFileW(lpFileName,
-        GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+    hFile =
+        CreateFileW(lpFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
 
     if (hFile == INVALID_HANDLE_VALUE) {
         return FALSE;
@@ -83,27 +76,24 @@ BOOL supWriteBufferToFile(
 }
 
 /*
-* supReadFileToBuffer
-*
-* Purpose:
-*
-* Read file to buffer. Release memory when it no longer needed.
-*
-*/
-PBYTE supReadFileToBuffer(
-    _In_ LPWSTR lpFileName,
-    _Inout_opt_ LPDWORD lpBufferSize
-)
-{
-    NTSTATUS    status;
-    HANDLE      hFile = NULL;
-    PBYTE       Buffer = NULL;
-    SIZE_T      sz = 0;
+ * supReadFileToBuffer
+ *
+ * Purpose:
+ *
+ * Read file to buffer. Release memory when it no longer needed.
+ *
+ */
+PBYTE supReadFileToBuffer(_In_ LPWSTR lpFileName,
+                          _Inout_opt_ LPDWORD lpBufferSize) {
+    NTSTATUS status;
+    HANDLE hFile = NULL;
+    PBYTE Buffer = NULL;
+    SIZE_T sz = 0;
 
-    UNICODE_STRING              usName;
-    OBJECT_ATTRIBUTES           attr;
-    IO_STATUS_BLOCK             iost;
-    FILE_STANDARD_INFORMATION   fi;
+    UNICODE_STRING usName;
+    OBJECT_ATTRIBUTES attr;
+    IO_STATUS_BLOCK iost;
+    FILE_STANDARD_INFORMATION fi;
 
     if (lpFileName == NULL)
         return NULL;
@@ -111,25 +101,16 @@ PBYTE supReadFileToBuffer(
     usName.Buffer = NULL;
 
     do {
-
         if (!RtlDosPathNameToNtPathName_U(lpFileName, &usName, NULL, NULL))
             break;
 
-        InitializeObjectAttributes(&attr, &usName, OBJ_CASE_INSENSITIVE, NULL, NULL);
+        InitializeObjectAttributes(&attr, &usName, OBJ_CASE_INSENSITIVE, NULL,
+                                   NULL);
 
         status = NtCreateFile(
-            &hFile,
-            FILE_READ_DATA | SYNCHRONIZE,
-            &attr,
-            &iost,
-            NULL,
-            FILE_ATTRIBUTE_NORMAL,
-            FILE_SHARE_READ,
-            FILE_OPEN,
-            FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT,
-            NULL,
-            0
-        );
+            &hFile, FILE_READ_DATA | SYNCHRONIZE, &attr, &iost, NULL,
+            FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, FILE_OPEN,
+            FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
 
         if (!NT_SUCCESS(status)) {
             break;
@@ -137,12 +118,9 @@ PBYTE supReadFileToBuffer(
 
         RtlSecureZeroMemory(&fi, sizeof(fi));
 
-        status = NtQueryInformationFile(
-            hFile,
-            &iost,
-            &fi,
-            sizeof(FILE_STANDARD_INFORMATION),
-            FileStandardInformation);
+        status = NtQueryInformationFile(hFile, &iost, &fi,
+                                        sizeof(FILE_STANDARD_INFORMATION),
+                                        FileStandardInformation);
 
         if (!NT_SUCCESS(status))
             break;
@@ -151,23 +129,13 @@ PBYTE supReadFileToBuffer(
 
         Buffer = (PBYTE)supHeapAlloc(sz);
         if (Buffer) {
-
-            status = NtReadFile(
-                hFile,
-                NULL,
-                NULL,
-                NULL,
-                &iost,
-                Buffer,
-                fi.EndOfFile.LowPart,
-                NULL,
-                NULL);
+            status = NtReadFile(hFile, NULL, NULL, NULL, &iost, Buffer,
+                                fi.EndOfFile.LowPart, NULL, NULL);
 
             if (NT_SUCCESS(status)) {
                 if (lpBufferSize)
                     *lpBufferSize = fi.EndOfFile.LowPart;
-            }
-            else {
+            } else {
                 supHeapFree(Buffer);
                 Buffer = NULL;
             }
@@ -186,18 +154,15 @@ PBYTE supReadFileToBuffer(
 }
 
 /*
-* KDUCompressResource
-*
-* Purpose:
-*
-* Compress resource and write it to the disk into new file with same name and .bin extension.
-*
-*/
-VOID KDUCompressResource(
-    _In_ LPWSTR lpFileName,
-    _In_ ULONG ulCompressKey
-)
-{
+ * KDUCompressResource
+ *
+ * Purpose:
+ *
+ * Compress resource and write it to the disk into new file with same name and
+ * .bin extension.
+ *
+ */
+VOID KDUCompressResource(_In_ LPWSTR lpFileName, _In_ ULONG ulCompressKey) {
     DWORD fileSize = 0;
     PBYTE fileBuffer;
 
@@ -209,7 +174,6 @@ VOID KDUCompressResource(
     fileBuffer = supReadFileToBuffer(lpFileName, &fileSize);
 
     if (fileBuffer) {
-
         printf_s("[+] %lu bytes read\r\n", fileSize);
 
         PWSTR newFileName;
@@ -217,13 +181,12 @@ VOID KDUCompressResource(
 
         newFileName = (PWSTR)supHeapAlloc(sz);
         if (newFileName == NULL) {
-
-            printf_s("[!] Could not allocate memory for filename, GetLastError %lu\r\n",
+            printf_s(
+                "[!] Could not allocate memory for filename, GetLastError "
+                "%lu\r\n",
                 GetLastError());
 
-        }
-        else {
-
+        } else {
             _filename_noext(newFileName, lpFileName);
 
             RtlSecureZeroMemory(&d_in, sizeof(DELTA_INPUT));
@@ -235,51 +198,37 @@ VOID KDUCompressResource(
             RtlSecureZeroMemory(&t_op, sizeof(DELTA_INPUT));
             RtlSecureZeroMemory(&g_op, sizeof(DELTA_INPUT));
 
-            if (CreateDeltaB(DELTA_FILE_TYPE_RAW,
-                DELTA_FLAG_NONE,
-                DELTA_FLAG_NONE,
-                d_in,
-                d_target,
-                s_op,
-                t_op,
-                g_op,
-                NULL,
-                0,
-                &d_out))
-            {
+            if (CreateDeltaB(DELTA_FILE_TYPE_RAW, DELTA_FLAG_NONE,
+                             DELTA_FLAG_NONE, d_in, d_target, s_op, t_op, g_op,
+                             NULL, 0, &d_out)) {
                 SIZE_T writeSize = d_out.uSize;
                 PVOID dataBlob = supHeapAlloc(writeSize);
                 if (dataBlob) {
-
                     RtlCopyMemory(dataBlob, d_out.lpStart, writeSize);
                     EncodeBuffer(dataBlob, (ULONG)writeSize, ulCompressKey);
 
                     _strcat(newFileName, L".bin");
 
-                    printf_s("[+] Saving resource as \"%wS\" with new size %llu bytes\r\n",
-                        newFileName,
-                        writeSize);
+                    printf_s(
+                        "[+] Saving resource as \"%wS\" with new size %llu "
+                        "bytes\r\n",
+                        newFileName, writeSize);
 
-                    if (!supWriteBufferToFile(newFileName,
-                        dataBlob,
-                        (DWORD)writeSize))
-                    {
-
-                        printf_s("[!] Error writing to file \"%wS\", GetLastError %lu\r\n",
-                            newFileName,
-                            GetLastError());
-
+                    if (!supWriteBufferToFile(newFileName, dataBlob,
+                                              (DWORD)writeSize)) {
+                        printf_s(
+                            "[!] Error writing to file \"%wS\", GetLastError "
+                            "%lu\r\n",
+                            newFileName, GetLastError());
                     }
 
                     supHeapFree(dataBlob);
                 }
 
                 DeltaFree(d_out.lpStart);
-            }
-            else {
-
-                printf_s("[!] Error compressing resource, GetLastError %lu\r\n", GetLastError());
-
+            } else {
+                printf_s("[!] Error compressing resource, GetLastError %lu\r\n",
+                         GetLastError());
             }
 
             supHeapFree(newFileName);
@@ -287,32 +236,25 @@ VOID KDUCompressResource(
 
         supHeapFree(fileBuffer);
 
-    }
-    else {
-
+    } else {
         printf_s("[!] Could not read input file \"%wS\"\r\n", lpFileName);
-
     }
-
 }
 
 /*
-* KDUDecompressResourceRaw
-*
-* Purpose:
-*
-* Decompress resource and return pointer to decompressed data.
-*
-* N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
-*
-*/
-PVOID KDUDecompressResourceRaw(
-    _In_ PVOID ResourcePtr,
-    _In_ SIZE_T ResourceSize,
-    _Out_ PSIZE_T DecompressedSize,
-    _In_ ULONG DecryptKey
-)
-{
+ * KDUDecompressResourceRaw
+ *
+ * Purpose:
+ *
+ * Decompress resource and return pointer to decompressed data.
+ *
+ * N.B. Use supHeapFree to release memory allocated for the decompressed buffer.
+ *
+ */
+PVOID KDUDecompressResourceRaw(_In_ PVOID ResourcePtr,
+                               _In_ SIZE_T ResourceSize,
+                               _Out_ PSIZE_T DecompressedSize,
+                               _In_ ULONG DecryptKey) {
     DELTA_INPUT diDelta, diSource;
     DELTA_OUTPUT doOutput;
     PVOID resultPtr = NULL, dataBlob;
@@ -344,9 +286,10 @@ PVOID KDUDecompressResourceRaw(
                 *DecompressedSize = newSize;
             }
             DeltaFree(doOutput.lpStart);
-        }
-        else {
-            printf_s("[!] Error while decompressing resource, GetLastError %lu\r\n", GetLastError());
+        } else {
+            printf_s(
+                "[!] Error while decompressing resource, GetLastError %lu\r\n",
+                GetLastError());
         }
         supHeapFree(dataBlob);
     }
@@ -355,18 +298,15 @@ PVOID KDUDecompressResourceRaw(
 }
 
 /*
-* KDUDecompressFile
-*
-* Purpose:
-*
-* Decrypt+decompress file produced by KDUCompressResource and write output to disk.
-*
-*/
-VOID KDUDecompressFile(
-    _In_ LPWSTR lpFileName,
-    _In_ ULONG ulDecryptKey
-)
-{
+ * KDUDecompressFile
+ *
+ * Purpose:
+ *
+ * Decrypt+decompress file produced by KDUCompressResource and write output to
+ * disk.
+ *
+ */
+VOID KDUDecompressFile(_In_ LPWSTR lpFileName, _In_ ULONG ulDecryptKey) {
     DWORD fileSize = 0;
     PBYTE fileBuffer;
 
@@ -387,10 +327,8 @@ VOID KDUDecompressFile(
 
     printf_s("[+] %lu bytes read\r\n", fileSize);
 
-    decompressedBuffer = KDUDecompressResourceRaw(fileBuffer,
-        (SIZE_T)fileSize,
-        &decompressedSize,
-        ulDecryptKey);
+    decompressedBuffer = KDUDecompressResourceRaw(
+        fileBuffer, (SIZE_T)fileSize, &decompressedSize, ulDecryptKey);
 
     if (decompressedBuffer == NULL) {
         printf_s("[!] Decompression failed\r\n");
@@ -402,29 +340,23 @@ VOID KDUDecompressFile(
 
     newFileName = (PWSTR)supHeapAlloc(sz);
     if (newFileName == NULL) {
-
-        printf_s("[!] Could not allocate memory for filename, GetLastError %lu\r\n",
+        printf_s(
+            "[!] Could not allocate memory for filename, GetLastError %lu\r\n",
             GetLastError());
 
-    }
-    else {
-
+    } else {
         _filename_noext(newFileName, lpFileName);
         _strcat(newFileName, L".decompressed");
 
-        printf_s("[+] Saving decompressed data as \"%wS\" with new size %llu bytes\r\n",
-            newFileName,
-            decompressedSize);
+        printf_s(
+            "[+] Saving decompressed data as \"%wS\" with new size %llu "
+            "bytes\r\n",
+            newFileName, decompressedSize);
 
-        if (!supWriteBufferToFile(newFileName,
-            decompressedBuffer,
-            (DWORD)decompressedSize))
-        {
-
+        if (!supWriteBufferToFile(newFileName, decompressedBuffer,
+                                  (DWORD)decompressedSize)) {
             printf_s("[!] Error writing to file \"%wS\", GetLastError %lu\r\n",
-                newFileName,
-                GetLastError());
-
+                     newFileName, GetLastError());
         }
 
         supHeapFree(newFileName);
@@ -435,27 +367,25 @@ VOID KDUDecompressFile(
 }
 
 /*
-* main
-*
-* Purpose:
-*
-* Program entrypoint.
-*
-*/
-int main()
-{
-    LPWSTR  keyParam = NULL, fNameParam = NULL;
+ * main
+ *
+ * Purpose:
+ *
+ * Program entrypoint.
+ *
+ */
+int main() {
+    LPWSTR keyParam = NULL, fNameParam = NULL;
     LPWSTR* szArglist;
-    INT     nArgs = 0;
+    INT nArgs = 0;
 
     ULONG provKey = 0;
 
     szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
     if (szArglist) {
-
         if (nArgs > 1) {
-
-            if (_strcmpi(szArglist[1], L"-d") == 0 || _strcmpi(szArglist[1], L"/d") == 0) {
+            if (_strcmpi(szArglist[1], L"-d") == 0 ||
+                _strcmpi(szArglist[1], L"/d") == 0) {
                 if (nArgs > 2) {
                     fNameParam = szArglist[2];
                     if (nArgs > 3)
@@ -469,16 +399,16 @@ int main()
 
                     if (fNameParam) {
                         KDUDecompressFile(fNameParam, provKey);
-                    }
-                    else {
+                    } else {
                         printf_s("[!] Unrecognized parameter\r\n");
                     }
+                } else {
+                    printf_s(
+                        "[?] KDU Provider Compressor, usage: pcomp -d "
+                        "filename.bin [key]\r\n[!] Input file not "
+                        "specified\r\n");
                 }
-                else {
-                    printf_s("[?] KDU Provider Compressor, usage: pcomp -d filename.bin [key]\r\n[!] Input file not specified\r\n");
-                }
-            }
-            else {
+            } else {
                 fNameParam = szArglist[1];
                 if (nArgs > 2)
                     keyParam = szArglist[2];
@@ -491,14 +421,14 @@ int main()
 
                 if (fNameParam) {
                     KDUCompressResource(fNameParam, provKey);
-                }
-                else {
+                } else {
                     printf_s("[!] Unrecognized parameter\r\n");
                 }
             }
-        }
-        else {
-            printf_s("[?] KDU Provider Compressor, usage: pcomp filename [key]\r\n[!] Input file not specified\r\n");
+        } else {
+            printf_s(
+                "[?] KDU Provider Compressor, usage: pcomp filename "
+                "[key]\r\n[!] Input file not specified\r\n");
         }
 
         LocalFree(szArglist);

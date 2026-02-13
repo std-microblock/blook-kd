@@ -3,19 +3,19 @@
 #include "global.h"
 #include "idrv/tpup.h"
 
-static SUPERFETCH_MEMORY_MAP g_TpupMemoryMap = { 0 };
+static SUPERFETCH_MEMORY_MAP g_TpupMemoryMap = {0};
 static BOOL g_TpupMemoryMapInitialized = FALSE;
 
 /*
-* TpupEnsureMemoryMap
-*
-* Purpose:
-*
-* Initialize memory map (once). Only for stable memory layout, otherwise rebuild the map.
-*
-*/
-BOOL TpupEnsureMemoryMap(VOID)
-{
+ * TpupEnsureMemoryMap
+ *
+ * Purpose:
+ *
+ * Initialize memory map (once). Only for stable memory layout, otherwise
+ * rebuild the map.
+ *
+ */
+BOOL TpupEnsureMemoryMap(VOID) {
     if (g_TpupMemoryMapInitialized)
         return TRUE;
 
@@ -24,29 +24,27 @@ BOOL TpupEnsureMemoryMap(VOID)
 
     g_TpupMemoryMapInitialized = TRUE;
 
-    supPrintfEvent(kduEventInformation,
+    supPrintfEvent(
+        kduEventInformation,
         "[+] Superfetch memory map built: %llu entries from %lu ranges\r\n",
-        g_TpupMemoryMap.TableSize,
-        g_TpupMemoryMap.RangeCount);
+        g_TpupMemoryMap.TableSize, g_TpupMemoryMap.RangeCount);
 
     return TRUE;
 }
 
 /*
-* TpupReadWritePhysicalMemory
-*
-* Purpose:
-*
-* Read/Write physical memory via ThrottleStop driver.
-*
-*/
-BOOL TpupReadWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes,
-    _In_ BOOL DoWrite)
-{
+ * TpupReadWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read/Write physical memory via ThrottleStop driver.
+ *
+ */
+BOOL TpupReadWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                 _In_ ULONG_PTR PhysicalAddress,
+                                 _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                                 _In_ ULONG NumberOfBytes,
+                                 _In_ BOOL DoWrite) {
     NTSTATUS ntStatus;
     ULONG chunkSize;
     ULONG ioctl;
@@ -58,10 +56,10 @@ BOOL TpupReadWritePhysicalMemory(
     if (NumberOfBytes == 0 || Buffer == NULL)
         return FALSE;
 
-    ioctl = DoWrite ? IOCTL_TPUP_WRITE_PHYSICAL_MEMORY : IOCTL_TPUP_READ_PHYSICAL_MEMORY;
+    ioctl = DoWrite ? IOCTL_TPUP_WRITE_PHYSICAL_MEMORY
+                    : IOCTL_TPUP_READ_PHYSICAL_MEMORY;
 
     while (offset < NumberOfBytes) {
-
         chunkSize = NumberOfBytes - (ULONG)offset;
         if (chunkSize > TPUP_MAX_CHUNK_SIZE)
             chunkSize = TPUP_MAX_CHUNK_SIZE;
@@ -72,29 +70,18 @@ BOOL TpupReadWritePhysicalMemory(
         *(PULONG64)inputBuffer = PhysicalAddress + offset;
 
         if (DoWrite) {
+            RtlCopyMemory(&inputBuffer[8], RtlOffsetToPointer(Buffer, offset),
+                          chunkSize);
 
-            RtlCopyMemory(&inputBuffer[8], RtlOffsetToPointer(Buffer, offset), chunkSize);
-
-            ntStatus = supCallDriverEx(DeviceHandle,
-                ioctl,
-                inputBuffer,
-                8 + chunkSize,
-                NULL,
-                0,
-                &ioStatus);
+            ntStatus = supCallDriverEx(DeviceHandle, ioctl, inputBuffer,
+                                       8 + chunkSize, NULL, 0, &ioStatus);
 
             if (!NT_SUCCESS(ntStatus))
                 return FALSE;
-        }
-        else {
-
-            ntStatus = supCallDriverEx(DeviceHandle,
-                ioctl,
-                inputBuffer,
-                sizeof(ULONG64),
-                outputBuffer,
-                chunkSize,
-                &ioStatus);
+        } else {
+            ntStatus = supCallDriverEx(DeviceHandle, ioctl, inputBuffer,
+                                       sizeof(ULONG64), outputBuffer, chunkSize,
+                                       &ioStatus);
 
             if (!NT_SUCCESS(ntStatus))
                 return FALSE;
@@ -102,7 +89,8 @@ BOOL TpupReadWritePhysicalMemory(
             if (ioStatus.Information != chunkSize)
                 return FALSE;
 
-            RtlCopyMemory(RtlOffsetToPointer(Buffer, offset), outputBuffer, chunkSize);
+            RtlCopyMemory(RtlOffsetToPointer(Buffer, offset), outputBuffer,
+                          chunkSize);
         }
 
         offset += chunkSize;
@@ -112,61 +100,49 @@ BOOL TpupReadWritePhysicalMemory(
 }
 
 /*
-* TpupReadPhysicalMemory
-*
-* Purpose:
-*
-* Read from physical memory via ThrottleStop driver.
-*
-*/
-BOOL WINAPI TpupReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
-    return TpupReadWritePhysicalMemory(DeviceHandle,
-        PhysicalAddress,
-        Buffer,
-        NumberOfBytes,
-        FALSE);
+ * TpupReadPhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read from physical memory via ThrottleStop driver.
+ *
+ */
+BOOL WINAPI TpupReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR PhysicalAddress,
+                                   _In_ PVOID Buffer,
+                                   _In_ ULONG NumberOfBytes) {
+    return TpupReadWritePhysicalMemory(DeviceHandle, PhysicalAddress, Buffer,
+                                       NumberOfBytes, FALSE);
 }
 
 /*
-* TpupWritePhysicalMemory
-*
-* Purpose:
-*
-* Write to physical memory via ThrottleStop driver.
-*
-*/
-BOOL WINAPI TpupWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
-    return TpupReadWritePhysicalMemory(DeviceHandle,
-        PhysicalAddress,
-        Buffer,
-        NumberOfBytes,
-        TRUE);
+ * TpupWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Write to physical memory via ThrottleStop driver.
+ *
+ */
+BOOL WINAPI TpupWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                    _In_ ULONG_PTR PhysicalAddress,
+                                    _In_ PVOID Buffer,
+                                    _In_ ULONG NumberOfBytes) {
+    return TpupReadWritePhysicalMemory(DeviceHandle, PhysicalAddress, Buffer,
+                                       NumberOfBytes, TRUE);
 }
 
 /*
-* TpupReadKernelVirtualMemory
-*
-* Purpose:
-*
-* Read kernel virtual memory via ThrottleStop using Superfetch translation.
-*
-*/
-BOOL WINAPI TpupReadKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * TpupReadKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Read kernel virtual memory via ThrottleStop using Superfetch translation.
+ *
+ */
+BOOL WINAPI TpupReadKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                        _In_ ULONG_PTR Address,
+                                        _In_ PVOID Buffer,
+                                        _In_ ULONG NumberOfBytes) {
     ULONG_PTR currentVA;
     ULONG_PTR currentPA;
     ULONG bytesToRead;
@@ -183,15 +159,16 @@ BOOL WINAPI TpupReadKernelVirtualMemory(
     offset = 0;
 
     while (bytesRemaining > 0) {
-
-        if (!supSuperfetchVirtualToPhysical(&g_TpupMemoryMap, currentVA, &currentPA))
+        if (!supSuperfetchVirtualToPhysical(&g_TpupMemoryMap, currentVA,
+                                            &currentPA))
             return FALSE;
 
         bytesToRead = PAGE_SIZE - (ULONG)(currentVA & (PAGE_SIZE - 1));
         if (bytesToRead > bytesRemaining)
             bytesToRead = bytesRemaining;
 
-        if (!TpupReadPhysicalMemory(DeviceHandle, currentPA, destBuffer + offset, bytesToRead))
+        if (!TpupReadPhysicalMemory(DeviceHandle, currentPA,
+                                    destBuffer + offset, bytesToRead))
             return FALSE;
 
         currentVA += bytesToRead;
@@ -203,19 +180,18 @@ BOOL WINAPI TpupReadKernelVirtualMemory(
 }
 
 /*
-* TpupWriteKernelVirtualMemory
-*
-* Purpose:
-*
-* Write kernel virtual memory via ThrottleStop using Superfetch translation.
-*
-*/
-BOOL WINAPI TpupWriteKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * TpupWriteKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Write kernel virtual memory via ThrottleStop using Superfetch translation.
+ *
+ */
+BOOL WINAPI TpupWriteKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                         _In_ ULONG_PTR Address,
+                                         _In_reads_bytes_(NumberOfBytes)
+                                             PVOID Buffer,
+                                         _In_ ULONG NumberOfBytes) {
     ULONG_PTR currentVA;
     ULONG_PTR currentPA;
     ULONG bytesToWrite;
@@ -232,15 +208,16 @@ BOOL WINAPI TpupWriteKernelVirtualMemory(
     offset = 0;
 
     while (bytesRemaining > 0) {
-
-        if (!supSuperfetchVirtualToPhysical(&g_TpupMemoryMap, currentVA, &currentPA))
+        if (!supSuperfetchVirtualToPhysical(&g_TpupMemoryMap, currentVA,
+                                            &currentPA))
             return FALSE;
 
         bytesToWrite = PAGE_SIZE - (ULONG)(currentVA & (PAGE_SIZE - 1));
         if (bytesToWrite > bytesRemaining)
             bytesToWrite = bytesRemaining;
 
-        if (!TpupWritePhysicalMemory(DeviceHandle, currentPA, srcBuffer + offset, bytesToWrite))
+        if (!TpupWritePhysicalMemory(DeviceHandle, currentPA,
+                                     srcBuffer + offset, bytesToWrite))
             return FALSE;
 
         currentVA += bytesToWrite;
@@ -252,16 +229,14 @@ BOOL WINAPI TpupWriteKernelVirtualMemory(
 }
 
 /*
-* TpupValidatePrerequisites
-*
-* Purpose:
-*
-* Check if Superfetch is available and build memory map.
-*
-*/
-BOOL WINAPI TpupValidatePrerequisites(
-    _In_ PKDU_CONTEXT Context)
-{
+ * TpupValidatePrerequisites
+ *
+ * Purpose:
+ *
+ * Check if Superfetch is available and build memory map.
+ *
+ */
+BOOL WINAPI TpupValidatePrerequisites(_In_ PKDU_CONTEXT Context) {
     BOOLEAN oldValue = FALSE;
     NTSTATUS ntStatus;
 
@@ -270,28 +245,30 @@ BOOL WINAPI TpupValidatePrerequisites(
     //
     // Only enable privilege, defer map building
     //
-    ntStatus = RtlAdjustPrivilege(SE_PROF_SINGLE_PROCESS_PRIVILEGE, TRUE, FALSE, &oldValue);
+    ntStatus = RtlAdjustPrivilege(SE_PROF_SINGLE_PROCESS_PRIVILEGE, TRUE, FALSE,
+                                  &oldValue);
     if (!NT_SUCCESS(ntStatus)) {
-        supPrintfEvent(kduEventError,
-            "[-] Failed to enable SE_PROF_SINGLE_PROCESS_PRIVILEGE (0x%lX)\r\n", ntStatus);
+        supPrintfEvent(
+            kduEventError,
+            "[-] Failed to enable SE_PROF_SINGLE_PROCESS_PRIVILEGE (0x%lX)\r\n",
+            ntStatus);
         return FALSE;
     }
 
     supPrintfEvent(kduEventInformation,
-        "[+] Superfetch prerequisites validated\r\n");
+                   "[+] Superfetch prerequisites validated\r\n");
 
     return TRUE;
 }
 
 /*
-* TpupFreeResources
-*
-* Purpose:
-*
-* Free provider resources (memory map).
-*
-*/
-VOID TpupFreeResources(VOID)
-{
+ * TpupFreeResources
+ *
+ * Purpose:
+ *
+ * Free provider resources (memory map).
+ *
+ */
+VOID TpupFreeResources(VOID) {
     supFreeSuperfetchMemoryMap(&g_TpupMemoryMap);
 }

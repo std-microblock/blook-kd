@@ -1,12 +1,12 @@
 /*
 Module name:
-	minirtl.h
+    minirtl.h
 
 Description:
-	header for string handling and conversion routines
+    header for string handling and conversion routines
 
 Date:
-	4 Oct 2020
+    4 Oct 2020
 */
 
 #pragma once
@@ -14,94 +14,95 @@ Date:
 #ifndef _MINIRTL_
 #define _MINIRTL_
 
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 // string copy/concat/length
 
-char *_strend_a(const char *s);
-wchar_t *_strend_w(const wchar_t *s);
+char* _strend_a(const char* s);
+wchar_t* _strend_w(const wchar_t* s);
 
-char *_strcpy_a(char *dest, const char *src);
-wchar_t *_strcpy_w(wchar_t *dest, const wchar_t *src);
+char* _strcpy_a(char* dest, const char* src);
+wchar_t* _strcpy_w(wchar_t* dest, const wchar_t* src);
 
-char *_strcat_a(char *dest, const char *src);
-wchar_t *_strcat_w(wchar_t *dest, const wchar_t *src);
+char* _strcat_a(char* dest, const char* src);
+wchar_t* _strcat_w(wchar_t* dest, const wchar_t* src);
 
-char *_strncpy_a(char *dest, size_t ccdest, const char *src, size_t ccsrc);
-wchar_t *_strncpy_w(wchar_t *dest, size_t ccdest, const wchar_t *src, size_t ccsrc);
+char* _strncpy_a(char* dest, size_t ccdest, const char* src, size_t ccsrc);
+wchar_t* _strncpy_w(wchar_t* dest,
+                    size_t ccdest,
+                    const wchar_t* src,
+                    size_t ccsrc);
 
-char *_strcpyn_a(char* dest, const char* src, size_t n);
-wchar_t *_strcpyn_w(wchar_t* dest, const wchar_t* src, size_t n);
+char* _strcpyn_a(char* dest, const char* src, size_t n);
+wchar_t* _strcpyn_w(wchar_t* dest, const wchar_t* src, size_t n);
 
-size_t _strlen_a(const char *s);
-size_t _strlen_w(const wchar_t *s);
+size_t _strlen_a(const char* s);
+size_t _strlen_w(const wchar_t* s);
 
 // comparing
 
-int _strcmp_a(const char *s1, const char *s2);
-int _strcmp_w(const wchar_t *s1, const wchar_t *s2);
+int _strcmp_a(const char* s1, const char* s2);
+int _strcmp_w(const wchar_t* s1, const wchar_t* s2);
 
-int _strncmp_a(const char *s1, const char *s2, size_t cchars);
-int _strncmp_w(const wchar_t *s1, const wchar_t *s2, size_t cchars);
+int _strncmp_a(const char* s1, const char* s2, size_t cchars);
+int _strncmp_w(const wchar_t* s1, const wchar_t* s2, size_t cchars);
 
-int _strcmpi_a(const char *s1, const char *s2);
-int _strcmpi_w(const wchar_t *s1, const wchar_t *s2);
+int _strcmpi_a(const char* s1, const char* s2);
+int _strcmpi_w(const wchar_t* s1, const wchar_t* s2);
 
-int _strncmpi_a(const char *s1, const char *s2, size_t cchars);
-int _strncmpi_w(const wchar_t *s1, const wchar_t *s2, size_t cchars);
+int _strncmpi_a(const char* s1, const char* s2, size_t cchars);
+int _strncmpi_w(const wchar_t* s1, const wchar_t* s2, size_t cchars);
 
-char *_strstr_a(const char *s, const char *sub_s);
-wchar_t *_strstr_w(const wchar_t *s, const wchar_t *sub_s);
+char* _strstr_a(const char* s, const char* sub_s);
+wchar_t* _strstr_w(const wchar_t* s, const wchar_t* sub_s);
 
-char *_strstri_a(const char *s, const char *sub_s);
-wchar_t *_strstri_w(const wchar_t *s, const wchar_t *sub_s);
+char* _strstri_a(const char* s, const char* sub_s);
+wchar_t* _strstri_w(const wchar_t* s, const wchar_t* sub_s);
 
-char *_strchr_a(const char *s, const char ch);
-wchar_t *_strchr_w(const wchar_t *s, const wchar_t ch);
-
+char* _strchr_a(const char* s, const char ch);
+wchar_t* _strchr_w(const wchar_t* s, const wchar_t ch);
 
 // conversion of integer types to string, returning string length
 
-size_t ultostr_a(unsigned long x, char *s);
-size_t ultostr_w(unsigned long x, wchar_t *s);
+size_t ultostr_a(unsigned long x, char* s);
+size_t ultostr_w(unsigned long x, wchar_t* s);
 
-size_t ultohex_a(unsigned long x, char *s);
-size_t ultohex_w(unsigned long x, wchar_t *s);
+size_t ultohex_a(unsigned long x, char* s);
+size_t ultohex_w(unsigned long x, wchar_t* s);
 
-size_t itostr_a(int x, char *s);
-size_t itostr_w(int x, wchar_t *s);
+size_t itostr_a(int x, char* s);
+size_t itostr_w(int x, wchar_t* s);
 
-size_t i64tostr_a(signed long long x, char *s);
-size_t i64tostr_w(signed long long x, wchar_t *s);
+size_t i64tostr_a(signed long long x, char* s);
+size_t i64tostr_w(signed long long x, wchar_t* s);
 
-size_t u64tostr_a(unsigned long long x, char *s);
-size_t u64tostr_w(unsigned long long x, wchar_t *s);
+size_t u64tostr_a(unsigned long long x, char* s);
+size_t u64tostr_w(unsigned long long x, wchar_t* s);
 
-size_t u64tohex_a(unsigned long long x, char *s);
-size_t u64tohex_w(unsigned long long x, wchar_t *s);
+size_t u64tohex_a(unsigned long long x, char* s);
+size_t u64tohex_w(unsigned long long x, wchar_t* s);
 
 // string to integers conversion
 
-unsigned long strtoul_a(char *s);
-unsigned long strtoul_w(wchar_t *s);
+unsigned long strtoul_a(char* s);
+unsigned long strtoul_w(wchar_t* s);
 
-unsigned long long strtou64_a(char *s);
-unsigned long long strtou64_w(wchar_t *s);
+unsigned long long strtou64_a(char* s);
+unsigned long long strtou64_w(wchar_t* s);
 
-unsigned long hextoul_a(char *s);
-unsigned long hextoul_w(wchar_t *s);
+unsigned long hextoul_a(char* s);
+unsigned long hextoul_w(wchar_t* s);
 
-int strtoi_a(char *s);
-int strtoi_w(wchar_t *s);
+int strtoi_a(char* s);
+int strtoi_w(wchar_t* s);
 
-signed long long strtoi64_a(char *s);
-signed long long strtoi64_w(wchar_t *s);
+signed long long strtoi64_a(char* s);
+signed long long strtoi64_w(wchar_t* s);
 
-unsigned long long hextou64_a(char *s);
-unsigned long long hextou64_w(wchar_t *s);
+unsigned long long hextou64_a(char* s);
+unsigned long long hextou64_w(wchar_t* s);
 
 /* =================================== */
 
@@ -136,7 +137,7 @@ unsigned long long hextou64_w(wchar_t *s);
 #define strtou64 strtou64_w
 #define hextou64 hextou64_w
 
-#else // ANSI
+#else  // ANSI
 
 #define _strend _strend_a
 #define _strcpy _strcpy_a

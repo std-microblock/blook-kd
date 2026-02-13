@@ -3,19 +3,19 @@
 #include "global.h"
 #include "idrv/tpw.h"
 
-static SUPERFETCH_MEMORY_MAP g_TpwMemoryMap = { 0 };
+static SUPERFETCH_MEMORY_MAP g_TpwMemoryMap = {0};
 static BOOL g_TpwMemoryMapInitialized = FALSE;
 
 /*
-* TpwEnsureMemoryMap
-*
-* Purpose:
-*
-* Initialize memory map (once). Only for stable memory layout, otherwise rebuild the map.
-*
-*/
-BOOL TpwEnsureMemoryMap(VOID)
-{
+ * TpwEnsureMemoryMap
+ *
+ * Purpose:
+ *
+ * Initialize memory map (once). Only for stable memory layout, otherwise
+ * rebuild the map.
+ *
+ */
+BOOL TpwEnsureMemoryMap(VOID) {
     if (g_TpwMemoryMapInitialized)
         return TRUE;
 
@@ -24,29 +24,27 @@ BOOL TpwEnsureMemoryMap(VOID)
 
     g_TpwMemoryMapInitialized = TRUE;
 
-    supPrintfEvent(kduEventInformation,
+    supPrintfEvent(
+        kduEventInformation,
         "[+] Superfetch memory map built: %llu entries from %lu ranges\r\n",
-        g_TpwMemoryMap.TableSize,
-        g_TpwMemoryMap.RangeCount);
+        g_TpwMemoryMap.TableSize, g_TpwMemoryMap.RangeCount);
 
     return TRUE;
 }
 
 /*
-* TpwReadWritePhysicalMemory
-*
-* Purpose:
-*
-* Read/Write physical memory via TPwSav driver.
-*
-*/
-BOOL TpwReadWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes,
-    _In_ BOOL DoWrite)
-{
+ * TpwReadWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read/Write physical memory via TPwSav driver.
+ *
+ */
+BOOL TpwReadWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                _In_ ULONG_PTR PhysicalAddress,
+                                _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                                _In_ ULONG NumberOfBytes,
+                                _In_ BOOL DoWrite) {
     NTSTATUS ntStatus;
     ULONG ioctl;
     LARGE_INTEGER buffer[2];
@@ -55,35 +53,26 @@ BOOL TpwReadWritePhysicalMemory(
     if (NumberOfBytes == 0 || Buffer == NULL)
         return FALSE;
 
-    ioctl = DoWrite ? IOCTL_TPW_WRITE_PHYSICAL_MEMORY : IOCTL_TPW_READ_PHYSICAL_MEMORY;
+    ioctl = DoWrite ? IOCTL_TPW_WRITE_PHYSICAL_MEMORY
+                    : IOCTL_TPW_READ_PHYSICAL_MEMORY;
     PBYTE pBuffer = (PBYTE)Buffer;
     for (ULONG i = 0; i < NumberOfBytes; i++) {
         RtlSecureZeroMemory(buffer, sizeof(buffer));
         buffer[0].QuadPart = (ULONG_PTR)(PhysicalAddress + i);
         buffer[1].QuadPart = 0;
-        
+
         if (DoWrite) {
             buffer[1].QuadPart = pBuffer[i];
 
-            ntStatus = supCallDriverEx(DeviceHandle,
-                ioctl,
-                buffer,
-                sizeof(buffer),
-                NULL,
-                0,
-                &ioStatus);
+            ntStatus = supCallDriverEx(DeviceHandle, ioctl, buffer,
+                                       sizeof(buffer), NULL, 0, &ioStatus);
 
             if (!NT_SUCCESS(ntStatus))
                 return FALSE;
-        }
-        else {
-            ntStatus = supCallDriverEx(DeviceHandle,
-                ioctl,
-                buffer,
-                sizeof(buffer),
-                buffer,
-                sizeof(buffer),
-                &ioStatus);
+        } else {
+            ntStatus =
+                supCallDriverEx(DeviceHandle, ioctl, buffer, sizeof(buffer),
+                                buffer, sizeof(buffer), &ioStatus);
 
             if (!NT_SUCCESS(ntStatus))
                 return FALSE;
@@ -96,61 +85,49 @@ BOOL TpwReadWritePhysicalMemory(
 }
 
 /*
-* TpwReadPhysicalMemory
-*
-* Purpose:
-*
-* Read from physical memory via TPwSav driver.
-*
-*/
-BOOL WINAPI TpwReadPhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
-    return TpwReadWritePhysicalMemory(DeviceHandle,
-        PhysicalAddress,
-        Buffer,
-        NumberOfBytes,
-        FALSE);
+ * TpwReadPhysicalMemory
+ *
+ * Purpose:
+ *
+ * Read from physical memory via TPwSav driver.
+ *
+ */
+BOOL WINAPI TpwReadPhysicalMemory(_In_ HANDLE DeviceHandle,
+                                  _In_ ULONG_PTR PhysicalAddress,
+                                  _In_ PVOID Buffer,
+                                  _In_ ULONG NumberOfBytes) {
+    return TpwReadWritePhysicalMemory(DeviceHandle, PhysicalAddress, Buffer,
+                                      NumberOfBytes, FALSE);
 }
 
 /*
-* TpwWritePhysicalMemory
-*
-* Purpose:
-*
-* Write to physical memory via TPwSav driver.
-*
-*/
-BOOL WINAPI TpwWritePhysicalMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
-    return TpwReadWritePhysicalMemory(DeviceHandle,
-        PhysicalAddress,
-        Buffer,
-        NumberOfBytes,
-        TRUE);
+ * TpwWritePhysicalMemory
+ *
+ * Purpose:
+ *
+ * Write to physical memory via TPwSav driver.
+ *
+ */
+BOOL WINAPI TpwWritePhysicalMemory(_In_ HANDLE DeviceHandle,
+                                   _In_ ULONG_PTR PhysicalAddress,
+                                   _In_ PVOID Buffer,
+                                   _In_ ULONG NumberOfBytes) {
+    return TpwReadWritePhysicalMemory(DeviceHandle, PhysicalAddress, Buffer,
+                                      NumberOfBytes, TRUE);
 }
 
 /*
-* TpwReadKernelVirtualMemory
-*
-* Purpose:
-*
-* Read kernel virtual memory via TPwSav driver using Superfetch translation.
-*
-*/
-BOOL WINAPI TpwReadKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * TpwReadKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Read kernel virtual memory via TPwSav driver using Superfetch translation.
+ *
+ */
+BOOL WINAPI TpwReadKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                       _In_ ULONG_PTR Address,
+                                       _In_ PVOID Buffer,
+                                       _In_ ULONG NumberOfBytes) {
     ULONG_PTR currentVA;
     ULONG_PTR currentPA;
     ULONG bytesToRead;
@@ -167,15 +144,16 @@ BOOL WINAPI TpwReadKernelVirtualMemory(
     offset = 0;
 
     while (bytesRemaining > 0) {
-
-        if (!supSuperfetchVirtualToPhysical(&g_TpwMemoryMap, currentVA, &currentPA))
+        if (!supSuperfetchVirtualToPhysical(&g_TpwMemoryMap, currentVA,
+                                            &currentPA))
             return FALSE;
 
         bytesToRead = PAGE_SIZE - (ULONG)(currentVA & (PAGE_SIZE - 1));
         if (bytesToRead > bytesRemaining)
             bytesToRead = bytesRemaining;
 
-        if (!TpwReadPhysicalMemory(DeviceHandle, currentPA, destBuffer + offset, bytesToRead))
+        if (!TpwReadPhysicalMemory(DeviceHandle, currentPA, destBuffer + offset,
+                                   bytesToRead))
             return FALSE;
 
         currentVA += bytesToRead;
@@ -187,19 +165,18 @@ BOOL WINAPI TpwReadKernelVirtualMemory(
 }
 
 /*
-* TpwWriteKernelVirtualMemory
-*
-* Purpose:
-*
-* Write kernel virtual memory via TPwSav using Superfetch translation.
-*
-*/
-BOOL WINAPI TpwWriteKernelVirtualMemory(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes)
-{
+ * TpwWriteKernelVirtualMemory
+ *
+ * Purpose:
+ *
+ * Write kernel virtual memory via TPwSav using Superfetch translation.
+ *
+ */
+BOOL WINAPI TpwWriteKernelVirtualMemory(_In_ HANDLE DeviceHandle,
+                                        _In_ ULONG_PTR Address,
+                                        _In_reads_bytes_(NumberOfBytes)
+                                            PVOID Buffer,
+                                        _In_ ULONG NumberOfBytes) {
     ULONG_PTR currentVA;
     ULONG_PTR currentPA;
     ULONG bytesToWrite;
@@ -216,15 +193,16 @@ BOOL WINAPI TpwWriteKernelVirtualMemory(
     offset = 0;
 
     while (bytesRemaining > 0) {
-
-        if (!supSuperfetchVirtualToPhysical(&g_TpwMemoryMap, currentVA, &currentPA))
+        if (!supSuperfetchVirtualToPhysical(&g_TpwMemoryMap, currentVA,
+                                            &currentPA))
             return FALSE;
 
         bytesToWrite = PAGE_SIZE - (ULONG)(currentVA & (PAGE_SIZE - 1));
         if (bytesToWrite > bytesRemaining)
             bytesToWrite = bytesRemaining;
 
-        if (!TpwWritePhysicalMemory(DeviceHandle, currentPA, srcBuffer + offset, bytesToWrite))
+        if (!TpwWritePhysicalMemory(DeviceHandle, currentPA, srcBuffer + offset,
+                                    bytesToWrite))
             return FALSE;
 
         currentVA += bytesToWrite;
@@ -236,14 +214,13 @@ BOOL WINAPI TpwWriteKernelVirtualMemory(
 }
 
 /*
-* TpwFreeResources
-*
-* Purpose:
-*
-* Free provider resources (memory map).
-*
-*/
-VOID TpwFreeResources(VOID)
-{
+ * TpwFreeResources
+ *
+ * Purpose:
+ *
+ * Free provider resources (memory map).
+ *
+ */
+VOID TpwFreeResources(VOID) {
     supFreeSuperfetchMemoryMap(&g_TpwMemoryMap);
 }

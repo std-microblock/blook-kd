@@ -1,6 +1,8 @@
-/* Taken from publicly available Microsoft sources or mentioned elsewhere. Common header file for the ntos HAL AMD64 definitions. Depends on:    Windows.h Include:       Windows.h */
+/* Taken from publicly available Microsoft sources or mentioned elsewhere.
+ * Common header file for the ntos HAL AMD64 definitions. Depends on: Windows.h
+ * Include:       Windows.h */
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1020)
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #endif
 
@@ -8,16 +10,16 @@
 #define HALAMD64_RTL
 
 #pragma warning(push)
-#pragma warning(disable: 4214)
+#pragma warning(disable : 4214)
 
 //
 // HALAMD64_RTL HEADER BEGIN
 //
 
-#pragma pack(push,2)
+#pragma pack(push, 2)
 
 typedef struct _FAR_JMP_16 {
-    UCHAR  OpCode;  // = 0xe9
+    UCHAR OpCode;  // = 0xe9
     USHORT Offset;
 } FAR_JMP_16;
 
@@ -35,27 +37,27 @@ typedef struct _PSEUDO_DESCRIPTOR_32 {
 
 typedef union _KGDTENTRY64 {
     struct {
-        USHORT  LimitLow;
-        USHORT  BaseLow;
+        USHORT LimitLow;
+        USHORT BaseLow;
         union {
             struct {
-                UCHAR   BaseMiddle;
-                UCHAR   Flags1;
-                UCHAR   Flags2;
-                UCHAR   BaseHigh;
+                UCHAR BaseMiddle;
+                UCHAR Flags1;
+                UCHAR Flags2;
+                UCHAR BaseHigh;
             } Bytes;
 
             struct {
-                ULONG   BaseMiddle : 8;
-                ULONG   Type : 5;
-                ULONG   Dpl : 2;
-                ULONG   Present : 1;
-                ULONG   LimitHigh : 4;
-                ULONG   System : 1;
-                ULONG   LongMode : 1;
-                ULONG   DefaultBig : 1;
-                ULONG   Granularity : 1;
-                ULONG   BaseHigh : 8;
+                ULONG BaseMiddle : 8;
+                ULONG Type : 5;
+                ULONG Dpl : 2;
+                ULONG Present : 1;
+                ULONG LimitHigh : 4;
+                ULONG System : 1;
+                ULONG LongMode : 1;
+                ULONG DefaultBig : 1;
+                ULONG Granularity : 1;
+                ULONG BaseHigh : 8;
             } Bits;
         };
 
@@ -64,7 +66,7 @@ typedef union _KGDTENTRY64 {
     };
 
     ULONG64 Alignment;
-} KGDTENTRY64, * PKGDTENTRY64;
+} KGDTENTRY64, *PKGDTENTRY64;
 
 typedef union _KIDTENTRY64 {
     struct {
@@ -81,7 +83,7 @@ typedef union _KIDTENTRY64 {
     };
 
     ULONG64 Alignment;
-} KIDTENTRY64, * PKIDTENTRY64;
+} KIDTENTRY64, *PKIDTENTRY64;
 
 typedef union _KGDT_BASE {
     struct {
@@ -92,7 +94,7 @@ typedef union _KGDT_BASE {
     };
 
     ULONG64 Base;
-} KGDT_BASE, * PKGDT_BASE;
+} KGDT_BASE, *PKGDT_BASE;
 
 typedef union _KGDT_LIMIT {
     struct {
@@ -102,21 +104,21 @@ typedef union _KGDT_LIMIT {
     };
 
     ULONG Limit;
-} KGDT_LIMIT, * PKGDT_LIMIT;
+} KGDT_LIMIT, *PKGDT_LIMIT;
 
-#define PSB_GDT32_MAX       3
+#define PSB_GDT32_MAX 3
 
 typedef struct _KDESCRIPTOR {
     USHORT Pad[3];
     USHORT Limit;
     PVOID Base;
-} KDESCRIPTOR, * PKDESCRIPTOR;
+} KDESCRIPTOR, *PKDESCRIPTOR;
 
 typedef struct _KDESCRIPTOR32 {
     USHORT Pad[3];
     USHORT Limit;
     ULONG Base;
-} KDESCRIPTOR32, * PKDESCRIPTOR32;
+} KDESCRIPTOR32, *PKDESCRIPTOR32;
 
 typedef struct _KSPECIAL_REGISTERS {
     ULONG64 Cr0;
@@ -146,17 +148,16 @@ typedef struct _KSPECIAL_REGISTERS {
     ULONG64 MsrLStar;
     ULONG64 MsrCStar;
     ULONG64 MsrSyscallMask;
-} KSPECIAL_REGISTERS, * PKSPECIAL_REGISTERS;
+} KSPECIAL_REGISTERS, *PKSPECIAL_REGISTERS;
 
 typedef struct _KPROCESSOR_STATE {
     KSPECIAL_REGISTERS SpecialRegisters;
     CONTEXT ContextFrame;
-} KPROCESSOR_STATE, * PKPROCESSOR_STATE;
+} KPROCESSOR_STATE, *PKPROCESSOR_STATE;
 
 typedef struct _PROCESSOR_START_BLOCK* PPROCESSOR_START_BLOCK;
 
 typedef struct _PROCESSOR_START_BLOCK {
-
     //
     // The block starts with a jmp instruction to the end of the block
     //

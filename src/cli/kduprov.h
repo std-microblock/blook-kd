@@ -9,125 +9,107 @@
 //
 // Prototype for read kernel virtual memory function.
 //
-typedef BOOL(WINAPI* provReadKernelVM)(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+typedef BOOL(WINAPI* provReadKernelVM)(_In_ HANDLE DeviceHandle,
+                                       _In_ ULONG_PTR Address,
+                                       _Out_writes_bytes_(NumberOfBytes)
+                                           PVOID Buffer,
+                                       _In_ ULONG NumberOfBytes);
 
 //
 // Prototype for write kernel virtual memory function.
 //
-typedef BOOL(WINAPI* provWriteKernelVM)(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR Address,
-    _Out_writes_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+typedef BOOL(WINAPI* provWriteKernelVM)(_In_ HANDLE DeviceHandle,
+                                        _In_ ULONG_PTR Address,
+                                        _Out_writes_bytes_(NumberOfBytes)
+                                            PVOID Buffer,
+                                        _In_ ULONG NumberOfBytes);
 
 //
 // Prototype for virtual to physical address translation function.
 //
-typedef BOOL(WINAPI* provVirtualToPhysical)(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _Out_ ULONG_PTR* PhysicalAddress);
+typedef BOOL(WINAPI* provVirtualToPhysical)(_In_ HANDLE DeviceHandle,
+                                            _In_ ULONG_PTR VirtualAddress,
+                                            _Out_ ULONG_PTR* PhysicalAddress);
 
 //
 // Prototype for read physical memory function.
 //
-typedef BOOL(WINAPI* provReadPhysicalMemory)(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_ PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+typedef BOOL(WINAPI* provReadPhysicalMemory)(_In_ HANDLE DeviceHandle,
+                                             _In_ ULONG_PTR PhysicalAddress,
+                                             _In_ PVOID Buffer,
+                                             _In_ ULONG NumberOfBytes);
 
 //
 // Prototype for write physical memory function.
 //
-typedef BOOL(WINAPI* provWritePhysicalMemory)(
-    _In_ HANDLE DeviceHandle,
-    _In_ ULONG_PTR PhysicalAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+typedef BOOL(WINAPI* provWritePhysicalMemory)(_In_ HANDLE DeviceHandle,
+                                              _In_ ULONG_PTR PhysicalAddress,
+                                              _In_reads_bytes_(NumberOfBytes)
+                                                  PVOID Buffer,
+                                              _In_ ULONG NumberOfBytes);
 
 //
 // Prototype for query PML4 value function.
 //
-typedef BOOL(WINAPI* provQueryPML4)(
-    _In_ HANDLE DeviceHandle,
-    _Out_ ULONG_PTR* Value);
+typedef BOOL(WINAPI* provQueryPML4)(_In_ HANDLE DeviceHandle,
+                                    _Out_ ULONG_PTR* Value);
 
 //
 // Prototype for driver registering/unlocking function.
 //
-typedef BOOL(WINAPI* provRegisterDriver)(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param);
+typedef BOOL(WINAPI* provRegisterDriver)(_In_ HANDLE DeviceHandle,
+                                         _In_opt_ PVOID Param);
 
 //
 // Prototype for driver unregistering function.
 //
-typedef BOOL(WINAPI* provUnregisterDriver)(
-    _In_ HANDLE DeviceHandle,
-    _In_opt_ PVOID Param);
+typedef BOOL(WINAPI* provUnregisterDriver)(_In_ HANDLE DeviceHandle,
+                                           _In_opt_ PVOID Param);
 
 //
 // Prototype for driver specific pre-open actions.
 //
-typedef BOOL(WINAPI* provPreOpenDriver)(
-    _In_opt_ PVOID Param
-    );
+typedef BOOL(WINAPI* provPreOpenDriver)(_In_opt_ PVOID Param);
 
 //
 // Prototype for driver specific post-open actions.
 //
-typedef BOOL(WINAPI* provPostOpenDriver)(
-    _In_opt_ PVOID Param
-    );
+typedef BOOL(WINAPI* provPostOpenDriver)(_In_opt_ PVOID Param);
 
 //
 // Start/Stop prototypes.
 //
 typedef BOOL(WINAPI* provStartVulnerableDriver)(
-    _In_ struct _KDU_CONTEXT* Context
-    );
+    _In_ struct _KDU_CONTEXT* Context);
 typedef void(WINAPI* provStopVulnerableDriver)(
-    _In_ struct _KDU_CONTEXT* Context
-    );
+    _In_ struct _KDU_CONTEXT* Context);
 
 //
 // Control DSE callback prototype
 //
-typedef BOOL(WINAPI* provControlDSE)(
-    _In_ struct _KDU_CONTEXT* Context,
-    _In_ ULONG DSEValue,
-    _In_ ULONG_PTR Address
-    );
+typedef BOOL(WINAPI* provControlDSE)(_In_ struct _KDU_CONTEXT* Context,
+                                     _In_ ULONG DSEValue,
+                                     _In_ ULONG_PTR Address);
 
 //
 // Prototype for driver mapping action.
 //
-typedef BOOL(WINAPI* provMapDriver)(
-    _In_ struct _KDU_CONTEXT *Context,
-    _In_ PVOID ImageBase
-    );
+typedef BOOL(WINAPI* provMapDriver)(_In_ struct _KDU_CONTEXT* Context,
+                                    _In_ PVOID ImageBase);
 
 //
 // Prototype for driver prerequisites validator.
 //
 typedef BOOL(WINAPI* provValidatePrerequisites)(
-    _In_ struct _KDU_CONTEXT* Context
-    );
+    _In_ struct _KDU_CONTEXT* Context);
 
 //
 // Prototype for process handle acquisition.
 //
-typedef BOOL(WINAPI* provOpenProcess)(
-    _In_ HANDLE DeviceHandle,
-    _In_ HANDLE ProcessId,
-    _In_ ACCESS_MASK DesiredAccess,
-    _Out_ PHANDLE ProcessHandle
-    );
+typedef BOOL(WINAPI* provOpenProcess)(_In_ HANDLE DeviceHandle,
+                                      _In_ HANDLE ProcessId,
+                                      _In_ ACCESS_MASK DesiredAccess,
+                                      _Out_ PHANDLE ProcessHandle);
 
 typedef enum _KDU_ACTION_TYPE {
     ActionTypeMapDriver = 0,
@@ -150,27 +132,27 @@ typedef struct _KDU_PROVIDER {
         provStartVulnerableDriver StartVulnerableDriver;
         provStopVulnerableDriver StopVulnerableDriver;
 
-        provRegisterDriver RegisterDriver; //optional
-        provUnregisterDriver UnregisterDriver; //optional
-        provPreOpenDriver PreOpenDriver; //optional;
-        provPostOpenDriver PostOpenDriver; //optional;
+        provRegisterDriver RegisterDriver;      // optional
+        provUnregisterDriver UnregisterDriver;  // optional
+        provPreOpenDriver PreOpenDriver;        // optional;
+        provPostOpenDriver PostOpenDriver;      // optional;
         provMapDriver MapDriver;
         provControlDSE ControlDSE;
 
-        provReadKernelVM ReadKernelVM; //optional
-        provWriteKernelVM WriteKernelVM; //optional
+        provReadKernelVM ReadKernelVM;    // optional
+        provWriteKernelVM WriteKernelVM;  // optional
 
-        provVirtualToPhysical VirtualToPhysical; //optional
-        provQueryPML4 QueryPML4Value; //optional
-        provReadPhysicalMemory ReadPhysicalMemory; //optional
-        provWritePhysicalMemory WritePhysicalMemory; //optional
+        provVirtualToPhysical VirtualToPhysical;      // optional
+        provQueryPML4 QueryPML4Value;                 // optional
+        provReadPhysicalMemory ReadPhysicalMemory;    // optional
+        provWritePhysicalMemory WritePhysicalMemory;  // optional
 
-        provValidatePrerequisites ValidatePrerequisites; //optional
+        provValidatePrerequisites ValidatePrerequisites;  // optional
 
-        provOpenProcess OpenProcess; //optional
+        provOpenProcess OpenProcess;  // optional
 
     } Callbacks;
-} KDU_PROVIDER, * PKDU_PROVIDER;
+} KDU_PROVIDER, *PKDU_PROVIDER;
 
 typedef struct _KDU_CONTEXT {
     ULONG HvciEnabled;
@@ -180,7 +162,7 @@ typedef struct _KDU_CONTEXT {
         ULONG EncryptKey;
         ULONG MemoryTag;
     };
-    
+
     // DB image base
     HINSTANCE ModuleBase;
 
@@ -191,22 +173,22 @@ typedef struct _KDU_CONTEXT {
         HANDLE PortHandle;
     };
 
-    //full file name to the vulnerable driver
-    PWSTR DriverFileName; 
+    // full file name to the vulnerable driver
+    PWSTR DriverFileName;
 
     ULONG_PTR MaximumUserModeAddress;
     PKDU_PROVIDER Provider;
     PKDU_VICTIM_PROVIDER Victim;
     KDU_PROVIDER_STATE ProviderState;
 
-    //fields used by shellcode v3 only
+    // fields used by shellcode v3 only
     FIXED_UNICODE_STRING DriverObjectName;
     FIXED_UNICODE_STRING DriverRegistryPath;
 
-    //other
+    // other
     ULONG64 ArbitraryData;
 
-} KDU_CONTEXT, * PKDU_CONTEXT;
+} KDU_CONTEXT, *PKDU_CONTEXT;
 
 typedef struct _KDU_PHYSMEM_ENUM_PARAMS {
     _In_ BOOL bWrite;
@@ -227,46 +209,36 @@ typedef struct _KDU_PHYSMEM_ENUM_PARAMS {
     _In_ ULONG DispatchSignatureLength;
     _In_ ULONG JmpAddress;
 
-} KDU_PHYSMEM_ENUM_PARAMS, * PKDU_PHYSMEM_ENUM_PARAMS;
+} KDU_PHYSMEM_ENUM_PARAMS, *PKDU_PHYSMEM_ENUM_PARAMS;
 
 ULONG KDUProvGetCount();
 PKDU_DB KDUReferenceLoadDB();
 VOID KDUProvList();
 
-BOOL WINAPI KDUProviderPostOpen(
-    _In_ PVOID Param);
+BOOL WINAPI KDUProviderPostOpen(_In_ PVOID Param);
 
-_Success_(return != FALSE)
-BOOL WINAPI KDUOpenProcess(
-    _In_ struct _KDU_CONTEXT* Context,
-    _In_ HANDLE ProcessId,
-    _In_ ACCESS_MASK DesiredAccess,
-    _Out_ PHANDLE ProcessHandle);
+_Success_(return != FALSE) BOOL WINAPI
+    KDUOpenProcess(_In_ struct _KDU_CONTEXT* Context,
+                   _In_ HANDLE ProcessId,
+                   _In_ ACCESS_MASK DesiredAccess,
+                   _Out_ PHANDLE ProcessHandle);
 
-HINSTANCE KDUProviderLoadDB(
-    VOID);
+HINSTANCE KDUProviderLoadDB(VOID);
 
-PKDU_CONTEXT WINAPI KDUProviderCreate(
-    _In_ ULONG ProviderId,
-    _In_ ULONG HvciEnabled,
-    _In_ ULONG NtBuildNumber,
-    _In_ ULONG ShellCodeVersion,
-    _In_ KDU_ACTION_TYPE ActionType);
+PKDU_CONTEXT WINAPI KDUProviderCreate(_In_ ULONG ProviderId,
+                                      _In_ ULONG HvciEnabled,
+                                      _In_ ULONG NtBuildNumber,
+                                      _In_ ULONG ShellCodeVersion,
+                                      _In_ KDU_ACTION_TYPE ActionType);
 
-VOID WINAPI KDUProviderRelease(
-    _In_ KDU_CONTEXT * Context);
+VOID WINAPI KDUProviderRelease(_In_ KDU_CONTEXT* Context);
 
-void KDUProvOpenVulnerableDriverAndRunCallbacks(
-    _In_ KDU_CONTEXT* Context);
+void KDUProvOpenVulnerableDriverAndRunCallbacks(_In_ KDU_CONTEXT* Context);
 
-BOOL KDUProvLoadVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+BOOL KDUProvLoadVulnerableDriver(_In_ KDU_CONTEXT* Context);
 
-BOOL KDUProvExtractVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+BOOL KDUProvExtractVulnerableDriver(_In_ KDU_CONTEXT* Context);
 
-BOOL KDUProvStartVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+BOOL KDUProvStartVulnerableDriver(_In_ KDU_CONTEXT* Context);
 
-void KDUProvStopVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+void KDUProvStopVulnerableDriver(_In_ KDU_CONTEXT* Context);

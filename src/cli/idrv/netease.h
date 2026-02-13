@@ -4,7 +4,7 @@
 
 //
 // Based on https://github.com/smallzhong/NeacController
-// 
+//
 
 #define OpCode_ReadVM 14
 #define OpCode_WriteVM 70
@@ -34,22 +34,18 @@ typedef struct _NEAC_FILTER_CONNECT {
 } NEAC_FILTER_CONNECT, *PNEAC_FILTER_CONNECT;
 #pragma pack()
 
-BOOL NetEaseStartVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+BOOL NetEaseStartVulnerableDriver(_In_ KDU_CONTEXT* Context);
 
-VOID NetEaseStopVulnerableDriver(
-    _In_ KDU_CONTEXT* Context);
+VOID NetEaseStopVulnerableDriver(_In_ KDU_CONTEXT* Context);
 
-_Success_(return != FALSE)
-BOOL WINAPI NetEaseReadVirtualMemory(
-    _In_ HANDLE PortHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+_Success_(return != FALSE) BOOL WINAPI
+    NetEaseReadVirtualMemory(_In_ HANDLE PortHandle,
+                             _In_ ULONG_PTR VirtualAddress,
+                             _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                             _In_ ULONG NumberOfBytes);
 
-_Success_(return != FALSE)
-BOOL WINAPI NetEaseWriteVirtualMemory(
-    _In_ HANDLE PortHandle,
-    _In_ ULONG_PTR VirtualAddress,
-    _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
-    _In_ ULONG NumberOfBytes);
+_Success_(return != FALSE) BOOL WINAPI
+    NetEaseWriteVirtualMemory(_In_ HANDLE PortHandle,
+                              _In_ ULONG_PTR VirtualAddress,
+                              _In_reads_bytes_(NumberOfBytes) PVOID Buffer,
+                              _In_ ULONG NumberOfBytes);

@@ -8,20 +8,17 @@
 //
 
 /*
-* RazerOpenProcess
-*
-* Purpose:
-*
-* Call ZwOpenProcess via razer driver request.
-*
-*/
-BOOL WINAPI RazerOpenProcess(
-    _In_ HANDLE DeviceHandle,
-    _In_ HANDLE ProcessId,
-    _In_ ACCESS_MASK DesiredAccess,
-    _Out_ PHANDLE ProcessHandle
-)
-{
+ * RazerOpenProcess
+ *
+ * Purpose:
+ *
+ * Call ZwOpenProcess via razer driver request.
+ *
+ */
+BOOL WINAPI RazerOpenProcess(_In_ HANDLE DeviceHandle,
+                             _In_ HANDLE ProcessId,
+                             _In_ ACCESS_MASK DesiredAccess,
+                             _Out_ PHANDLE ProcessHandle) {
     BOOL bResult;
     RAZER_OPEN_PROCESS request;
 
@@ -30,12 +27,8 @@ BOOL WINAPI RazerOpenProcess(
     request.ProcessId = ProcessId;
     request.ProcessHandle = NULL;
 
-    bResult = supCallDriver(DeviceHandle,
-        IOCTL_RZPNK_OPEN_PROCESS,
-        &request,
-        sizeof(request),
-        &request,
-        sizeof(request));
+    bResult = supCallDriver(DeviceHandle, IOCTL_RZPNK_OPEN_PROCESS, &request,
+                            sizeof(request), &request, sizeof(request));
 
     *ProcessHandle = request.ProcessHandle;
     return bResult;
