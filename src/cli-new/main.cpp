@@ -9,7 +9,7 @@
 
 #include "cxxopts.hpp"
 #include "core/kdu_core.h"
-#include "drivers/gdrv-exploit/gdrv_exploit.cpp"
+#include "test-lib/provider_tester.h"
 
 using namespace kdu;
 
@@ -223,119 +223,23 @@ int cmd_query_pml4(const cxxopts::ParseResult& args) {
 
 int cmd_test_memory(const cxxopts::ParseResult& args) {
     std::string driver_name = args["driver"].as<std::string>();
+    std::string judge_provider = args.count("judge-provider") ? 
+        args["judge-provider"].as<std::string>() : "";
     
     std::cout << std::format("\n=== Memory R/W Test using {} ===\n\n", driver_name);
     
-    // Find driver
-    auto& manager = core::DriverManager::instance();
-    auto provider = manager.find_provider_by_name(driver_name);
-    
-    if (!provider) {
-        std::cerr << std::format("Error: Driver '{}' not found\n", driver_name);
-        return 1;
+    if (!judge_provider.empty()) {
+        std::cout << std::format("Judge provider: {}\n\n", judge_provider);
     }
     
-    // Create instance
-    auto instance_result = provider->create_instance();
-    if (!instance_result) {
-        std::cerr << std::format("Error: Failed to create driver instance: {}\n",
-                                instance_result.error());
-        return 1;
-    }
+    testing::ProviderTester tester(driver_name, judge_provider);
+    auto results = tester.run_all_tests();
     
-    auto& instance = *instance_result;
+    testing::print_test_results(results);
     
-    // Test 1: Read from known safe physical address (low memory)
-    std::cout << "Test 1: Reading from physical address 0x1000 (4KB page)\n";
-    if (auto* reader = instance->as<core::IPhysicalMemoryRead>()) {
-        auto result = reader->try_read_physical_memory(0x1000, 64);
-        if (result) {
-            std::cout << "  ✓ Read succeeded\n";
-            print_hex_dump(*result, 0x1000);
-        } else {
-            std::cout << std::format("  ✗ Read failed: {}\n", result.error());
-        }
-    } else {
-        std::cout << "  - Driver does not support physical memory read\n";
-    }
-    
-    // Test 2: Query PML4
-    std::cout << "\nTest 2: Querying PML4 (CR3 register)\n";
-    if (auto* pml4 = instance->as<core::IQueryPML4>()) {
-        auto result = pml4->try_query_pml4();
-        if (result) {
-            std::cout << std::format("  ✓ PML4 = 0x{:016X}\n", *result);
-        } else {
-            std::cout << std::format("  ✗ Query failed: {}\n", result.error());
-        }
-    } else {
-        std::cout << "  - Driver does not support PML4 query\n";
-    }
-    
-    // Test 3: Read/Write cycle test (use temporary buffer in physical memory)
-    std::cout << "\nTest 3: Read-Modify-Write cycle test\n";
-    if (auto* reader = instance->as<core::IPhysicalMemoryRead>()) {
-        if (auto* writer = instance->as<core::IPhysicalMemoryWrite>()) {
-            constexpr uintptr_t TEST_ADDR = 0x10000; // 64KB mark
-            
-            // Read original
-            auto original = reader->try_read_physical_memory(TEST_ADDR, 16);
-            if (!original) {
-                std::cout << std::format("  ✗ Read failed: {}\n", original.error());
-            } else {
-                std::cout << "  ✓ Original data read\n";
-                
-                // Create test pattern
-                std::vector<uint8_t> test_pattern = {
-                    0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xBE,
-                    0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0
-                };
-                
-                // Write test pattern
-                auto write_result = writer->try_write_physical_memory(
-                    TEST_ADDR, test_pattern.data(), test_pattern.size());
-                
-                if (!write_result) {
-                    std::cout << std::format("  ✗ Write failed: {}\n", write_result.error());
-                } else {
-                    std::cout << "  ✓ Test pattern written\n";
-                    
-                    // Read back
-                    auto readback = reader->try_read_physical_memory(TEST_ADDR, 16);
-                    if (!readback) {
-                        std::cout << std::format("  ✗ Read-back failed: {}\n", readback.error());
-                    } else {
-                        // Verify
-                        bool match = (*readback == test_pattern);
-                        if (match) {
-                            std::cout << "  ✓ Verification succeeded - Data matches!\n";
-                        } else {
-                            std::cout << "  ✗ Verification failed - Data mismatch\n";
-                            std::cout << "    Expected: ";
-                            for (auto b : test_pattern) std::cout << std::format("{:02X} ", b);
-                            std::cout << "\n    Got:      ";
-                            for (auto b : *readback) std::cout << std::format("{:02X} ", b);
-                            std::cout << "\n";
-                        }
-                        
-                        // Restore original
-                        writer->try_write_physical_memory(TEST_ADDR, original->data(), original->size());
-                        std::cout << "  ✓ Original data restored\n";
-                    }
-                }
-            }
-        } else {
-            std::cout << "  - Driver does not support physical memory write\n";
-        }
-    } else {
-        std::cout << "  - Driver does not support physical memory read\n";
-    }
-    
-    std::cout << "\n=== Test Complete ===\n";
-    
-    return 0;
+    auto summary = testing::summarize_results(results);
+    return summary.failed > 0 ? 1 : 0;
 }
-
 int main(int argc, char** argv) {
     std::cout << "KDU Core - Modern Driver Utility\n";
     std::cout << "================================\n\n";
@@ -358,6 +262,7 @@ int main(int argc, char** argv) {
             ("a,address", "Memory address (hex)", cxxopts::value<uint64_t>())
             ("s,size", "Size in bytes", cxxopts::value<size_t>()->default_value("64"))
             ("d,driver", "Driver name", cxxopts::value<std::string>()->default_value("gdrv"))
+            ("judge-provider", "Judge provider for comparison tests", cxxopts::value<std::string>())
             ("data", "Data to write (hex string)", cxxopts::value<std::string>());
         
         auto result = options.parse(argc, argv);

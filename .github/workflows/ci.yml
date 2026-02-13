@@ -1,0 +1,164 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  release:
+    types: [ created ]
+
+env:
+  BUILD_TYPE: releasedbg
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Setup xmake
+      uses: xmake-io/github-action-setup-xmake@v1
+      with:
+        xmake-version: latest
+    
+    - name: Setup MSVC
+      uses: microsoft/setup-msbuild@v2
+    
+    - name: Configure xmake
+      run: |
+        xmake config -m ${{ env.BUILD_TYPE }} -y
+    
+    - name: Build
+      run: |
+        xmake build -y cli-new provider-tests core gdrv_exploit
+    
+    - name: List providers
+      run: |
+        xmake r cli-new --list
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: kdu-build-${{ github.sha }}
+        path: |
+          build/windows/x64/${{ env.BUILD_TYPE }}/*.exe
+          build/windows/x64/${{ env.BUILD_TYPE }}/*.lib
+          build/windows/x64/${{ env.BUILD_TYPE }}/*.sys
+        retention-days: 30
+    
+    - name: Upload to nightly (on push to main)
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: actions/upload-artifact@v4
+      with:
+        name: kdu-nightly
+        path: |
+          build/windows/x64/${{ env.BUILD_TYPE }}/cli-new.exe
+          build/windows/x64/${{ env.BUILD_TYPE }}/provider-tests.exe
+        retention-days: 90
+    
+    - name: Create Release Assets
+      if: github.event_name == 'release'
+      run: |
+        cd build/windows/x64/${{ env.BUILD_TYPE }}
+        7z a -tzip kdu-${{ github.event.release.tag_name }}-windows-x64.zip *.exe *.sys
+    
+    - name: Upload Release Assets
+      if: github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: build/windows/x64/${{ env.BUILD_TYPE }}/kdu-${{ github.event.release.tag_name }}-windows-x64.zip
+        asset_name: kdu-${{ github.event.release.tag_name }}-windows-x64.zip
+        asset_content_type: application/zip
+
+  # Provider 测试 - 每个 Provider 单独运行
+  test-gdrv:
+    name: Test Provider - GDRV
+    needs: build
+    runs-on: windows-latest
+    if: github.event_name != 'release'
+    
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: kdu-build-${{ github.sha }}
+        path: build
+    
+    - name: Run tests
+      continue-on-error: true  # 防止蓝屏导致整个 CI 失败
+      timeout-minutes: 5
+      run: |
+        cd build
+        # 需要管理员权限，CI 环境可能无法运行
+        # ./provider-tests.exe gdrv
+        echo "Test skipped: requires administrator privileges"
+        exit 0
+
+  # 添加更多 Provider 测试
+  # test-rtcore:
+  #   name: Test Provider - RTCore
+  #   needs: build
+  #   runs-on: windows-latest
+  #   if: github.event_name != 'release'
+  #   
+  #   steps:
+  #   - name: Download artifacts
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: kdu-build-${{ github.sha }}
+  #       path: build
+  #   
+  #   - name: Run tests
+  #     continue-on-error: true
+  #     timeout-minutes: 5
+  #     run: |
+  #       cd build
+  #       ./provider-tests.exe rtcore
+
+  # 语法和静态分析
+  lint:
+    name: Code Quality
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup xmake
+      uses: xmake-io/github-action-setup-xmake@v1
+    
+    - name: Check format (xmake format)
+      run: |
+        # xmake format --check
+        echo "Format check skipped"
+    
+    - name: Static analysis
+      run: |
+        # 可以添加 clang-tidy 或其他静态分析工具
+        echo "Static analysis skipped"
+
+  # 文档检查
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Check documentation
+      run: |
+        # 检查必需的文档文件是否存在
+        test -f README.md
+        test -f docs/PROVIDER_DEVELOPMENT.md
+        test -f src/core/README.md
+        echo "Documentation check passed"
