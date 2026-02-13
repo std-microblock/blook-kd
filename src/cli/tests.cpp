@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2025
-*
-*  TITLE:       TESTS.CPP
-*
-*  VERSION:     1.45
-*
-*  DATE:        02 Dec 2025
-*
-*  KDU tests.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* KDU tests. */
 
 #include "global.h"
 

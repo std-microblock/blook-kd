@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2016 - 2021
-*
-*  TITLE:       MAIN.C
-*
-*  VERSION:     1.03
-*
-*  DATE:        02 Apr 2021
-*
-*  Example driver for driver loaders usage (KDU/ALICE)
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Example driver for driver loaders usage (KDU/ALICE) */
 
 #include <ntddk.h>
 

@@ -1,21 +1,4 @@
-/************************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2017 - 2022, translated from Microsoft sources/debugger
-*
-*  TITLE:       NTALPC.H
-*
-*  VERSION:     1.95
-*
-*  DATE:        02 Feb 2022
-*
-*  Common header file for the ntos ALPC/CSR related functions and definitions.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-************************************************************************************/
+/* Common header file for the ntos ALPC/CSR related functions and definitions. */
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once

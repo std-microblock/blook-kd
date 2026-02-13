@@ -1,23 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2011 - 2025 UGN/HE
-*
-*  TITLE:       NTSUP.C
-*
-*  VERSION:     2.25
-*
-*  DATE:        18 Aug 2025
-*
-*  Native API support functions.
-*
-*  Only ntdll-bound import.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Native API support functions. Only ntdll-bound import. */
 
 #include "ntsup.h"
 

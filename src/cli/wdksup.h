@@ -1,23 +1,4 @@
-/************************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2018 - 2023, translated from Microsoft sources/debugger
-*
-*  TITLE:       WDKSUP.H
-*
-*  VERSION:     1.33
-*
-*  DATE:        16 Jul 2023
-*
-*  Header file for NT WDK definitions.
-*
-*  WARNING: some structures are opaque and incomplete.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-************************************************************************************/
+/* Header file for NT WDK definitions. WARNING: some structures are opaque and incomplete. */
 #pragma once
 
 #define IO_NO_INCREMENT 0

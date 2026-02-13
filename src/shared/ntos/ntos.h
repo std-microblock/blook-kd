@@ -1,30 +1,4 @@
-/************************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2015 - 2025
-*  Translated from Microsoft sources/debugger or mentioned elsewhere.
-*
-*  TITLE:       NTOS.H
-*
-*  VERSION:     1.240
-*
-*  DATE:        02 Dec 2025
-*
-*  Common header file for the ntos API functions and definitions.
-*
-*  Only projects required API/definitions.
-*
-*  Depends on:    Windows.h
-*                 NtStatus.h
-*
-*  Include:       Windows.h
-*                 NtStatus.h
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-************************************************************************************/
+/* Translated from Microsoft sources/debugger or mentioned elsewhere. Common header file for the ntos API functions and definitions. Only projects required API/definitions. Depends on:    Windows.h NtStatus.h Include:       Windows.h NtStatus.h */
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once

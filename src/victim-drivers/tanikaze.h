@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2025
-*
-*  TITLE:       CONSTS.H
-*
-*  VERSION:     1.24
-*
-*  DATE:        02 Dec 2025
-*
-*  Tanikaze helper dll (part of KDU project).
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Tanikaze helper dll (part of KDU project). */
 #include <Windows.h>
 #include "consts.h"
 #include "ntos/ntbuilds.h"

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2024
-*
-*  TITLE:       WINRING0.H
-*
-*  VERSION:     1.43
-*
-*  DATE:        10 Nov 2024
-*
-*  WinRing0 based drivers interface header.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* WinRing0 based drivers interface header. */
 
 #pragma once
 

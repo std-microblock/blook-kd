@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2023
-*
-*  TITLE:       EVGA.CPP
-*
-*  VERSION:     1.41
-*
-*  DATE:        10 Dec 2023
-*
-*  EVGA driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* EVGA driver routines. */
 
 #include "global.h"
 #include "idrv/evga.h"

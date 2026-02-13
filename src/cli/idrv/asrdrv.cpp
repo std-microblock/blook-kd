@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2023
-*
-*  TITLE:       ASRDRV.CPP
-*
-*  VERSION:     1.43
-*
-*  DATE:        10 Nov 2023
-*
-*  ASRock driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* ASRock driver routines. */
 
 #include "global.h"
 #include "idrv/asrdrv.h"

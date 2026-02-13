@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020
-*
-*  TITLE:       ATSZIO.H
-*
-*  VERSION:     1.01
-*
-*  DATE:        12 Feb 2020
-*
-*  ASUSTeK ATSZIO WinFlash driver interface header.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* ASUSTeK ATSZIO WinFlash driver interface header. */
 
 #pragma once
 

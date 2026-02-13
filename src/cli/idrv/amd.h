@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2023
-*
-*  TITLE:       AMD.H
-*
-*  VERSION:     1.41
-*
-*  DATE:        04 Nov 2023
-*
-*  AMD drivers interface header.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* AMD drivers interface header. */
 
 #pragma once
 

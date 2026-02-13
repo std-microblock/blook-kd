@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2021
-*
-*  TITLE:       RTCORE.CPP
-*
-*  VERSION:     1.11
-*
-*  DATE:        19 Apr 2021
-*
-*  RTCORE64 driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* RTCORE64 driver routines. */
 
 #include "global.h"
 #include "idrv/rtcore.h"

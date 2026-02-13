@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2023
-*
-*  TITLE:       NVIDIA.H
-*
-*  VERSION:     1.34
-*
-*  DATE:        16 Sep 2023
-*
-*  NVidia drivers interface header.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* NVidia drivers interface header. */
 
 #pragma once
 

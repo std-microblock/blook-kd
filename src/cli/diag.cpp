@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2025
-*
-*  TITLE:       DIAG.CPP
-*
-*  VERSION:     1.45
-*
-*  DATE:        30 Nov 2025
-*
-*  Hamakaze system diagnostics component.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Hamakaze system diagnostics component. */
 
 #include "global.h"
 

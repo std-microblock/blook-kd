@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2025
-*
-*  TITLE:       SHELLCODE.CPP
-*
-*  VERSION:     1.45
-*
-*  DATE:        30 Nov 2025
-*
-*  Default driver mapping shellcode(s) implementation.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Default driver mapping shellcode(s) implementation. */
 
 #include "global.h"
 

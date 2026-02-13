@@ -1,20 +1,3 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2023
-*
-*  TITLE:       LDR.CPP
-*
-*  VERSION:     1.16
-*
-*  DATE:        23 Dec 2023
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
-
 #include "Windows.h"
 #include "../ntos/ntos.h"
 #include "../minirtl/minirtl.h"

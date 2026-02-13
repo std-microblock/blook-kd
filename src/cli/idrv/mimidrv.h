@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022
-*
-*  TITLE:       MIMIDRV.H
-*
-*  VERSION:     1.20
-*
-*  DATE:        08 Feb 2022
-*
-*  MIMIDRV driver interface header.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* MIMIDRV driver interface header. */
 
 #pragma once
 

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2023
-*
-*  TITLE:       MAIN.CPP
-*
-*  VERSION:     1.21
-*
-*  DATE:        10 June 2023
-*
-*  Taigei helper dll (part of KDU project).
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Taigei helper dll (part of KDU project). */
 
 #include "global.h"
 

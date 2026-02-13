@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2017 - 2021
-*
-*  TITLE:       MAIN.C
-*
-*  VERSION:     1.02
-*
-*  DATE:        02 Apr 2021
-*
-*  PatchGuard BSOD generator.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* PatchGuard BSOD generator. */
 #include "main.h"
 
 RTL_OSVERSIONINFOW g_osver;

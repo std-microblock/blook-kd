@@ -1,24 +1,4 @@
-/************************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2011 - 2025 UGN/HE
-*
-*  TITLE:       NTSUP.H
-*
-*  VERSION:     2.25
-*
-*  DATE:        18 Aug 2025
-*
-*  Common header file for the NT API support functions and definitions.
-*
-*  Depends on:    ntos.h
-*                 minirtl
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-************************************************************************************/
+/* Common header file for the NT API support functions and definitions. Depends on:    ntos.h minirtl */
 
 #define ENABLE_C_EXTERN
 

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2025
-*
-*  TITLE:       TPUP.CPP
-*
-*  VERSION:     1.45
-*
-*  DATE:        02 Dec 2025
-*
-*  TechPowerUp ThrottleStop driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* TechPowerUp ThrottleStop driver routines. */
 
 #include "global.h"
 #include "idrv/tpup.h"

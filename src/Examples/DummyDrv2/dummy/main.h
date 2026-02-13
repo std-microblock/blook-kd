@@ -1,20 +1,3 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2016 - 2017
-*
-*  TITLE:       MAIN.H
-*
-*  VERSION:     1.01
-*
-*  DATE:        20 Apr 2017
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
-
 #pragma once
 
 NTKERNELAPI

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2023
-*
-*  TITLE:       RZPNK.CPP
-*
-*  VERSION:     1.40
-*
-*  DATE:        20 Oct 2023
-*
-*  Razer Overlay Support driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Razer Overlay Support driver routines. */
 
 #include "global.h"
 #include "idrv/rzpnk.h"

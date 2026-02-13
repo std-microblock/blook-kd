@@ -1,24 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2024
-*
-*  TITLE:       INTEL.CPP
-*
-*  VERSION:     1.42
-*
-*  DATE:        01 Apr 2024
-*
-*  Intel drivers routines.
-*
-*    Network Adapter iQVM64 driver aka Nal
-*    Intel(R) Management Engine Tools Driver aka PmxDrv
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Intel drivers routines. Network Adapter iQVM64 driver aka Nal Intel(R) Management Engine Tools Driver aka PmxDrv */
 
 #include "global.h"
 #include "idrv/intel.h"

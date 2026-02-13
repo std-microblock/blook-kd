@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022
-*
-*  TITLE:       MARVINHW.CPP
-*
-*  VERSION:     1.25
-*
-*  DATE:        18 Aug 2022
-*
-*  Marvin HW driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Marvin HW driver routines. */
 
 #include "global.h"
 #include "idrv/marvinhw.h"

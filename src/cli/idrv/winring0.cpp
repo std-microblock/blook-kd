@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2023
-*
-*  TITLE:       WINRING0.CPP
-*
-*  VERSION:     1.31
-*
-*  DATE:        14 Apr 2023
-*
-*  WinRing0 based drivers routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* WinRing0 based drivers routines. */
 
 #include "global.h"
 #include "idrv/winring0.h"

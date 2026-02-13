@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2023
-*
-*  TITLE:       SYM.CPP
-*
-*  VERSION:     1.31
-*
-*  DATE:        08 Apr 2023
-*
-*  Program symbols support routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Program symbols support routines. */
 
 #include "global.h"
 #include <dbghelp.h>

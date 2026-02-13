@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022
-*
-*  TITLE:       IPCSVC.CPP
-*
-*  VERSION:     1.20
-*
-*  DATE:        10 Feb 2022
-*
-*  Inter-process communication, simplified ALPC server.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Inter-process communication, simplified ALPC server. */
 #include "global.h"
 #include "ntos/ntalpc.h"
 

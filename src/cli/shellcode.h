@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2023
-*
-*  TITLE:       SHELLCODE.H
-*
-*  VERSION:     1.30
-*
-*  DATE:        20 Mar 2023
-*
-*  Default driver mapping shellcode(s) prototypes and definitions.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Default driver mapping shellcode(s) prototypes and definitions. */
 #pragma once
 
 typedef struct _PAYLOAD_HEADER_V1 {

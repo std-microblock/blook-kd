@@ -1,22 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2014 - 2025
-*
-*  TITLE:       DSEFIX.CPP
-*
-*  VERSION:     1.45
-*
-*  DATE:        02 Dec 2025
-*
-*  CI DSE corruption related routines.
-*  Based on DSEFix v1.3
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* CI DSE corruption related routines. Based on DSEFix v1.3 */
 
 #include "global.h"
 

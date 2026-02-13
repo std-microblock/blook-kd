@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022
-*
-*  TITLE:       ASIO.CPP
-*
-*  VERSION:     1.20
-*
-*  DATE:        10 Feb 2022
-*
-*  Asus hack-o-rama v3.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Asus hack-o-rama v3. */
 
 #include "global.h"
 

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2023
-*
-*  TITLE:       ZEMANA.CPP
-*
-*  VERSION:     1.40
-*
-*  DATE:        20 Oct 2023
-*
-*  Zemana driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Zemana driver routines. */
 
 #include "global.h"
 #include "idrv/zemana.h"

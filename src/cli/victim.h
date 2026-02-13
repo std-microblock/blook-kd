@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2018 - 2023
-*
-*  TITLE:       VICTIM.H
-*
-*  VERSION:     1.30
-*
-*  DATE:        20 Mar 2023
-*
-*  Victim support prototypes and definitions.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Victim support prototypes and definitions. */
 
 #pragma once
 

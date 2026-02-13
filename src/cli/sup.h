@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2025
-*
-*  TITLE:       SUP.H
-*
-*  VERSION:     1.45
-*
-*  DATE:        02 Dec 2025
-*
-*  Support routines header file.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Support routines header file. */
 #pragma once
 
 //#define VERBOSE_FUNCTION_LOG

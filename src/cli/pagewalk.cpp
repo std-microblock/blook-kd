@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2018 - 2021
-*
-*  TITLE:       PAGEWALK.CPP
-*
-*  VERSION:     1.12
-*
-*  DATE:        16 May 2021
-*
-*  Function to translate virtual to physical addresses, x86-64.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Function to translate virtual to physical addresses, x86-64. */
 
 #include "global.h"
 

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022
-*
-*  TITLE:       MIMIDRV.CPP
-*
-*  VERSION:     1.20
-*
-*  DATE:        08 Feb 2022
-*
-*  Mimikatz "mimidrv" driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Mimikatz "mimidrv" driver routines. */
 
 #include "global.h"
 #include "idrv/mimidrv.h"

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2021 - 2025
-*
-*  TITLE:       NTBUILDS.H
-*
-*  VERSION:     1.28
-*
-*  DATE:        18 Sep 2025
-*
-*  Windows NT builds definition file.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Windows NT builds definition file. */
 #pragma once
 
 //

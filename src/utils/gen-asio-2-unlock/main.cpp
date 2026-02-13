@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2021
-*
-*  TITLE:       MAIN.CPP
-*
-*  VERSION:     1.00
-*
-*  DATE:        18 Apr 2021
-*
-*  AsIo2 "unlock" resource generator and binder.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* AsIo2 "unlock" resource generator and binder. */
 
 #include <Windows.h>
 #include <strsafe.h>

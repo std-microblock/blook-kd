@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2023
-*
-*  TITLE:       ECHODRV.CPP
-*
-*  VERSION:     1.40
-*
-*  DATE:        21 Oct 2023
-*
-*  Inspect Element LTD spyware (anticheat) driver interface.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Inspect Element LTD spyware (anticheat) driver interface. */
 
 //
 // Based on https://github.com/kite03/echoac-poc/tree/main/PoC

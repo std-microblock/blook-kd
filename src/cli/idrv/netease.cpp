@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2025
-*
-*  TITLE:       NETEASE.CPP
-*
-*  VERSION:     1.44
-*
-*  DATE:        10 Jul 2025
-*
-*  NetEase drivers routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* NetEase drivers routines. */
 
 #include "global.h"
 #include "idrv/netease.h"

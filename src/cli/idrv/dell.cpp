@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2025
-*
-*  TITLE:       DELL.CPP
-*
-*  VERSION:     1.44
-*
-*  DATE:        18 Aug 2025
-*
-*  Dell drivers routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Dell drivers routines. */
 
 #include "global.h"
 #include "idrv/dell.h"

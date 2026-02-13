@@ -1,26 +1,4 @@
-/************************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2014 - 2020
-*  Taken from publicly available Microsoft sources or mentioned elsewhere.
-*
-*  TITLE:       HALAMD64.H
-*
-*  VERSION:     1.11
-*
-*  DATE:        12 Feb 2020
-*
-*  Common header file for the ntos HAL AMD64 definitions.
-*
-*  Depends on:    Windows.h
-*
-*  Include:       Windows.h
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-************************************************************************************/
+/* Taken from publicly available Microsoft sources or mentioned elsewhere. Common header file for the ntos HAL AMD64 definitions. Depends on:    Windows.h Include:       Windows.h */
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2022
-*
-*  TITLE:       DIRECTIO64.CPP
-*
-*  VERSION:     1.27
-*
-*  DATE:        12 Nov 2022
-*
-*  PassMark DIRECTIO driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* PassMark DIRECTIO driver routines. */
 
 #include "global.h"
 #include "idrv/directio64.h"

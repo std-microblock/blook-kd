@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2023
-*
-*  TITLE:       DRVMAP.H
-*
-*  VERSION:     1.30
-*
-*  DATE:        20 Mar 2023
-*
-*  Prototypes and definitions for driver mapping.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* Prototypes and definitions for driver mapping. */
 #pragma once
 
 PVOID KDUSetupShellCode(

@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2020 - 2022
-*
-*  TITLE:       ATSZIO.CPP
-*
-*  VERSION:     1.13
-*
-*  DATE:        05 Feb 2022
-*
-*  ASUSTeK ATSZIO WinFlash driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* ASUSTeK ATSZIO WinFlash driver routines. */
 
 #include "global.h"
 #include "idrv/atszio.h"

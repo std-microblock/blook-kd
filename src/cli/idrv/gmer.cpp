@@ -1,21 +1,4 @@
-/*******************************************************************************
-*
-*  (C) COPYRIGHT AUTHORS, 2022 - 2023
-*
-*  TITLE:       GMER.CPP
-*
-*  VERSION:     1.31
-*
-*  DATE:        14 Apr 2023
-*
-*  GMER driver routines.
-*
-* THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-* ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED
-* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-* PARTICULAR PURPOSE.
-*
-*******************************************************************************/
+/* GMER driver routines. */
 
 #include "global.h"
 #include "idrv/gmer.h"
