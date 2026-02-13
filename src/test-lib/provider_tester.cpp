@@ -32,10 +32,10 @@ std::vector<TestResult> ProviderTester::run_all_tests() {
         }
     }
 
-    results.push_back(test_virtual_to_physical());
     results.push_back(test_physical_memory_read());
-    results.push_back(test_virtual_memory_read());
     results.push_back(test_query_pml4());
+    results.push_back(test_virtual_memory_read());
+    results.push_back(test_virtual_to_physical());
     results.push_back(test_physical_memory_write_back());
 
     if (judge_driver_) {

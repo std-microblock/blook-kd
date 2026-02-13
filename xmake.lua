@@ -27,6 +27,9 @@ local function add_provider_target(name)
 end
 
 add_provider_target("mapmem")
+add_provider_target("asrock")
+target("asrock-provider")
+    add_syslinks("bcrypt")
 
 target("test-lib")
     set_kind("static")
@@ -46,7 +49,7 @@ target("cli-new")
     add_headerfiles("src/cli-new/**.hpp", "src/cli-new/**.h")
     add_includedirs("src/cli-new", "src", {public = true})
     
-    add_deps("core", "mapmem-provider", {public = true})
+    add_deps("core", "mapmem-provider", "asrock-provider", {public = true})
     add_deps("test-lib")
     set_languages("cxx23")
     add_syslinks("advapi32")
@@ -69,7 +72,7 @@ target("provider-tests")
     add_defines("UNICODE", "NOMINMAX")
     add_files("tests/provider_tests.cpp")
     add_includedirs("src", {public = true})
-    add_deps("core", "mapmem-provider", "test-lib")
+    add_deps("core", "mapmem-provider", "asrock-provider", "test-lib")
     set_languages("cxx23")
     add_syslinks("advapi32")
 
