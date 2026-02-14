@@ -9,5 +9,5 @@ Copy-VMFile -VMName $VMName -SourcePath ".\build\windows\x64\releasedbg\cli-new.
 
 Write-Host ">>> Starting Cli..." -ForegroundColor Yellow
 Invoke-Command -VMName $VMName -ScriptBlock {
-    C:\cli-new.exe --test -d asrock
+    C:\cli-new.exe -d asrock --test
 } -Credential $Cred 

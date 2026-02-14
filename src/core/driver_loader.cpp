@@ -73,9 +73,8 @@ std::expected<HANDLE, std::string> IDriverProvider::load_driver_from_memory(
         if (error == ERROR_SERVICE_EXISTS ||
             error == ERROR_DUPLICATE_SERVICE_NAME) {
             // Service already exists, use OpenService
-            service = OpenServiceW(
-                scm, service_name.c_str(),
-                SERVICE_START | SERVICE_STOP | DELETE);
+            service = OpenServiceW(scm, service_name.c_str(),
+                                   SERVICE_START | SERVICE_STOP | DELETE);
             if (!service) {
                 CloseServiceHandle(scm);
                 DeleteFileW(driver_path.c_str());
@@ -121,6 +120,7 @@ std::expected<HANDLE, std::string> IDriverProvider::load_driver_from_memory(
 
 std::expected<void, std::string> IDriverProvider::unload_driver(
     const std::wstring& service_name) noexcept {
+    return {};
     std::println("Unloading driver service: {}",
                  std::filesystem::path(service_name).string());
     SC_HANDLE scm = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_CONNECT);
@@ -166,4 +166,41 @@ std::expected<void, std::string> DriverExploit::try_unload() noexcept {
     return IDriverProvider::unload_driver(service_name_);
 }
 
+BOOL DriverExploit::call_driver(HANDLE hDevice,
+                                DWORD dwIoControlCode,
+                                LPVOID lpInBuffer,
+                                DWORD nInBufferSize,
+                                LPVOID lpOutBuffer,
+                                DWORD nOutBufferSize) const {
+    DWORD dwBytesReturned = 0;
+    auto res =
+        DeviceIoControl(hDevice, dwIoControlCode, lpInBuffer, nInBufferSize,
+                        lpOutBuffer, nOutBufferSize, &dwBytesReturned, nullptr);
+    if (!res) {
+        std::println("DeviceIoControl failed: {}", GetLastError());
+    }
+    return res;
+}
+PVOID DriverExploit::alloc_user_locked_memory(_In_ SIZE_T Size,
+                                              _In_ ULONG AllocationType,
+                                              _In_ ULONG Protect) {
+    PVOID Buffer;
+    DWORD lastError;
+
+    SetLastError(ERROR_SUCCESS);
+
+    Buffer = VirtualAllocEx(GetCurrentProcess(), NULL, Size, AllocationType,
+                            Protect);
+
+    if (Buffer) {
+        if (!VirtualLock(Buffer, Size)) {
+            lastError = GetLastError();
+            VirtualFreeEx(GetCurrentProcess(), Buffer, 0, MEM_RELEASE);
+            SetLastError(lastError);
+            Buffer = NULL;
+        }
+    }
+
+    return Buffer;
+}
 }  // namespace kdu::core

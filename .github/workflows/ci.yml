@@ -79,11 +79,15 @@ jobs:
         asset_name: kdu-${{ github.event.release.tag_name }}-windows-x64.zip
         asset_content_type: application/zip
 
-  test-gdrv:
-    name: Test Provider - GDRV
+test-providers:
+    name: Test Provider - ${{ matrix.provider }}
     needs: build
     runs-on: windows-latest
     if: github.event_name != 'release'
+    strategy:
+      fail-fast: false
+      matrix:
+        provider: [gdrv, asrock, asrock2, asrock3, asrock4, asrock5]
     
     steps:
     - name: Download artifacts
@@ -97,4 +101,4 @@ jobs:
       timeout-minutes: 5
       run: |
         cd build
-        ./provider-tests.exe gdrv
+        ./provider-tests.exe ${{ matrix.provider }}

